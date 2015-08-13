@@ -1,0 +1,139 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Moviepilot.com
+  description: Edward
+  version: "5.2.1"
+# the domain of the service
+host: api.moviepilot.com
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /v4
+produces:
+  - application/json
+paths:
+  /posts/{id}:
+    get:
+      summary: Post
+      description: |
+        Post including author information and so forth
+      parameters:
+        - name: id
+          in: path
+          description: External id.
+          required: true
+          type: number
+          format: integer
+      tags:
+        - Posts
+      responses:
+        200:
+          description: A post
+          schema:
+            type: object
+            properties:
+              id:
+                type: number
+              slug:
+                type: string
+              title:
+                type: string
+              html_body:
+                type: string
+              total_comments_count:
+                type: number
+              created_at:
+                type: string
+              questionnaire_id:
+                type: number
+              template:
+                type: string
+              abstract:
+                type: string
+              keywords:
+                type: array
+                items:
+                  type: string
+              cover_image_url:
+                type: string
+              cover_image_caption:
+                type: string
+              seo_title:
+                type: string
+              social_title:
+                type: string
+              social_abstract:
+                type: string
+              suggested_facebook_page_id:
+                type: string
+              comments_disabled:
+                type: boolean
+              is_mobile_post:
+                type: boolean
+              legacy_type:
+                type: string
+              og_image_url:
+                type: string
+              published_at:
+                type: string
+              first_published_at:
+                type: string
+              last_published_at:
+                type: string
+              promoted:
+                type: boolean
+              cover_video:
+                type: string
+              view_count:
+                type: number
+              comment_count:
+                type: number
+              author:
+                type: object
+              in_reply_to:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  type:
+                    type: string
+                  first_published_at:
+                    type: string
+                  last_published_at:
+                    type: string
+                  slug:
+                    type: string
+                  title:
+                    type: string
+                  author:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      user_name:
+                        type: string
+              related_objects:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: number
+                    type:
+                      type: string
+                    slug:
+                      type: string
+                    name:
+                      type: string
+                    image_url:
+                      type: string
+                    subscriber_count:
+                      type: number
+            required:
+              - id
+              - title
+              - html_body

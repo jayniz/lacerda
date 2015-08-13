@@ -9,11 +9,12 @@ We'll forward you to the v2 status resource
 
 ## Retrieve the Entry Point [GET]
 
-+ Response 200 (application/json)
-
-        {
-            "version": "5.2.0"
-        }
++ Response 200 (application/json; charset=utf-8)
+  + Body
+    + Attributes
+      - version: 5.2.1 (string, required) - Version number of currently deployed Edward
+      - server_time: `2015-08-11T08:19:41.556-07:00` (string, required) - Server's time
+      - user_id: 888448 (number, optional) - Requesting user's id
 
 ## Group Posts
 
@@ -22,7 +23,7 @@ Resources related to posts in the API.
 ## Post [/v4/posts/{id}]
 
 + Parameters
-    + id: `3461151` (integer, required) - External id
+    + id: `3461151` (number, required) - External id
 
 ### View a post [GET]
 
@@ -31,7 +32,7 @@ Resources related to posts in the API.
   + Body
 
             {
-              "id": 3461151,
+                "id": 3461151,
                 "slug": "it-would-not-have-cost-marketing-any-more-money-to-add-black-widow-on",
                 "title": "It would not have cost marketing any more money to add Black Widow on...",
                 "html_body": "<p>... the cover (or Hawkeye, for that matter). And would it not have been better to take the chance at one more sale by having her on than to lose a sale by not having her on?And don't say that the main characters would then have been smaller because they could have placed Black Widow to the left and behind or above the main characters without changing their relative size.</p>",
@@ -209,7 +210,30 @@ Resources related to posts in the API.
 
 
     + Attributes
-        - id: 1 (number, required) - The unique identifier for a product
-        - name: A green door (string, required) - Name of the product
-        - price: 12.50 (number, required)
-        - tags: home, green (array[string])
+      - id: 3461151 (number, required) - Post's id
+      - slug: `it-would-not-have-cost-marketing-any-more-money-to-add-black-widow-on` (string, required) - Url slug
+      - title: `It would not have cost marketing any more money to add Black Widow on...` (string, required) - Title
+      - html_body: <p>foo</p> (string, required) - Full HTML Body
+      - total_comments_count: 0 (number, required) - Amount of comments
+      - created_at: 2015-08-11T06:23:50.000-07:00 (string, required) - ActiveRecord creation date
+      - questionnaire_id: null (number, optional) - Attached questionaire
+      - template: null (string, optional) - Not sure, perhaps a legacy type?
+      - abstract: null (string, optional) - Not used at the moment, this is from tarantula days
+      - keywords: null (string, optional)
+      - cover_image_url: null (string, optional)
+      - cover_image_caption: null (string, optional)
+      - seo_title: null (string, optional)
+      - social_title: null (string, optional)
+      - social_abstract: null (string, optional)
+      - suggested_facebook_page_id: "1525889887653500" (string, optional)
+      - comments_disabled: false (boolean, optional)
+      - is_mobile_post: false (boolean, optional)
+      - legacy_type: "post" (string, required)
+      - og_image_url: "http://images-cdn.moviepilot.com/image/upload/v1431953404/pocket_post_big2_ct9cex.png" (string, required)
+      - published_at: "2015-08-11T06:23:50.000-07:00" (string, required)
+      - first_published_at: "2015-08-11T06:23:50.000-07:00" (string, required)
+      - last_published_at: "2015-08-11T06:23:50.000-07:00" (string, required)
+      - promoted: null (string, optional)
+      - cover_video: {} (object, optional)
+      - view_count: 0 (number, required)
+      - comment_count: 0 (number, required)
