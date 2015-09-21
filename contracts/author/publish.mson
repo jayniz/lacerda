@@ -1,0 +1,8 @@
+# Data Structures
+
+## Post
+
+- id: 1 (number, required) - The unique identifier for a post
+- title: Work from home (string, required) - Title of the product
+- author: 2 (number, required) - External user id of author
+- tags: tv, superheroes (array[string])
