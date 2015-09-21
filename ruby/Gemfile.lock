@@ -1,0 +1,20 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ffi (1.9.10)
+    rake (10.4.2)
+    redsnow (0.4.3)
+      bundler (>= 1.7.0)
+      ffi (~> 1.9.3)
+      rake (>= 10.3.2)
+      yard (~> 0.8.7.4)
+    yard (0.8.7.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  redsnow
+
+BUNDLED WITH
+   1.10.4

@@ -1,0 +1,27 @@
+            - id: 3461151 (number, required) - Post's id
+            - slug: `it-would-not-have-cost-marketing-any-more-money-to-add-black-widow-on` (string, required) - Url slug fro mtitle
+            - title: `It would not have cost marketing any more money to add Black Widow on...` (string, required) - Post's Title
+            - html_body: <p>foo</p> (string, required) - Full HTML body of the post
+            - total_comments_count: 0
+            - created_at: "2015-08-11T06:23:50.000-07:00"
+            - questionnaire_id: null
+            - template: null
+            - abstract: null
+            - keywords: null
+            - cover_image_url: null
+            - cover_image_caption: null
+            - seo_title: null
+            - social_title: null
+            - social_abstract: null
+            - suggested_facebook_page_id: "1525889887653500"
+            - comments_disabled: false
+            - is_mobile_post: false
+            - legacy_type: "post"
+            - og_image_url: "http://images-cdn.moviepilot.com/image/upload/v1431953404/pocket_post_big2_ct9cex.png"
+            - published_at: "2015-08-11T06:23:50.000-07:00"
+            - first_published_at: "2015-08-11T06:23:50.000-07:00"
+            - last_published_at: "2015-08-11T06:23:50.000-07:00"
+            - promoted: null
+            - cover_video: {}
+            - view_count: 0
+            - comment_count: 0
