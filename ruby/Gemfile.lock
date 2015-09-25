@@ -1,8 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    addressable (2.3.8)
     coderay (1.1.0)
     ffi (1.9.10)
+    json-schema (2.5.1)
+      addressable (~> 2.3.7)
     method_source (0.8.2)
     pry (0.10.1)
       coderay (~> 1.1.0)
@@ -14,7 +17,6 @@ GEM
       ffi (~> 1.9.3)
       rake (>= 10.3.2)
       yard (~> 0.8.7.4)
-    ruby-progressbar (1.6.0)
     slop (3.6.0)
     yard (0.8.7.6)
 
@@ -22,10 +24,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  json-schema
   pry
   rake
   redsnow
-  ruby-progressbar
-
-BUNDLED WITH
-   1.10.4
