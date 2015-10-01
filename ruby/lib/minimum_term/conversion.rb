@@ -1,9 +1,10 @@
+require 'fileutils'
 require 'open3'
 require 'minimum_term/conversion/apiary_to_json_schema'
 
 module MinimumTerm
   module Conversion
-    def self.mson_to_json_schema(filename)
+    def self.mson_to_json_schema(filename, keep_intermediary_files = false)
 
       # Parse MSON to an apiary AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
@@ -19,6 +20,8 @@ module MinimumTerm
       outfile = filename.gsub(/\.\w+$/, '.schemas.json')
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(data_structures) }
 
+      # Clean up
+      FileUtils.rm(to_ast[:outfile]) unless keep_intermediary_files
       true
     end
 
