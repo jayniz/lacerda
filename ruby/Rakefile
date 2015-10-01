@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+require 'fileutils'
+
 require 'bundler'
 Bundler.require
 
@@ -6,7 +8,14 @@ $:.unshift File.join(File.dirname(__FILE__), "lib")
 require "minimum_term"
 
 desc "Transform all MSON files to JSON Schema using drafter"
-task :mson_to_json_schema do
+task :cleanup do
+  files = Dir.glob(File.join(File.expand_path("../contracts"), "/**/*.json"))
+  files.each do |file|
+    FileUtils.rm(file)
+  end
+end
+
+task mson_to_json_schema: :cleanup do
   files = Dir.glob(File.join(File.expand_path("../contracts"), "/**/*.mson"))
   files.each do |file|
     if MinimumTerm::Conversion.mson_to_json_schema(file)
