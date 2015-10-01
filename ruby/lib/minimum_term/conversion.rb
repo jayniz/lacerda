@@ -15,13 +15,18 @@ module MinimumTerm
       data_structures = data_structures_from_apiary_ast(to_ast[:outfile])
 
       # Generate json schema from each contained data structure
-      json_schemas = data_structures.map do |data|
-        DataStructure.new(data).to_json
+      schema = {
+        "$schema" => "http://json-schema.org/schema#",
+        "definitions" => {}
+      }
+      data_structures.each do |data|
+        json= DataStructure.new(data).to_json
+        schema['definitions'][json.delete('title')] = json
       end
 
       # Write it in a file
       outfile = filename.gsub(/\.\w+$/, '.schemas.json')
-      File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(json_schemas) }
+      File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(schema) }
 
       # Clean up
       FileUtils.rm(to_ast[:outfile]) unless keep_intermediary_files

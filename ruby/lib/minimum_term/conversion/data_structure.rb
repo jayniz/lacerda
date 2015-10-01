@@ -33,10 +33,19 @@ module MinimumTerm
         member_type = get_member_type(@data['sections'], 'memberType')
         raise "No memberType section found" unless member_type
         get_member_type(member_type.first, 'property').each do |s|
-          type_definition = s['valueDefinition']['typeDefinition']
           spec = {}
-          spec['type'] = type_definition['typeSpecification']['name']
+
           name = s['name']['literal']
+          type_definition = s['valueDefinition']['typeDefinition']
+          type = type_definition['typeSpecification']['name']
+
+          spec['type'] = type
+          nestedTypes = [type_definition['typeSpecification']['nestedTypes']].flatten.compact
+          if n = nestedTypes.first
+            spec['items'] = {'type' => n['literal']}
+          end
+
+
           @schema['properties'][name] = spec
           @schema['required'] << name if type_definition['attributes'].include?('required')
         end

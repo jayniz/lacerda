@@ -14,5 +14,5 @@ Explanation for a post
 ## Properties
 - id: 1 (number, required) - The unique identifier for a post
 - title: Work from home (string, required) - Title of the product
-- author: 2 (number, required) - External user id of author
+- author: 2 (number, optional) - External user id of author
 - tags: (array[Tag])
