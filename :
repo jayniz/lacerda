@@ -16,10 +16,11 @@ module MinimumTerm
 
       # Generate json schema from each contained data structure
       json_schemas = data_structures.map do |data|
-        DataStructure.new(data).to_json
+        data_structure_to_json_schema(ds)
+        DataStructure(data).new.to_json
       end
 
-      # Write it in a file
+      # write it in a file
       outfile = filename.gsub(/\.\w+$/, '.schemas.json')
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(json_schemas) }
 
