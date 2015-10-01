@@ -7,7 +7,8 @@ module MinimumTerm
 
       def to_json
         @schema = json_schema_blueprint
-        @schema['TODOtype'] = @data['name']['literal']
+        @schema['title'] = @data['name']['literal']
+        add_description_to_json_schema
         add_properties_to_json_schema
         @schema
       end
@@ -18,6 +19,13 @@ module MinimumTerm
         struct.select do |s|
           s['class'] == clazz
         end.map{|d| d['content'] }
+      end
+
+      def add_description_to_json_schema
+        return unless @data['sections']
+        description = get_member_type(@data['sections'], 'blockDescription').first
+        return unless description
+        @schema['description'] = description.strip
       end
 
       def add_properties_to_json_schema
