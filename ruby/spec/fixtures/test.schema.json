@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "definitions": {
+    "tag": {
+      "$schema": "http://json-schema.org/schema#",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "description": "Guten Tag"
+    },
+    "post": {
+      "$schema": "http://json-schema.org/schema#",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "description": "Explanation for a post"
+    }
+  }
+}
