@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string'
+
 module MinimumTerm
   module Conversion
     class DataStructure
@@ -7,7 +9,7 @@ module MinimumTerm
 
       def to_json
         @schema = json_schema_blueprint
-        @schema['title'] = @data['name']['literal']
+        @schema['title'] = @data['name']['literal'].underscore
         add_description_to_json_schema
         add_properties_to_json_schema
         @schema
@@ -34,15 +36,14 @@ module MinimumTerm
         raise "No memberType section found" unless member_type
         get_member_type(member_type.first, 'property').each do |s|
           spec = {}
-
-          name = s['name']['literal']
+          name = s['name']['literal'].underscore
           type_definition = s['valueDefinition']['typeDefinition']
           type = type_definition['typeSpecification']['name']
 
           spec['type'] = type
           nestedTypes = [type_definition['typeSpecification']['nestedTypes']].flatten.compact
           if n = nestedTypes.first
-            spec['items'] = {'type' => n['literal']}
+            spec['items'] = {'type' => n['literal'].underscore}
           end
 
 

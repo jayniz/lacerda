@@ -25,7 +25,7 @@ module MinimumTerm
       end
 
       # Write it in a file
-      outfile = filename.gsub(/\.\w+$/, '.schemas.json')
+      outfile = filename.gsub(/\.\w+$/, '.schema.json')
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(schema) }
 
       # Clean up
