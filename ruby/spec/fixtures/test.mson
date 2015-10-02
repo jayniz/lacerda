@@ -1,7 +1,6 @@
 # Data Structures
 
 # Tag
-
 Guten Tag
 
 ## Properties
@@ -9,11 +8,13 @@ Guten Tag
 - slug: Test (string, optional) - Some kind of slug
 - variations: "test", "testing" (array[string], optional)
 
-# Post
 
+# Post
 Explanation for a post
 
 ## Properties
 - id: 1 (number, required) - The unique identifier for a post
 - title: Work from home (string, required) - Title of the product
 - author: 2 (number, optional) - External user id of author
+- primary_tag: (Tag, optional) - Property of custom type
+- tags: (array[Tag]) - An array with a custom type

@@ -6,27 +6,15 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number",
-          "items": {
-            "type": [
-
-            ]
-          }
+          "type": "number"
         },
         "slug": {
-          "type": "string",
-          "items": {
-            "type": [
-
-            ]
-          }
+          "type": "string"
         },
         "variations": {
           "type": "array",
           "items": {
-            "type": [
-              "string"
-            ]
+            "type": "string"
           }
         }
       },
@@ -40,27 +28,21 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number",
-          "items": {
-            "type": [
-
-            ]
-          }
+          "type": "number"
         },
         "title": {
-          "type": "string",
-          "items": {
-            "type": [
-
-            ]
-          }
+          "type": "string"
         },
         "author": {
-          "type": "number",
+          "type": "number"
+        },
+        "primary_tag": {
+          "$ref": "#/definitions/tag"
+        },
+        "tags": {
+          "type": "array",
           "items": {
-            "type": [
-
-            ]
+            "$ref": "#/definitions/tag"
           }
         }
       },

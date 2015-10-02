@@ -3,13 +3,15 @@ require 'active_support/core_ext/string'
 module MinimumTerm
   module Conversion
     class DataStructure
+      PRIMITIVES = %w{boolean string number array enum object}
+
       def initialize(data)
         @data = data
       end
 
       def to_json
         @schema = json_schema_blueprint
-        @schema['title'] = @data['name']['literal'].underscore
+        @schema['title'] = @data['name']['literal'].to_s.underscore
         add_description_to_json_schema
         add_properties_to_json_schema
         @schema
@@ -40,13 +42,22 @@ module MinimumTerm
           type_definition = s['valueDefinition']['typeDefinition']
           type = type_definition['typeSpecification']['name']
 
-          spec['type'] = type
-          nestedTypes = [type_definition['typeSpecification']['nestedTypes']].flatten.compact
-          spec['items'] = {'type' => nestedTypes} if nestedTypes
+          spec.merge!(primitive_or_reference(type))
 
+          if nestedTypes = [type_definition['typeSpecification']['nestedTypes']].flatten.compact.first
+            spec['items'] = primitive_or_reference(nestedTypes)
+          end
 
           @schema['properties'][name] = spec
           @schema['required'] << name if type_definition['attributes'].include?('required')
+        end
+      end
+
+      def primitive_or_reference(type)
+        if PRIMITIVES.include?(type)
+          { 'type' => type }
+        else
+          { '$ref' => "#/definitions/#{type['literal'].to_s.underscore}" }
         end
       end
 
