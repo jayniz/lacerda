@@ -6,10 +6,28 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "number",
+          "items": {
+            "type": [
+
+            ]
+          }
         },
-        "name": {
-          "type": "string"
+        "slug": {
+          "type": "string",
+          "items": {
+            "type": [
+
+            ]
+          }
+        },
+        "variations": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string"
+            ]
+          }
         }
       },
       "required": [
@@ -22,13 +40,28 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "number"
+          "type": "number",
+          "items": {
+            "type": [
+
+            ]
+          }
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "items": {
+            "type": [
+
+            ]
+          }
         },
         "author": {
-          "type": "number"
+          "type": "number",
+          "items": {
+            "type": [
+
+            ]
+          }
         }
       },
       "required": [

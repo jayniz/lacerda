@@ -13,7 +13,7 @@ describe MinimumTerm::Conversion do
     end
 
     after(:all) do
-      FileUtils.rm(schema_file) rescue nil
+      # FileUtils.rm(schema_file) rescue nil
     end
 
     it "created a schema file" do
@@ -45,8 +45,12 @@ describe MinimumTerm::Conversion do
         expect(tag.validate('id' => '1').first).to eq false
       end
 
+      it "have a wrong type array item" do
+        expect(tag.validate('id' => 1, 'variations' => [1]).first).to eq false
+      end
+
       it "miss a required type" do
-        expect(tag.validate('name' => 'test').first).to eq false
+        expect(tag.validate('slug' => 'test').first).to eq false
       end
     end
   end

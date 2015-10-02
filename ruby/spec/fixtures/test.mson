@@ -6,7 +6,8 @@ Guten Tag
 
 ## Properties
 - id: 1 (number, required) - Just an id, carry on
-- name: Test (string, optional) - We somehow allow tags with no name
+- slug: Test (string, optional) - Some kind of slug
+- variations: "test", "testing" (array[string], optional)
 
 # Post
 

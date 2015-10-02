@@ -42,9 +42,7 @@ module MinimumTerm
 
           spec['type'] = type
           nestedTypes = [type_definition['typeSpecification']['nestedTypes']].flatten.compact
-          if n = nestedTypes.first
-            spec['items'] = {'type' => n['literal'].underscore}
-          end
+          spec['items'] = {'type' => nestedTypes} if nestedTypes
 
 
           @schema['properties'][name] = spec
