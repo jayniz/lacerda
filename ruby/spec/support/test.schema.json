@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/schema#",
   "definitions": {
     "tag": {
-      "$schema": "http://json-schema.org/schema#",
       "type": "object",
       "properties": {
         "id": {
@@ -24,7 +23,6 @@
       "description": "Guten Tag"
     },
     "post": {
-      "$schema": "http://json-schema.org/schema#",
       "type": "object",
       "properties": {
         "id": {

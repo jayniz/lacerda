@@ -63,7 +63,6 @@ module MinimumTerm
 
       def json_schema_blueprint
         {
-          "$schema" => "http://json-schema.org/schema#",
           "type" => "object",
           "properties" => {},
           "required" => []

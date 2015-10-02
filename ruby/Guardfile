@@ -27,7 +27,8 @@ guard 'ctags-bundler', :src_path => ["lib"] do
 end
 
 guard :rspec, cmd: 'rspec', all_on_start: true  do
-  watch(%r{^spec/fixtures/.*\.mson$}) { "spec" }
+  watch(%r{^spec/support/.*\.mson$}) { "spec" }
+  watch(%r{^spec/support/.*\.rb$}) { "spec" }
   watch(%r{^spec/.+_spec\.rb$})
   watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }

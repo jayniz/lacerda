@@ -3,12 +3,12 @@ require 'spec_helper'
 
 describe MinimumTerm::Conversion do
   context "doing basic mson->json schema conversion" do
-    let(:schema_file) { File.expand_path("../../../fixtures/test.schema.json", __FILE__)}
+    let(:schema_file) { File.expand_path("../../../support/test.schema.json", __FILE__)}
     let(:schema){ JsonSchema.parse!(JSON.parse(open(schema_file).read)) }
 
     before(:all) do
       FileUtils.rm(schema_file) rescue nil
-      mson_file = File.expand_path("../../../fixtures/test.mson", __FILE__)
+      mson_file = File.expand_path("../../../support/test.mson", __FILE__)
       MinimumTerm::Conversion.mson_to_json_schema(mson_file)
     end
 
@@ -36,21 +36,42 @@ describe MinimumTerm::Conversion do
 
     context "validating objects that" do
       let(:tag){ schema.definitions['tag'] }
+      let(:post){ schema.definitions['post'] }
+      let(:valid_tag){ {'id' => 1} }
 
       it "are valid" do
-        expect(tag.validate('id' => 1).last).to eq []
+        expect(valid_tag).to match_schema(tag)
       end
 
       it "have a wrong type" do
-        expect(tag.validate('id' => '1').first).to eq false
+        expect('id' => '1').to_not match_schema(tag)
       end
 
       it "have a wrong type array item" do
-        expect(tag.validate('id' => 1, 'variations' => [1]).first).to eq false
+        expect('id' => 1, 'variations' => [1]).to_not match_schema(tag)
       end
 
       it "miss a required type" do
-        expect(tag.validate('slug' => 'test').first).to eq false
+        expect('slug' => 'test').to_not match_schema(tag)
+      end
+
+      context "have properties with custom types that is" do
+        let(:valid_post){ {'id' => 1, 'title' => 'Servus'} }
+        let(:invalid_tag){ {'id' => 1, 'variations' => [1]} }
+
+        it "nonexistant" do
+          expect(valid_post).to match_schema(post)
+        end
+
+        it "valid" do
+          object = valid_post.merge('primary_tag' => valid_tag)
+          expect(object).to match_schema(post)
+        end
+
+        it "invalid" do
+          object = valid_post.merge('primary_tag' => invalid_tag)
+          expect(object).to_not match_schema(post)
+        end
       end
     end
   end
