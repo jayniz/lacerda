@@ -1,9 +1,5 @@
-#!/usr/bin/env ruby
-require 'bundler'
-Bundler.require
-
-$:.unshift File.join(File.dirname(__FILE__), "lib")
-require "minimum_term"
+require 'json'
+require 'json_schema'
 
 
 schema_data = <<SCHEMA
@@ -30,6 +26,4 @@ data = <<DATA
 DATA
 
 JsonSchema.parse!(JSON.parse(schema_data)).validate!(JSON.parse(data))
-puts "Nothing is raised"
-
-binding.pry
+puts "Hi there, this didn't fail"
