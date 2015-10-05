@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'redsnow'
 gem 'rake'
-gem 'json_schema'
+gem 'json-schema'
 gem 'activesupport'
 gem 'pry'
 
