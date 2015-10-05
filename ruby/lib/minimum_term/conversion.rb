@@ -16,7 +16,7 @@ module MinimumTerm
 
       # Generate json schema from each contained data structure
       schema = {
-        "$schema"     => "http://json-schema.org/schema#",
+        "$schema"     => "http://json-schema.org/draft-04/schema#",
         "definitions" => {},
         "type"        => "object",
         "properties"  => {}

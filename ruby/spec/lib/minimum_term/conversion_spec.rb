@@ -4,7 +4,7 @@ require 'spec_helper'
 describe MinimumTerm::Conversion do
   context "doing basic mson->json schema conversion" do
     let(:schema_file) { File.expand_path("../../../support/test.schema.json", __FILE__)}
-    let(:schema){ JsonSchema.parse!(JSON.parse(open(schema_file).read)) }
+    let(:schema){ JSON.parse(open(schema_file).read) }
 
     before(:all) do
       FileUtils.rm(schema_file) rescue nil
@@ -22,16 +22,16 @@ describe MinimumTerm::Conversion do
 
     it "created a parseable json schema" do
       expect{
-        schema
+        JSON::Validator.validate(schema, {}, :validate_schema => true)
       }.to_not raise_error
     end
 
     it "registered both types" do
-      expect(schema.definitions.keys.sort).to eq ["post", "tag"]
+      expect(schema['definitions'].keys.sort).to eq ["post", "tag"]
     end
 
     it "found the tag description" do
-      expect(schema.definitions['tag'].description).to eq "Guten Tag"
+      expect(schema['definitions']['tag']['description']).to eq "Guten Tag"
     end
 
     context "validating objects that" do
