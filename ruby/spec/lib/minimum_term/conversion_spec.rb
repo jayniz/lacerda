@@ -13,7 +13,7 @@ describe MinimumTerm::Conversion do
     end
 
     after(:all) do
-      # FileUtils.rm(schema_file) rescue nil
+      # TODO FileUtils.rm(schema_file) rescue nil
     end
 
     it "created a schema file" do
@@ -35,24 +35,22 @@ describe MinimumTerm::Conversion do
     end
 
     context "validating objects that" do
-      let(:tag){ schema.definitions['tag'] }
-      let(:post){ schema.definitions['post'] }
       let(:valid_tag){ {'id' => 1} }
 
       it "are valid" do
-        expect(valid_tag).to match_schema(tag)
+        expect(valid_tag).to match_schema(schema, :tag)
       end
 
       it "have a wrong type" do
-        expect('id' => '1').to_not match_schema(tag)
+        expect('id' => '1').to_not match_schema(schema, :tag)
       end
 
       it "have a wrong type array item" do
-        expect('id' => 1, 'variations' => [1]).to_not match_schema(tag)
+        expect('id' => 1, 'variations' => [1]).to_not match_schema(schema, :tag)
       end
 
       it "miss a required type" do
-        expect('slug' => 'test').to_not match_schema(tag)
+        expect('slug' => 'test').to_not match_schema(schema, :tag)
       end
 
       context "have properties with custom types that is" do
@@ -60,17 +58,17 @@ describe MinimumTerm::Conversion do
         let(:invalid_tag){ {'id' => 1, 'variations' => [1]} }
 
         it "nonexistant" do
-          expect(valid_post).to match_schema(post)
+          expect(valid_post).to match_schema(schema, :post)
         end
 
         it "valid" do
           object = valid_post.merge('primary_tag' => valid_tag)
-          expect(object).to match_schema(post)
+          expect(object).to match_schema(schema, :post)
         end
 
         it "invalid" do
           object = valid_post.merge('primary_tag' => invalid_tag)
-          expect(object).to_not match_schema(post)
+          expect(object).to_not match_schema(schema, :post)
         end
       end
     end

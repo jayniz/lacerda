@@ -50,5 +50,14 @@
       ],
       "description": "Explanation for a post"
     }
+  },
+  "type": "object",
+  "properties": {
+    "tag": {
+      "$ref": "#/definitions/tag"
+    },
+    "post": {
+      "$ref": "#/definitions/post"
+    }
   }
 }

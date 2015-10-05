@@ -16,12 +16,48 @@ module MinimumTerm
 
       # Generate json schema from each contained data structure
       schema = {
-        "$schema" => "http://json-schema.org/schema#",
-        "definitions" => {}
+        "$schema"     => "http://json-schema.org/schema#",
+        "definitions" => {},
+        "type"        => "object",
+        "properties"  => {}
       }
+
+      # The json schema we're constructing contains every known
+      # object type in the 'definitions'. So if we have definitions for
+      # the objects User, Post and Tag, the schema will look like this:
+      #
+      # {
+      #   "$schema": "..."
+      #
+      #   "definitions": {
+      #     "user": { "type": "object", "properties": { ... }}
+      #     "post": { "type": "object", "properties": { ... }}
+      #     "tag":  { "type": "object", "properties": { ... }}
+      #   }
+      #
+      #   "properties": {
+      #     "user": "#/definitions/user"
+      #     "post": "#/definitions/post"
+      #     "tag":  "#/definitions/tag"
+      #   }
+      #
+      # }
+      #
+      # So when testing an object of type `user` against this schema,
+      # we need to wrap it as:
+      #
+      # {
+      #   user: {
+      #     "your": "actual",
+      #     "data": "goes here"
+      #     }
+      # }
+      #
       data_structures.each do |data|
         json= DataStructure.new(data).to_json
-        schema['definitions'][json.delete('title')] = json
+        member = json.delete('title')
+        schema['definitions'][member] = json
+        schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}
       end
 
       # Write it in a file
