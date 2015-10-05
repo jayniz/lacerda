@@ -1,10 +1,8 @@
-require 'json'
-require 'json_schema'
-
+require 'json-schema'
 
 schema_data = <<SCHEMA
 {
-  "$schema": "http://json-schema.org/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "definitions": {
     "other": {
       "type": "object",
@@ -14,16 +12,16 @@ schema_data = <<SCHEMA
   },
   "type": "object",
   "properties": {
-    "myref": { "$ref": "#/definitions/other" }
+    "reference": { "$ref": "#/definitions/other" }
   }
 }
 SCHEMA
 
 data = <<DATA
   {
-    "myref": {"id": "Oh god, a string, this should fail" }
+    "referenced": {"id": "Oh no, a string, this should fail" }
   }
 DATA
 
-JsonSchema.parse!(JSON.parse(schema_data)).validate!(JSON.parse(data))
+JSON::Validator.validate!(JSON.parse(schema_data), JSON.parse(data), validate_schema: true)
 puts "Hi there, this didn't fail"
