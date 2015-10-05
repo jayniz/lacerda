@@ -27,11 +27,11 @@ describe MinimumTerm::Conversion do
     end
 
     it "registered both types" do
-      expect(schema.definitions.keys.sort).to eq ["post", "tag"]
+      expect(schema['definitions'].keys.sort).to eq ["post", "tag"]
     end
 
     it "found the tag description" do
-      expect(schema.definitions['tag'].description).to eq "Guten Tag"
+      expect(schema['definitions']['tag']['description']).to eq "Guten Tag"
     end
 
     context "validating objects that" do
