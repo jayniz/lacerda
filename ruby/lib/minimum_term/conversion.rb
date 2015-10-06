@@ -6,6 +6,9 @@ module MinimumTerm
   module Conversion
     def self.mson_to_json_schema(filename, keep_intermediary_files = false)
 
+      # For now, we'll use the containing directory's name as a scope
+      scope = File.dirname(filename).split(File::SEPARATOR).last.underscore
+
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
       to_ast = mson_to_ast_json(filename)
@@ -17,9 +20,10 @@ module MinimumTerm
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
+        "title"       => scope,
         "definitions" => {},
         "type"        => "object",
-        "properties"  => {}
+        "properties"  => {},
       }
 
       # The json schema we're constructing contains every known
@@ -54,7 +58,7 @@ module MinimumTerm
       # }
       #
       data_structures.each do |data|
-        json= DataStructure.new(data).to_json
+        json= DataStructure.new(data, scope).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}

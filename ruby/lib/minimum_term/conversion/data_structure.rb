@@ -5,13 +5,19 @@ module MinimumTerm
     class DataStructure
       PRIMITIVES = %w{boolean string number array enum object}
 
-      def initialize(data)
+      def self.scope(scope, string)
+        [scope, string.to_s].compact.join(":").underscore
+      end
+
+      def initialize(data, scope = nil)
+        @scope = scope
         @data = data['content'].select{|d| d['element'] == 'object' }.first
+        @id = self.class.scope(@scope, @data['meta']['id'])
       end
 
       def to_json
         @schema = json_schema_blueprint
-        @schema['title'] = @data['meta']['id'].to_s.underscore
+        @schema['title'] = @id
         add_description_to_json_schema
         add_properties_to_json_schema
         @schema
@@ -62,7 +68,7 @@ module MinimumTerm
         if PRIMITIVES.include?(type)
           { 'type' => type }
         else
-          { '$ref' => "#/definitions/#{type.to_s.underscore}" }
+          { '$ref' => "#/definitions/#{self.class.scope(@scope, type)}" }
         end
       end
 

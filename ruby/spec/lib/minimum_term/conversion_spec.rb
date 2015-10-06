@@ -3,12 +3,12 @@ require 'spec_helper'
 
 describe MinimumTerm::Conversion do
   context "doing basic mson->json schema conversion" do
-    let(:schema_file) { File.expand_path("../../../support/test.schema.json", __FILE__)}
+    let(:schema_file) { File.expand_path("../../../support/contracts/some_app/test.schema.json", __FILE__)}
     let(:schema){ JSON.parse(open(schema_file).read) }
 
     before(:all) do
       FileUtils.rm(schema_file) rescue nil
-      mson_file = File.expand_path("../../../support/test.mson", __FILE__)
+      mson_file = File.expand_path("../../../support/contracts/some_app/test.mson", __FILE__)
       MinimumTerm::Conversion.mson_to_json_schema(mson_file)
     end
 
@@ -27,11 +27,11 @@ describe MinimumTerm::Conversion do
     end
 
     it "registered both types" do
-      expect(schema['definitions'].keys.sort).to eq ["post", "tag"]
+      expect(schema['definitions'].keys.sort).to eq ["some_app:post", "some_app:tag"]
     end
 
     it "found the tag description" do
-      expect(schema['definitions']['tag']['description']).to eq "Guten Tag"
+      expect(schema['definitions']['some_app:tag']['description']).to eq "Guten Tag"
     end
 
     context "validating objects that" do
