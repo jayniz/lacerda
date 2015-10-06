@@ -6,13 +6,13 @@ module MinimumTerm
   module Conversion
     def self.mson_to_json_schema(filename, keep_intermediary_files = false)
 
-      # Parse MSON to an apiary AST
+      # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
       to_ast = mson_to_ast_json(filename)
       return false unless to_ast[:status] == 0
 
       # Pluck out Data structures from it
-      data_structures = data_structures_from_apiary_ast(to_ast[:outfile])
+      data_structures = data_structures_from_blueprint_ast(to_ast[:outfile])
 
       # Generate json schema from each contained data structure
       schema = {
@@ -69,13 +69,13 @@ module MinimumTerm
       true
     end
 
-    def self.data_structures_from_apiary_ast(filename)
+    def self.data_structures_from_blueprint_ast(filename)
       JSON.parse(open(filename).read)['content'].first['content']
     end
 
     def self.mson_to_ast_json(filename)
       input = filename
-      output = filename.gsub(/\.\w+$/, '.apiary-ast.json')
+      output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
 
       cmd = "drafter -u -f json -o #{Shellwords.escape(output)} #{Shellwords.escape(input)}"
       stdin, stdout, status = Open3.capture3(cmd)
