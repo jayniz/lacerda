@@ -14,3 +14,17 @@ We use  [drafter](https://github.com/apiaryio/drafter) to convert MSON to JSON S
 
 Then, you can convert all `*.mson` files in `contracts` using `rake
 mson_to_json_schema`.
+
+## Code
+
+Most of the stuff happens in the `/ruby` directory right now.
+Go there, and
+
+  - run `bundle`
+  - run `guard` in a spare terminal which will run the tests,
+    install gems, and so forth
+
+
+Example contracts are kept in the `/contracts` dir for now but
+will be fetched from the participating projects' repositories
+later.
