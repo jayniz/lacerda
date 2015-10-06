@@ -65,7 +65,7 @@ module MinimumTerm
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(schema) }
 
       # Clean up
-      FileUtils.rm(to_ast[:outfile]) unless keep_intermediary_files
+      FileUtils.rm_f(to_ast[:outfile]) unless keep_intermediary_files
       true
     end
 
