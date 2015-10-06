@@ -1,3 +1,4 @@
 node/node_modules
 contracts/**/*.json
 **/*.schema.json
+ruby/tags
