@@ -51,6 +51,7 @@ describe MinimumTerm::Compare::JsonSchema do
     }
   }
 
+
   let(:schema) { MinimumTerm::Compare::JsonSchema.new(@schema_hash) }
 
   describe ".contains?" do
