@@ -22,7 +22,7 @@ module MinimumTerm
         (schema_hash['definitions'].keys - @schema['definitions'].keys).empty?
       end
 
-      def contains_properties?(schema_hash)
+      def contains_definitions_attributes?(schema_hash)
         schema_hash['definitions'].keys.each do |definition|
           # Perform definitions attribues comparison (type, properties and required) 
         end
