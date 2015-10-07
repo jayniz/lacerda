@@ -38,7 +38,7 @@ describe MinimumTerm::Compare::JsonSchema do
     }
   }
 
-  let(:schema_c) { 
+  let(:schema_c) {
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
@@ -59,6 +59,7 @@ describe MinimumTerm::Compare::JsonSchema do
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_a)).to be_truthy
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_truthy
       end
+    end
 
     context "Json Schema 'a' NOT containing other Json Schema 'b' because of" do
 
