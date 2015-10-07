@@ -1,0 +1,221 @@
+{
+  "element": "category",
+  "meta": {
+    "classes": [
+      "api"
+    ],
+    "title": ""
+  },
+  "content": [
+    {
+      "element": "category",
+      "meta": {
+        "classes": [
+          "dataStructures"
+        ]
+      },
+      "content": [
+        {
+          "element": "dataStructure",
+          "content": [
+            {
+              "element": "object",
+              "meta": {
+                "id": "Tag",
+                "description": "Guten Tag\n\n"
+              },
+              "content": [
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "Just an id, carry on"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "required"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "id"
+                    },
+                    "value": {
+                      "element": "number",
+                      "content": 1
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "Some kind of slug"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "optional"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "slug"
+                    },
+                    "value": {
+                      "element": "string",
+                      "content": "Test"
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "attributes": {
+                    "typeAttributes": [
+                      "optional"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "variations"
+                    },
+                    "value": {
+                      "element": "array",
+                      "content": [
+                        {
+                          "element": "string",
+                          "content": "\"test\""
+                        },
+                        {
+                          "element": "string",
+                          "content": "\"testing\""
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "element": "dataStructure",
+          "content": [
+            {
+              "element": "object",
+              "meta": {
+                "id": "Post",
+                "description": "Explanation for a post\n\n"
+              },
+              "content": [
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "The unique identifier for a post"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "required"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "id"
+                    },
+                    "value": {
+                      "element": "number",
+                      "content": 1
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "Title of the product"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "required"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "title"
+                    },
+                    "value": {
+                      "element": "string",
+                      "content": "Work from home"
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "External user id of author"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "optional"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "author"
+                    },
+                    "value": {
+                      "element": "number",
+                      "content": 2
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "Property of custom type"
+                  },
+                  "attributes": {
+                    "typeAttributes": [
+                      "optional"
+                    ]
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "primary_tag"
+                    },
+                    "value": {
+                      "element": "Tag"
+                    }
+                  }
+                },
+                {
+                  "element": "member",
+                  "meta": {
+                    "description": "An array with a custom type"
+                  },
+                  "content": {
+                    "key": {
+                      "element": "string",
+                      "content": "tags"
+                    },
+                    "value": {
+                      "element": "array",
+                      "content": [
+                        {
+                          "element": "Tag"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
