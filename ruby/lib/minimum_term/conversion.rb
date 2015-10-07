@@ -74,7 +74,9 @@ module MinimumTerm
     end
 
     def self.data_structures_from_blueprint_ast(filename)
-      JSON.parse(open(filename).read)['content'].first['content']
+      c = JSON.parse(open(filename).read)['content'].first
+      return [] unless c
+      c['content']
     end
 
     def self.mson_to_ast_json(filename)

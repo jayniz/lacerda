@@ -3,17 +3,24 @@ require 'spec_helper'
 
 describe MinimumTerm::Conversion do
   context "doing basic mson->json schema conversion" do
-    let(:schema_file) { File.expand_path("../../../support/contracts/some_app/test.schema.json", __FILE__)}
+    let(:schema_file) { File.expand_path("../../../support/contracts/some_app/publish.schema.json", __FILE__)}
     let(:schema){ JSON.parse(open(schema_file).read) }
 
     before(:all) do
       FileUtils.rm(schema_file) rescue nil
-      mson_file = File.expand_path("../../../support/contracts/some_app/test.mson", __FILE__)
+      mson_file = File.expand_path("../../../support/contracts/some_app/publish.mson", __FILE__)
       MinimumTerm::Conversion.mson_to_json_schema(mson_file)
     end
 
     after(:all) do
       # TODO FileUtils.rm(schema_file) rescue nil
+    end
+
+    it "allows empty files" do
+      empty_mson_file = File.expand_path("../../../support/contracts/some_app/empty.mson", __FILE__)
+      expect{
+        MinimumTerm::Conversion.mson_to_json_schema(empty_mson_file)
+      }.to_not raise_error
     end
 
     it "created a schema file" do
@@ -31,7 +38,7 @@ describe MinimumTerm::Conversion do
     end
 
     it "found the tag description" do
-      expect(schema['definitions']['some_app:tag']['description']).to eq "Guten Tag"
+      expect(schema['definitions']['some_app:tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
     end
 
     context "validating objects that" do
@@ -54,7 +61,7 @@ describe MinimumTerm::Conversion do
       end
 
       context "have properties with custom types that is" do
-        let(:valid_post){ {'id' => 1, 'title' => 'Servus'} }
+        let(:valid_post){ {'id' => 1, 'title' => 'Servus', 'author_id' => 22} }
         let(:invalid_tag){ {'id' => 1, 'variations' => [1]} }
 
         it "nonexistant" do

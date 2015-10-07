@@ -1,0 +1,12 @@
+# Data Structure
+
+# SomeApp.post
+
+We consume post objects from the SomeApp service. We're just interested
+in the title and the primary tag, though. The author is optional for us.
+
+## Properties
+
+- title: (string, required)
+- author_id: (number, optional)
+- primary_tag: (Tag, required)

@@ -47,3 +47,11 @@ Luckily, a rake task does all that for you. To convert all `*.mson` files in `co
 ✅  /Users/jannis/Dev/core/minimum-term/contracts/edward/consume.mson
 ➜  minimum-term/ruby $
 ```
+
+### Structure
+
+- Infrastructure
+  - Service
+    - Contracts
+      - Published contracts
+      - Consumed contracts
