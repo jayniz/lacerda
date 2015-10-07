@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe MinimumTerm::Compare::JsonSchema do
 
-  let(:schema_a) { 
-    { 
+  let(:schema_a) {
+    {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
         "tag" => {
@@ -25,7 +25,7 @@ describe MinimumTerm::Compare::JsonSchema do
     }
   }
 
-  let(:schema_b) { 
+  let(:schema_b) {
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
@@ -38,7 +38,7 @@ describe MinimumTerm::Compare::JsonSchema do
     }
   }
 
-  let(:schema_c) { 
+  let(:schema_c) {
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
@@ -55,8 +55,8 @@ describe MinimumTerm::Compare::JsonSchema do
 
   describe ".contains?" do
 
-    context "Json Schema 'a' containing Json Schema 'b'" do  
-      
+    context "Json Schema 'a' containing Json Schema 'b'" do
+
       it "doesn't detect a difference" do
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_a['definitions'])).to be_truthy
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_c['definitions'])).to be_truthy
