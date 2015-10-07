@@ -23,7 +23,6 @@ describe MinimumTerm::Compare::JsonSchema do
         }
       }
     }
-  }
 
   let(:schema_b) {
     {
@@ -36,7 +35,7 @@ describe MinimumTerm::Compare::JsonSchema do
         }
       }
     }
-  }
+
 
   let(:schema_c) {
     {
@@ -56,12 +55,12 @@ describe MinimumTerm::Compare::JsonSchema do
       context "Json Schema containing other Json Schema" do  
         context "contains all the definitions" do
           it "doesn't detect a difference" do
-            expect(schema.contains?(to_compare_schema_hash)).to be_truthy
+            expect(@schema.contains?(@to_compare_schema_hash)).to be_truthy
           end
         end
         
   let(:schema) { MinimumTerm::Compare::JsonSchema.new(@schema_hash) }
-
+  
   describe ".contains?" do
 
     context "Json Schema 'a' containing Json Schema 'b'" do
