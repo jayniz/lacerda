@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe MinimumTerm::Compare::JsonSchema do
 
-  before(:all) do
-    @schema_hash = { 
+  let(:schema_a) { 
+    { 
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
         "tag" => {
@@ -23,8 +23,10 @@ describe MinimumTerm::Compare::JsonSchema do
         }
       }
     }
+  }
 
-    @to_compare_schema_hash = {
+  let(:schema_b) { 
+    {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
         "post" => {
@@ -34,56 +36,38 @@ describe MinimumTerm::Compare::JsonSchema do
         }
       }
     }
+  }
 
-    @schema = MinimumTerm::Compare::JsonSchema.new(@schema_hash)
-  end
+  let(:schema_c) { 
+    {
+      "$schema" => "http://json-schema.org/draft-04/schema#",
+      "definitions" => {
+        "post" => {
+          "type" => "object",
+          "properties" => { "id" => { "type" => "number" } },
+          "required" => [ "id" ]
+        }
+      }
+    }
+  }
 
-    describe "#contains?" do
+  let(:schema) { MinimumTerm::Compare::JsonSchema.new(@schema_hash) }
+
+  describe ".contains?" do
+
+    context "Json Schema 'a' containing Json Schema 'b'" do  
       
-      context "Json Schema containing other Json Schema" do  
-        context "contains all the definitions" do
-          it "doesn't detect a difference" do
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_truthy
-          end
-        end
-
-        context "containing all the definitions and the properties" do
-          it "doesn't detect a difference" do
-            @to_compare_schema_hash['definitions']['post']['properties'].delete('name')
-
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_truthy
-          end
-        end
-
-        context "containing all the required attributes" do
-          it "doesn't detect a difference" do
-            @to_compare_schema_hash['definitions']['post']['required'].delete('name')
-
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_truthy
-          end
-        end
-      end
-
-      context "Json Schema NOT containing other Json Schema" do
-        context "NOT contains all the definitions" do
-          it "detects the difference" do
-            @to_compare_schema_hash['definitions']['user'] = {}
-
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_falsey
-          end
-        end
-
-        context "containing all the definitions but NOT the properties" do
-          it "detects the difference" do
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_falsey
-          end
-        end
-
-        context "NOT containing all the required attributes" do
-          it "detects the difference" do
-            expect(@schema.contains?(@to_compare_schema_hash)).to be_falsey
-          end
-        end
+      it "doesn't detect a difference" do
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_a['definitions'])).to be_truthy
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_c['definitions'])).to be_truthy
       end
     end
+
+    context "Json Schema 'a' NOT containing other Json Schema 'b'" do
+
+      it "detects the difference" do
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_b['definitions'])).to be_falsey
+      end
+    end
+  end
 end
