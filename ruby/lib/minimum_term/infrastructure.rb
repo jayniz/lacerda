@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/indifferent_access'
+
 module MinimumTerm
   class Infrastructure
     attr_reader :services
@@ -9,9 +11,11 @@ module MinimumTerm
     private
 
     def load_services
+      @services = {}.with_indifferent_access
       dirs = Dir.glob(File.join(MinimumTerm::Contract::DIR, "*/"))
-      @services = dirs.map do |dir|
-        MinimumTerm::Service.new(File.basename(dir))
+      dirs.each do |dir|
+        service_name = File.basename(dir)
+        @services[service_name] = MinimumTerm::Service.new(service_name)
       end
     end
   end

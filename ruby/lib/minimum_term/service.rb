@@ -2,11 +2,19 @@ module MinimumTerm
   # Models a service and its published objects as well as consumed
   # objects. The app itself is part of an Infrastructure
   class Service
-    attr_reader :contracts, :name
+    attr_reader :publish, :consume, :name
 
     def initialize(name)
       @name = name
       load_contracts
+    end
+
+    def dependant_on
+
+    end
+
+    def consumed_objects
+      @consumed_objects ||= @consume.objects
     end
 
     private

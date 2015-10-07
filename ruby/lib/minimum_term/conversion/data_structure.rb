@@ -6,7 +6,7 @@ module MinimumTerm
       PRIMITIVES = %w{boolean string number array enum object}
 
       def self.scope(scope, string)
-        [scope, string.to_s].compact.join(":").underscore
+        [scope, string.to_s].compact.join(MinimumTerm::SCOPE_SEPARATOR).underscore
       end
 
       def initialize(data, scope = nil)
