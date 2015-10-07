@@ -4,12 +4,23 @@ describe MinimumTerm::Compare::JsonSchema do
 
   let(:schema_hash) { 
     {
-      "$schema" => "http=://json-schema.org/draft-04/schema#",
-      "definitions" => { "tag" => { "type" => "object" }, "post" => { "type" => "object" } },
-      "type" => "object",
-      "properties" => {
-        "tag" => { "$ref" => "#/definitions/tag" },
-        "post" => { "$ref" => "#/definitions/post" }
+      "$schema" => "http://json-schema.org/draft-04/schema#",
+      "definitions" => {
+        "tag" => {
+          "type" => "object",
+          "properties" => { "id" => { "type" => "number", "description" => "Foobar" } },
+          "required" => [ "id" ],
+        },
+        "post" => {
+          "type" => "object",
+          "properties" => {
+            "id" => { "type" => "number", "description" => "The unique identifier for a post" },
+            "title" => { "type" => "string", "description" => "Title of the product" },
+            "author" => { "type" => "number", "description" => "External user id of author" },
+            "tags" => { "type" => "array","items" => [ { "$ref" => "#/definitions/tag" } ] }
+          },
+          "required" => [ "id", "title" ]
+        }
       }
     }
   }
@@ -17,25 +28,34 @@ describe MinimumTerm::Compare::JsonSchema do
   let(:to_compare_schema_hash) {
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
-      "definitions" => { "post" => { "type" => "object" } },
-      "type" => "object",
-      "properties" => { "post" => { "$ref" => "#/definitions/post" } }
+      "definitions" => {
+        "post" => {
+          "type" => "object",
+          "properties" => { "id" => { "type" => "number" }, "name" => { "type" => "string" } },
+          "required" => [ "id", "name" ]
+        }
+      }
     }
   }
+
+  let(:schema) { MinimumTerm::Compare::JsonSchema.new(schema_hash) }
 
 
   describe "#contains?" do
     
+
     context "Json Schema containing another Json Schema" do  
       context "contains all the definitions" do
         it "doesn't detect a difference" do
-          schema = MinimumTerm::Compare::JsonSchema.new(schema_hash)
           expect(schema.contains?(to_compare_schema_hash)).to be_truthy
         end
       end
 
       context "containing all the definitions and the properties" do
         it "doesn't detect a difference" do
+          to_compare_schema_hash['definitions']['post']['properties'].delete('name')
+
+          expect(schema.contains?(to_compare_schema_hash)).to be_truthy
         end
       end
     end
@@ -44,13 +64,14 @@ describe MinimumTerm::Compare::JsonSchema do
       context "NOT contains all the definitions" do
         it "detects the difference" do
           to_compare_schema_hash['definitions']['user'] = {}
-          schema = MinimumTerm::Compare::JsonSchema.new(schema_hash)
+
           expect(schema.contains?(to_compare_schema_hash)).to be_falsey
         end
       end
 
       context "containing all the definitions but NOT the properties" do
         it "detects the difference" do
+          expect(schema.contains?(to_compare_schema_hash)).to be_falsey
         end
       end
     end
