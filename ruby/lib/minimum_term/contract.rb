@@ -10,6 +10,9 @@ module MinimumTerm
       Dir.glob(File.join(DIR, "/**/*.json"))
     end
 
+
+    attr_reader :service, :schema
+
     def initialize(service, schema_or_file)
       @service = service
       load_schema(schema_or_file)
