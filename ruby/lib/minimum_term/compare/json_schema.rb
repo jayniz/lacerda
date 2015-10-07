@@ -9,6 +9,7 @@ module MinimumTerm
       # b - the Hash representation of the Json Schema to be compared with 'a'
       #
       # returns true if 'b' is contained into 'a'
+
       def self.definition_contains?(a, b)
         b['definitions'].each do |property, b_schema|
           a_schema = a['definitions'][property]
@@ -25,6 +26,7 @@ module MinimumTerm
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []
         publish_required = publish['required'] || []
+
         return false unless (consume_required - publish_required).empty?
 
         # We already know that publish and consume's type are equal
