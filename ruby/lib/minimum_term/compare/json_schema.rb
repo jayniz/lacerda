@@ -7,25 +7,29 @@ module MinimumTerm
       end
 
       # Methods
-      # Public: determine whether the current Json Schema contains another one
+      # Public: determine whether a Json Schema 'A' contains the Json Schema 'B' 
       # 
-      # schema_hash - the Hash representation of the Json Schema to compare with
+      # a - the Hash representation of the main Json Schema
+      # b - the Hash representation of the Json Schema to be compared with 'a'
       # 
-      # returns true if the schema_hash is contained into the curren schema 
-      def contains?(schema_hash)
-        contains_definitions?(schema_hash) && contains_definitions_attributes?(schema_hash)
-      end
-
-      private
-      def contains_definitions?(schema_hash)
-        (schema_hash['definitions'].keys - @schema['definitions'].keys).empty?
-      end
-
-      def contains_definitions_attributes?(schema_hash)
-        schema_hash['definitions'].keys.each do |definition|
-          # Perform definitions attribues comparison (type, properties and required) 
+      # returns true if 'b' is contained into 'a' 
+      def self.contains?(a, b, diff = {})
+        b.keys.each do |k|
+          if conflicts?(k, a, b)
+            if a[k].is_a?(Hash) && b[k].is_a?(Hash)
+              contains?(a[k], b[k], diff)
+            else
+              diff[k] = [a[k], b[k]]
+            end
+          end
         end
-        true
+        diff.empty?
+      end
+
+      def self.conflicts?(key, publish, consume)
+        # binding.pry
+        return true if consume[key]['required'].include?(key) && !publish[key]['required'].include?(key)
+        publish[key] != consume[key]
       end
     end
   end
