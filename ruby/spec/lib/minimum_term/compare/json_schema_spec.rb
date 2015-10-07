@@ -51,7 +51,15 @@ describe MinimumTerm::Compare::JsonSchema do
     }
   }
 
-
+    describe "#contains?" do
+      
+      context "Json Schema containing other Json Schema" do  
+        context "contains all the definitions" do
+          it "doesn't detect a difference" do
+            expect(schema.contains?(to_compare_schema_hash)).to be_truthy
+          end
+        end
+        
   let(:schema) { MinimumTerm::Compare::JsonSchema.new(@schema_hash) }
 
   describe ".contains?" do
@@ -62,7 +70,6 @@ describe MinimumTerm::Compare::JsonSchema do
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_a)).to be_truthy
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_truthy
       end
-    end
 
     context "Json Schema 'a' NOT containing other Json Schema 'b' because of" do
 
