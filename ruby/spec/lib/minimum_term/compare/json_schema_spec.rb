@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe MinimumTerm::Compare::JsonSchema do
 
-let(:schema_a) { 
+  let(:schema_a) { 
     { 
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
@@ -23,8 +23,9 @@ let(:schema_a) {
         }
       }
     }
+  }
 
-let(:schema_b) { 
+  let(:schema_b) { 
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
@@ -35,8 +36,9 @@ let(:schema_b) {
         }
       }
     }
+  }
 
-let(:schema_c) { 
+  let(:schema_c) { 
     {
       "$schema" => "http://json-schema.org/draft-04/schema#",
       "definitions" => {
