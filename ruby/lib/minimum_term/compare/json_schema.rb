@@ -13,8 +13,9 @@ module MinimumTerm
       def self.definition_contains?(a, b)
         b['definitions'].each do |property, b_schema|
           a_schema = a['definitions'][property]
-          return false unless a_schema && schema_contains?(a_schema, b_schema)
+          return false unless a_schema && definition_schema_contains?(a_schema, b_schema)
         end
+
 
         true
       end
@@ -34,7 +35,7 @@ module MinimumTerm
         if consume['type'] == 'object'
           consume['properties'].each do |property, schema|
             return false unless publish['properties'][property]
-            return false unless schema_contains?(publish['properties'][property], schema)
+            return false unless definition_schema_contains?(publish['properties'][property], schema)
           end
         end
 
