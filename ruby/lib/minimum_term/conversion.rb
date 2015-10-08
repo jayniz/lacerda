@@ -5,14 +5,23 @@ require 'minimum_term/conversion/apiary_to_json_schema'
 module MinimumTerm
   module Conversion
     def self.mson_to_json_schema(filename, keep_intermediary_files = false)
+      begin
+        mson_to_json_schema!(filename, keep_intermediary_files = false)
+        true
+      rescue
+        false
+      end
+    end
+
+    def self.mson_to_json_schema!(filename, keep_intermediary_files = false)
 
       # For now, we'll use the containing directory's name as a scope
-      scope = File.dirname(filename).split(File::SEPARATOR).last.underscore
+      service_scope = File.dirname(filename).split(File::SEPARATOR).last.underscore
 
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
       to_ast = mson_to_ast_json(filename)
-      return false unless to_ast[:status] == 0
+      raise "Error: #{to_ast}" unless to_ast[:status] == 0
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(to_ast[:outfile])
@@ -20,11 +29,24 @@ module MinimumTerm
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
-        "title"       => scope,
+        "title"       => service_scope,
         "definitions" => {},
         "type"        => "object",
         "properties"  => {},
       }
+
+      # The scope for the data structure is the name of the service
+      # publishing the object. So if we're parsing a 'consume' schema,
+      # the containing objects are alredy scoped (because a consume
+      # schema says 'i consume object X from service Y'.
+      basename = File.basename(filename)
+      if basename.end_with?("publish.mson")
+        data_structure_autoscope = service_scope
+      elsif basename.end_with?("consume.mson")
+        data_structure_autoscope = nil
+      else
+        raise "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
+      end
 
       # The json schema we're constructing contains every known
       # object type in the 'definitions'. So if we have definitions for
@@ -58,7 +80,7 @@ module MinimumTerm
       # }
       #
       data_structures.each do |data|
-        json= DataStructure.new(data, scope).to_json
+        json= DataStructure.new(data, data_structure_autoscope).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}

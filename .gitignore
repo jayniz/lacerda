@@ -4,3 +4,5 @@ contracts/**/*.json
 ruby/spec/support/**.json
 ruby/tags
 ruby/gems.tags
+ruby/spec/support/**/*blueprint-ast.json
+

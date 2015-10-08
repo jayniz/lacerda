@@ -1,6 +1,9 @@
 # Data Structure
 
-# SomeApp.post
+# AnotherApp:Tag
+- name: (string)
+
+# AnotherApp:Post
 
 We consume post objects from the SomeApp service. We're just interested
 in the title and the primary tag, though. The author is optional for us.
@@ -9,4 +12,4 @@ in the title and the primary tag, though. The author is optional for us.
 
 - title: (string, required)
 - author_id: (number, optional)
-- primary_tag: (Tag, required)
+- primary_tag: (AnotherApp:Tag, required)

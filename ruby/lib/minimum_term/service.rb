@@ -10,11 +10,11 @@ module MinimumTerm
     end
 
     def dependant_on
-
+      consumed_objects.map(&:service).uniq.sort
     end
 
     def consumed_objects
-      @consumed_objects ||= @consume.objects
+      @consume.objects
     end
 
     private
