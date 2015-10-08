@@ -5,7 +5,6 @@ gem 'rake'
 gem 'json-schema'
 gem 'activesupport'
 gem 'pry'
-gem 'json-compare'
 
 group :development, :test do
   gem 'guard-bundler'
