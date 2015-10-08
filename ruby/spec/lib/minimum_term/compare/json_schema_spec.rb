@@ -17,7 +17,7 @@ describe JsonSchema do
             "id" => { "type" => "number", "description" => "The unique identifier for a post" },
             "title" => { "type" => "string", "description" => "Title of the product" },
             "author" => { "type" => "number", "description" => "External user id of author" },
-            "tags" => { "type" => "array","items" => [ { "$ref" => "#/definitions/tag" } ] }
+            "tags" => { "type" => "array", "items" => [ { "type" => "string" } ] }
           },
           "required" => [ "id", "title" ]
         }
@@ -31,7 +31,10 @@ describe JsonSchema do
       "definitions" => {
         "post" => {
           "type" => "object",
-          "properties" => { "id" => { "type" => "number" } },
+          "properties" => { 
+            "id" => { "type" => "number" },
+            "tags" => { "type" => "array", "items" => [ { "type" => "string" } ] }
+          },
           "required" => [ "id", "title" ]
         }
       }
@@ -76,6 +79,12 @@ describe JsonSchema do
 
       it "a missing required property" do
         schema_b['definitions']['post']['required'] << 'name'
+
+        expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_falsey
+      end
+
+      it "a different type for the items of a property of type array" do
+        schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
 
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_falsey
       end
