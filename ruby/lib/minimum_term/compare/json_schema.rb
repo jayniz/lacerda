@@ -45,13 +45,6 @@ module MinimumTerm
         end
         # TODO: Check if it is $ref instead of type
 
-        if consume['type'] == 'array'
-          consume['items'].each_with_index do |item, i|
-            return false unless schema_contains?(publish['items'][i], item)
-          end
-        end
-        # TODO: Check if it is $ref instead of type
-
         true
       end
     end
