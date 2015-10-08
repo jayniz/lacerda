@@ -1,12 +1,5 @@
 # Data Structure
 
-# AnotherApp:Tag
-
-## Properties
-
-- name: (string)
-
-
 # AnotherApp:Post
 
 We consume post objects from the SomeApp service. We're just interested

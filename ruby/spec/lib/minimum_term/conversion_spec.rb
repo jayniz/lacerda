@@ -44,8 +44,12 @@ describe MinimumTerm::Conversion do
       expect(publish_schema['definitions'].keys.sort).to eq ["some_app:post", "some_app:tag"]
     end
 
-    it "registered both consume types with the scope as in the schema" do
-      expect(consume_schema['definitions'].keys.sort).to eq ["another_app:post", "another_app:tag"]
+    it "registered the consume type with the scope as in the schema" do
+      expect(consume_schema['definitions'].keys.sort).to eq ["another_app:post"]
+    end
+
+    it "parsed child objects in the consume schema" do
+      expect(consume_schema['definitions']['another_app:post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
     end
 
     it "found the tag description" do

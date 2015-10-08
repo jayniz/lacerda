@@ -13,13 +13,13 @@ module MinimumTerm
         @scope = scope
         @data = data
         @id = self.class.scope(@scope, id)
-      end
-
-      def to_json
         @schema = json_schema_blueprint
         @schema['title'] = @id
         add_description_to_json_schema
         add_properties_to_json_schema
+      end
+
+      def to_json
         @schema
       end
 
@@ -66,7 +66,7 @@ module MinimumTerm
             spec['properties'] = {}
             value_content.select{|d| d['element'] == 'member'}.each do |data|
               data_structure = DataStructure.new('tmp', content['value'], @scope).to_json
-              spec['properties'][data_structure.delete('title')] = data_structure
+              spec['properties'].merge!(data_structure['properties'])
             end
           end
 
