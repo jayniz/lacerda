@@ -14,7 +14,7 @@ module MinimumTerm
       #
       # returns true if 'b' is contained into 'a'
       def self.schema_definitions_contain?(a, b)
-        b['definitions'].each do |property, schema|
+        b['definitions'].each do |property, b_schema|
           a_schema = a['definitions'][property]
           return false unless schema_contains?(a_schema, b_schema)
         end
@@ -32,13 +32,13 @@ module MinimumTerm
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []
         publish_required = publish['required'] || []
-        return false unless (consume_required-publish_required).empty?
+        return false unless (consume_required - publish_required).empty?
 
         # We already know that publish and consume's type are equal
         # but if they're objects, we need to do some recursion
         if consume['type'] == "object"
           consume['properties'].each do |property, schema|
-            next if conflicts?(publish['properties'][property], schema)
+            next if schema_contains?(publish['properties'][property], schema)
             return false
           end
         end

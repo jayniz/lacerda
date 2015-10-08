@@ -58,15 +58,15 @@ describe MinimumTerm::Compare::JsonSchema do
     context "Json Schema 'a' containing Json Schema 'b'" do
 
       it "doesn't detect a difference" do
-        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_a['definitions'])).to be_truthy
-        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_c['definitions'])).to be_truthy
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_a)).to be_truthy
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_truthy
       end
     end
 
     context "Json Schema 'a' NOT containing other Json Schema 'b'" do
 
       it "detects the difference" do
-        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a['definitions'], schema_b['definitions'])).to be_falsey
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_b)).to be_falsey
       end
     end
   end
