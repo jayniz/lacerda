@@ -6,7 +6,7 @@ module MinimumTerm
   module Conversion
     def self.mson_to_json_schema(filename, keep_intermediary_files = false)
       begin
-        mson_to_json_schema!(filename, keep_intermediary_files = false)
+        mson_to_json_schema!(filename, keep_intermediary_files)
         true
       rescue
         false
@@ -80,7 +80,9 @@ module MinimumTerm
       # }
       #
       data_structures.each do |data|
-        json= DataStructure.new(data, data_structure_autoscope).to_json
+        schema_data = data['content'].select{|d| d['element'] == 'object' }.first
+        id = schema_data['meta']['id']
+        json= DataStructure.new(id, schema_data, data_structure_autoscope).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}

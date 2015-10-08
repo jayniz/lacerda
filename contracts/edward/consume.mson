@@ -2,5 +2,6 @@
 
 ## Author:Post
 
-- id: (number, required)
-- name: (string, required)
+- title: (string)
+- tag: (object)
+  - tagname: (string)

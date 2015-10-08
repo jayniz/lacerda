@@ -9,10 +9,10 @@ module MinimumTerm
         [scope, string.to_s].compact.join(MinimumTerm::SCOPE_SEPARATOR).underscore
       end
 
-      def initialize(data, scope = nil)
+      def initialize(id, data, scope = nil)
         @scope = scope
-        @data = data['content'].select{|d| d['element'] == 'object' }.first
-        @id = self.class.scope(@scope, @data['meta']['id'])
+        @data = data
+        @id = self.class.scope(@scope, id)
       end
 
       def to_json
@@ -42,20 +42,33 @@ module MinimumTerm
         return unless @data['content']
         members = @data['content'].select{|d| d['element'] == 'member' }
         members.each do |s|
+          content = s['content']
+          type = content['value']['element']
+
           spec = {}
           name = s['content']['key']['content'].underscore
-          type_definition = s['content']
-          type = type_definition['value']['element']
 
+          # This is either type: primimtive or $ref: reference_name
           spec.merge!(primitive_or_reference(type))
 
-          value_content = s['content']['value']['content']
-          if value_content.is_a?(Enumerable)
+          value_content = content['value']['content']
+
+          # We might have a description
+          spec['description'] = s['meta']['description'] if s['meta']
+
+          # If it's an array, we need to pluck out the item types
+          if type == 'array'
             nestedTypes = value_content.map{|d| d['element'] }.compact
             spec['items'] = nestedTypes.map{|t| primitive_or_reference(t) }
-          end
 
-          spec['description'] = s['meta']['description'] if s['meta']
+          # If it's an object, we need recursion
+          elsif type == 'object'
+            spec['properties'] = {}
+            value_content.select{|d| d['element'] == 'member'}.each do |data|
+              data_structure = DataStructure.new('tmp', content['value'], @scope).to_json
+              spec['properties'][data_structure.delete('title')] = data_structure
+            end
+          end
 
           @schema['properties'][name] = spec
           if attributes = s['attributes']
@@ -79,6 +92,7 @@ module MinimumTerm
           "required" => []
         }
       end
+
     end
   end
 end

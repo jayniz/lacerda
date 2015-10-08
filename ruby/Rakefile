@@ -17,9 +17,19 @@ end
 
 desc "Transform all MSON files to JSON Schema using drafter"
 task :mson_to_json_schema, [:keep_intermediary_files] => :cleanup do |t, args|
+
+  # For debugging it can be helpful to not clean up the
+  # intermediary blueprint ast files.
   keep_intermediary_files = args[:keep_intermediary_files] == 'keep_intermediary_files'
-  MinimumTerm::Contract.mson_files.each do |file|
-    if MinimumTerm::Conversion.mson_to_json_schema(file, keep_intermediary_files)
+
+  # If we were given files, just convert those
+  files = ENV['FILES'].to_s.split(',')
+
+  # OK then, we'll just convert all we find
+  files = MinimumTerm::Contract.mson_files if files.blank?
+
+  files.each do |file|
+    if MinimumTerm::Conversion.mson_to_json_schema!(file, keep_intermediary_files)
       puts "✅  #{file}"
     else
       puts "❌  #{file}"
