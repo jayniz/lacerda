@@ -32,7 +32,7 @@ describe MinimumTerm::Compare::JsonSchema do
         "post" => {
           "type" => "object",
           "properties" => { "id" => { "type" => "number" }, "name" => { "type" => "string" } },
-          "required" => [ "id", "name" ]
+          "required" => [ "id", "title" ]
         }
       }
     }
@@ -65,15 +65,33 @@ describe MinimumTerm::Compare::JsonSchema do
 
     context "Json Schema 'a' NOT containing other Json Schema 'b' because of" do
 
-      it "a missing required property" do
-        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_b)).to be_falsey
+      it "a missing definition" do
+        schema_c['definitions']['user'] = {}
+        
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_falsey
       end
 
       it "different types for the object" do
+        schema_c['definitions']['post']['type'] = 'string'
+        
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_falsey
       end
 
-      it "a missing property"
-      it "a different type of a property"
+      it "a missing property" do
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_b)).to be_falsey
+      end
+
+      it "a different type of a property" do
+        schema_c['definitions']['post']['properties']['id']['type'] = 'string'
+
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_falsey
+      end
+
+      it "a missing required property" do
+        schema_c['definitions']['post']['required'] << 'name'
+
+        expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_c)).to be_falsey
+      end
     end
   end
 end
