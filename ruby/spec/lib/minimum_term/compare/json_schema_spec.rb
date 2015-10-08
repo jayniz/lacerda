@@ -63,11 +63,17 @@ describe MinimumTerm::Compare::JsonSchema do
       end
     end
 
-    context "Json Schema 'a' NOT containing other Json Schema 'b'" do
+    context "Json Schema 'a' NOT containing other Json Schema 'b' because of" do
 
-      it "detects the difference" do
+      it "a missing required property" do
         expect(MinimumTerm::Compare::JsonSchema.contains?(schema_a, schema_b)).to be_falsey
       end
+
+      it "different types for the object" do
+      end
+
+      it "a missing property"
+      it "a different type of a property"
     end
   end
 end
