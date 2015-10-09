@@ -8,15 +8,16 @@ module MinimumTerm
 
       def contains?(contained_schema)
         @contained_schema = contained_schema
-        definition_contains?(@containing_schema, @contained_schema)
+        definitions_contained?
       end
 
       private
 
-      def definition_contains?(a, b)
-        b['definitions'].each do |property, b_schema|
-          a_schema = a['definitions'][property]
-          return false unless a_schema && schema_contains?(a_schema, b_schema)
+      def definitions_contained?
+        @contained_schema['definitions'].each do |property, contained_property|
+          containing_property = @containing_schema['definitions'][property]
+          return false unless containing_property
+          return false unless schema_contains?(containing_property, contained_property)
         end
         true
       end
@@ -25,8 +26,8 @@ module MinimumTerm
 
         # We can only compare types and $refs, so let's make
         # sure they're there
-        return false unless (consume['type'] && publish['type']) or
-                            (consume['$ref'] && publish['$ref'])
+        return false unless (consume['type'] or consume['$ref']) and
+                            (publish['type'] or publish['$ref'])
 
         # There's four possibilities here:
         #
@@ -38,13 +39,21 @@ module MinimumTerm
          return false if consume['type'] != publish['type']
         elsif(consume['$ref'] and publish['$ref'])
          return false if consume['$ref'] != publish['$ref']
-        # TODO 3 and 4
+        elsif(consume['type'] and publish['$ref'])
+
+          # We only know how to deal with simple local pointers for now
+          type = publish['$ref'][/\#\/definitions\/[^\/]+$/]
+          return false unless type
+
+          resolved_ref = @containing_schema['definitions'][type]
+          return false unless resolved_ref
+
+          return false unless schema_contains?(resolved_ref, consume)
         end
 
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []
         publish_required = publish['required'] || []
-
         return false unless (consume_required - publish_required).empty?
 
         # We already know that publish and consume's type are equal
@@ -61,7 +70,6 @@ module MinimumTerm
             return false unless schema_contains?(publish['items'][i], item)
           end
         end
-        # TODO: Check if it is $ref instead of type
 
         true
       end
