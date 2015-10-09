@@ -18,7 +18,6 @@ describe JsonSchema do
             'id' => { 'type' => 'number', 'description' => 'The unique identifier for a post' },
             'title' => { 'type' => 'string', 'description' => 'Title of the product' },
             'author' => { 'type' => 'number', 'description' => 'External user id of author' },
-            'primary_tag' => { '$ref' => '#/definitions/tag' },
             'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
           },
           'required' => [ 'id', 'title' ]
@@ -45,6 +44,16 @@ describe JsonSchema do
 
   describe '#contains?' do
 
+    let(:tag_as_pointer){ { '$ref' => '#/definitions/tag' } }
+    let(:tag_as_inline_object) {
+      {
+        'type' => 'object',
+        'properties' => {
+          'id' => {'type' => 'number'}
+        }
+      }
+    }
+
     context 'Json Schema a containing Json Schema b' do
 
       it 'when they are equal' do
@@ -56,18 +65,20 @@ describe JsonSchema do
       end
 
       it 'when the child schema describes a child object as a ref' do
+        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/tag' }
         expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
       end
 
       it 'when the child schema describes a child object instead of using a reference' do
-        inline_description = {
-          'type' => 'object',
-          'properties' => {
-            'id' => {'type' => 'number'}
-          }
-        }
-        schema_b['definitions']['post']['properties']['primary_tag'] = inline_description
+        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
+      end
+
+      it 'when the child schema describes a child object via a pointer' do
+        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+        schema_a['definitions']['primary_tag'] = tag_as_inline_object
         expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
       end
     end

@@ -1,0 +1,1 @@
+- make `Compare::JsonSpec` collect errors and give reasons for mismatches

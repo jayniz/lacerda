@@ -40,15 +40,13 @@ module MinimumTerm
         elsif(consume['$ref'] and publish['$ref'])
          return false if consume['$ref'] != publish['$ref']
         elsif(consume['type'] and publish['$ref'])
-
-          # We only know how to deal with simple local pointers for now
-          type = publish['$ref'][/\#\/definitions\/([^\/]+)$/, 1]
-          return false unless type
-
-          resolved_ref = @containing_schema['definitions'][type]
-          return false unless resolved_ref
-
+          return false unless resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
           return schema_contains?(resolved_ref, consume)
+        elsif(consume['$ref'] and publish['type'])
+          return false unless resolved_ref = resolve_pointer(consume['$ref'], @contained_schema)
+          return schema_contains?(resolved_ref, consume)
+        else
+          return false
         end
 
         # Make sure required properties in consume are required in publish
@@ -72,6 +70,12 @@ module MinimumTerm
         end
 
         true
+      end
+
+      def resolve_pointer(pointer, schema)
+        type = pointer[/\#\/definitions\/([^\/]+)$/, 1]
+        return false unless type
+        schema['definitions'][type]
       end
     end
   end
