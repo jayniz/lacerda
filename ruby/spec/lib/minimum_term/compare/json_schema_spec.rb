@@ -64,7 +64,7 @@ describe JsonSchema do
         inline_description = {
           'type' => 'object',
           'properties' => {
-            'id' => 'number'
+            'id' => {'type' => 'number'}
           }
         }
         schema_b['definitions']['post']['properties']['primary_tag'] = inline_description

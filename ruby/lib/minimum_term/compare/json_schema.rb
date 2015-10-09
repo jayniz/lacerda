@@ -42,13 +42,13 @@ module MinimumTerm
         elsif(consume['type'] and publish['$ref'])
 
           # We only know how to deal with simple local pointers for now
-          type = publish['$ref'][/\#\/definitions\/[^\/]+$/]
+          type = publish['$ref'][/\#\/definitions\/([^\/]+)$/, 1]
           return false unless type
 
           resolved_ref = @containing_schema['definitions'][type]
           return false unless resolved_ref
 
-          return false unless schema_contains?(resolved_ref, consume)
+          return schema_contains?(resolved_ref, consume)
         end
 
         # Make sure required properties in consume are required in publish
