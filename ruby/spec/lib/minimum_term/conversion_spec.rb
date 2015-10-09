@@ -3,17 +3,17 @@ require 'spec_helper'
 
 describe MinimumTerm::Conversion do
   context "doing basic mson->json schema conversion" do
-    let(:publish_schema_file) { File.expand_path("../../../support/contracts/some_app/publish.schema.json", __FILE__)}
+    let(:publish_schema_file) { File.expand_path("../../../support/contracts/json_schema_test_app/publish.schema.json", __FILE__)}
     let(:publish_schema){ JSON.parse(open(publish_schema_file).read) }
-    let(:consume_schema_file) { File.expand_path("../../../support/contracts/some_app/consume.schema.json", __FILE__)}
+    let(:consume_schema_file) { File.expand_path("../../../support/contracts/json_schema_test_app/consume.schema.json", __FILE__)}
     let(:consume_schema){ JSON.parse(open(consume_schema_file).read) }
 
     before(:all) do
       FileUtils.rm(publish_schema_file) rescue nil
       FileUtils.rm(consume_schema_file) rescue nil
 
-      publish_mson_file = File.expand_path("../../../support/contracts/some_app/publish.mson", __FILE__)
-      consume_mson_file = File.expand_path("../../../support/contracts/some_app/consume.mson", __FILE__)
+      publish_mson_file = File.expand_path("../../../support/contracts/json_schema_test_app/publish.mson", __FILE__)
+      consume_mson_file = File.expand_path("../../../support/contracts/json_schema_test_app/consume.mson", __FILE__)
 
       MinimumTerm::Conversion.mson_to_json_schema!(publish_mson_file)
       MinimumTerm::Conversion.mson_to_json_schema!(consume_mson_file)
@@ -24,7 +24,7 @@ describe MinimumTerm::Conversion do
     end
 
     it "allows empty files" do
-      empty_mson_file = File.expand_path("../../../support/contracts/some_app/empty_publish.mson", __FILE__)
+      empty_mson_file = File.expand_path("../../../support/contracts/json_schema_test_app/empty_publish.mson", __FILE__)
       expect{
         MinimumTerm::Conversion.mson_to_json_schema(empty_mson_file)
       }.to_not raise_error
@@ -41,7 +41,7 @@ describe MinimumTerm::Conversion do
     end
 
     it "registered both publish types with automatic scope from directory name" do
-      expect(publish_schema['definitions'].keys.sort).to eq ["some_app:post", "some_app:tag"]
+      expect(publish_schema['definitions'].keys.sort).to eq ["json_schema_test_app:post", "json_schema_test_app:tag"]
     end
 
     it "registered the consume type with the scope as in the schema" do
@@ -53,7 +53,7 @@ describe MinimumTerm::Conversion do
     end
 
     it "found the tag description" do
-      expect(publish_schema['definitions']['some_app:tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
+      expect(publish_schema['definitions']['json_schema_test_app:tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
     end
 
     context "validating objects that" do
