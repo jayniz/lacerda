@@ -26,9 +26,18 @@ module MinimumTerm
         return false unless (consume['type'] && publish['type']) or
                             (consume['$ref'] && publish['$ref'])
 
-        # Make sure types and $refs are equal
-         return false if consume['type'] != publish['type'] or
-                         consume['$ref'] != publish['$ref']
+        # There's four possibilities here:
+        #
+        # 1) publish and consume have a type defined
+        # 2) publish and consume have a $ref defined
+        # 3) publish has a $ref defined, and consume an inline object
+        # 4) consume has a $ref defined, and publish an inline object
+        if (consume['type'] and publish['type'])
+         return false if consume['type'] != publish['type']
+        elsif(consume['$ref'] and publish['$ref'])
+         return false if consume['$ref'] != publish['$ref']
+        # TODO 3 and 4
+        end
 
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []
