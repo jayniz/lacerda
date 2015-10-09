@@ -32,7 +32,7 @@ describe JsonSchema do
       "definitions" => {
         "post" => {
           "type" => "object",
-          "properties" => { 
+          "properties" => {
             "id" => { "type" => "number" },
             "tags" => { "type" => "array", "items" => [ { "type" => "string" } ] }
           },
@@ -46,8 +46,20 @@ describe JsonSchema do
 
     context "Json Schema 'a' containing Json Schema 'b'" do
 
-      it "doesn't detect a difference" do
+      it "when they are equal" do
         expect(JsonSchema.definition_contains?(schema_a, schema_a)).to be_truthy
+      end
+
+      it "when one is contained in the other" do
+        expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
+      end
+
+      xit "when the child schema describes a child object as a ref" do
+        schema_b['definitions']['post']['properties']['primary_tag'] = { "$ref" => "#/definitions/tag" }
+        expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
+      end
+
+      xit "when the child schema describes a child object instead of using a reference" do
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
       end
     end
@@ -62,7 +74,7 @@ describe JsonSchema do
 
       it "different types for the object" do
         schema_b['definitions']['post']['type'] = 'string'
-        
+
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_falsey
       end
 
@@ -76,6 +88,11 @@ describe JsonSchema do
         schema_b['definitions']['post']['properties']['id']['type'] = 'string'
 
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_falsey
+      end
+
+      xit "a different type of reference" do
+        schema_b['definitions']['post']['properties']['primary_tag'] = { "$ref" => "#/definitions/something_else" }
+        expect(JsonSchema.definition_contains?(schema_a, schema_b)).to_not be_truthy
       end
 
       it "a missing required property" do
