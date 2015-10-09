@@ -2,24 +2,26 @@ module MinimumTerm
   module Compare
     class JsonSchema
 
-      # Methods
-      # Public: determine whether a Json Schema 'A' definitions contains
-      # the Json Schema 'B' definitions
-      #
-      # a - hash of the main Json Schema
-      # b - hash of the Json Schema to be compared with 'a'
-      #
-      # returns true if 'b' is contained into 'a'
-      def self.definition_contains?(a, b)
+      def initialize(containing_schema)
+        @containing_schema = containing_schema
+      end
+
+      def contains?(contained_schema)
+        @contained_schema = contained_schema
+        definition_contains?(@containing_schema, @contained_schema)
+      end
+
+      private
+
+      def definition_contains?(a, b)
         b['definitions'].each do |property, b_schema|
           a_schema = a['definitions'][property]
           return false unless a_schema && schema_contains?(a_schema, b_schema)
         end
-
         true
       end
 
-      def self.schema_contains?(publish, consume)
+      def schema_contains?(publish, consume)
 
         # We can only compare types and $refs, so let's make
         # sure they're there
