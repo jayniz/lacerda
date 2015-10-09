@@ -3,13 +3,13 @@ module MinimumTerm
     class JsonSchema
 
       # Methods
-      # Public: determine whether a Json Schema 'A' definitions contains the Json Schema 'B' definitions
+      # Public: determine whether a Json Schema 'A' definitions contains
+      # the Json Schema 'B' definitions
       #
-      # a - the Hash representation of the main Json Schema
-      # b - the Hash representation of the Json Schema to be compared with 'a'
+      # a - hash of the main Json Schema
+      # b - hash of the Json Schema to be compared with 'a'
       #
       # returns true if 'b' is contained into 'a'
-
       def self.definition_contains?(a, b)
         b['definitions'].each do |property, b_schema|
           a_schema = a['definitions'][property]
@@ -20,8 +20,15 @@ module MinimumTerm
       end
 
       def self.schema_contains?(publish, consume)
-        # Make sure type is the same
-        return false if consume['type'] != publish['type']
+
+        # We can only compare types and $refs, so let's make
+        # sure they're there
+        return false unless (consume['type'] && publish['type']) or
+                            (consume['$ref'] && publish['$ref'])
+
+        # Make sure types and $refs are equal
+         return false if consume['type'] != publish['type'] or
+                         consume['$ref'] != publish['$ref']
 
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []

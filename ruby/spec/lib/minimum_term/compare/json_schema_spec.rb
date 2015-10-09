@@ -18,6 +18,7 @@ describe JsonSchema do
             "id" => { "type" => "number", "description" => "The unique identifier for a post" },
             "title" => { "type" => "string", "description" => "Title of the product" },
             "author" => { "type" => "number", "description" => "External user id of author" },
+            "primary_tag" => { "$ref" => "#/definitions/tag" },
             "tags" => { "type" => "array", "items" => [ { "type" => "string" } ] }
           },
           "required" => [ "id", "title" ]
@@ -54,12 +55,19 @@ describe JsonSchema do
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
       end
 
-      xit "when the child schema describes a child object as a ref" do
+      it "when the child schema describes a child object as a ref" do
         schema_b['definitions']['post']['properties']['primary_tag'] = { "$ref" => "#/definitions/tag" }
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
       end
 
-      xit "when the child schema describes a child object instead of using a reference" do
+      it "when the child schema describes a child object instead of using a reference" do
+        inline_description = {
+          "type" => "object",
+          "properties" => {
+            "id" => "number"
+          }
+        }
+        schema_b['definitions']['post']['properties']['primary_tag'] = inline_description
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_truthy
       end
     end
@@ -90,7 +98,7 @@ describe JsonSchema do
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to be_falsey
       end
 
-      xit "a different type of reference" do
+      it "a different type of reference" do
         schema_b['definitions']['post']['properties']['primary_tag'] = { "$ref" => "#/definitions/something_else" }
         expect(JsonSchema.definition_contains?(schema_a, schema_b)).to_not be_truthy
       end
