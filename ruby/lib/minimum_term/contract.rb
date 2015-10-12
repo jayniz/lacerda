@@ -20,13 +20,9 @@ module MinimumTerm
 
     private
 
-    def object_description_for(scoped_name, schema)
-
-    end
-
     def load_schema(schema_or_file)
       if schema_or_file.is_a?(Hash)
-        @schema = @schema_or_file
+        @schema = schema_or_file
       elsif File.readable?(schema_or_file)
         @schema = JSON.parse(open(schema_or_file).read)
       else

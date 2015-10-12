@@ -25,12 +25,6 @@ module MinimumTerm
 
       private
 
-      def get_member_type(struct, clazz, clazz_field = 'class')
-        struct.select do |s|
-          s[clazz_field] == clazz
-        end.map{|d| d['content'] }
-      end
-
       def add_description_to_json_schema
         return unless @data['meta']
         description = @data['meta']['description']

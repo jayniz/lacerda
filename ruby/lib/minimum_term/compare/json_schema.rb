@@ -6,7 +6,7 @@ module MinimumTerm
         @containing_schema = containing_schema
       end
 
-      def contains?(contained_schema)
+      def contains?(contained_schema, pry = false)
         @contained_schema = contained_schema
         definitions_contained?
       end
@@ -35,6 +35,10 @@ module MinimumTerm
         # 2) publish and consume have a $ref defined
         # 3) publish has a $ref defined, and consume an inline object
         # 4) consume has a $ref defined, and publish an inline object
+        #    (we don't support this yet, as otherwise couldn't check for
+        #    missing definitions, because we could never know if something
+        #    specified in the definitions of the consuming schema exists in
+        #    the publishing schema as an inline property somewhere).
         if (consume['type'] and publish['type'])
          return false if consume['type'] != publish['type']
         elsif(consume['$ref'] and publish['$ref'])
@@ -43,9 +47,6 @@ module MinimumTerm
           return false unless resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
           return schema_contains?(resolved_ref, consume)
         elsif(consume['$ref'] and publish['type'])
-          return false unless resolved_ref = resolve_pointer(consume['$ref'], @contained_schema)
-          return schema_contains?(resolved_ref, consume)
-        else
           return false
         end
 

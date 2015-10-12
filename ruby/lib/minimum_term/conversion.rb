@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'open3'
 require 'minimum_term/conversion/apiary_to_json_schema'
+require 'minimum_term/conversion/error'
 
 module MinimumTerm
   module Conversion
@@ -21,7 +22,7 @@ module MinimumTerm
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
       to_ast = mson_to_ast_json(filename)
-      raise "Error: #{to_ast}" unless to_ast[:status] == 0
+      raise Error, "Error: #{to_ast}" unless to_ast[:status] == 0
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(to_ast[:outfile])

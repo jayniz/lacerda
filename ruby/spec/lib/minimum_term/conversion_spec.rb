@@ -20,14 +20,36 @@ describe MinimumTerm::Conversion do
     end
 
     after(:all) do
-      # TODO FileUtils.rm(publish_schema_file) rescue nil
+      FileUtils.rm(publish_schema_file) rescue nil
     end
 
-    it "allows empty files" do
-      empty_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/empty_publish.mson", __FILE__)
+    context "conversion without exceptions" do
+      let(:f){ publish_schema_file }
+      it "when it works" do
+        expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
+          .with(f, false)
+        expect(MinimumTerm::Conversion.mson_to_json_schema(f)).to be true
+      end
+
+      it "when it bangs" do
+        expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
+          .with(f, false).and_raise
+        expect(MinimumTerm::Conversion.mson_to_json_schema(publish_schema_file)).to be false
+      end
+    end
+
+    it "doesn't allow names except for publish.mson and consume.mson" do
+      invalidly_named_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/invalid_name.mson", __FILE__)
       expect{
-        MinimumTerm::Conversion.mson_to_json_schema(empty_mson_file)
-      }.to_not raise_error
+        MinimumTerm::Conversion.mson_to_json_schema!(invalidly_named_mson_file)
+      }.to raise_error
+    end
+
+    it "doesn't allow empty files" do
+      empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/empty_publish.mson", __FILE__)
+      expect{
+        MinimumTerm::Conversion.mson_to_json_schema!(empty_mson_file)
+      }.to raise_error(MinimumTerm::Conversion::Error)
     end
 
     it "created a schema file" do

@@ -81,6 +81,18 @@ describe JsonSchema do
         schema_a['definitions']['primary_tag'] = tag_as_inline_object
         expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
       end
+
+      it 'when the child schema describes a child object via a pointer but the containing object inline' do
+        schema_a['definitions'].delete('tag')
+        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+
+        schema_b['definitions']['tag'] = tag_as_inline_object
+        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsy
+      end
+    end
+
+    context "Invalid data" do
     end
 
     context 'Json Schema a NOT containing other Json Schema b because of' do

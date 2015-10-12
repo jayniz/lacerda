@@ -15,8 +15,18 @@ module MinimumTerm
       consumed_objects.map(&:publisher)
     end
 
+    def dependants
+      infrastructure.services.values.select do |service|
+        service.dependant_on.include?(self)
+      end
+    end
+
     def consumed_objects
       @consume.objects
+    end
+
+    def published_objects
+      @publish.objects
     end
 
     private
