@@ -1,5 +1,5 @@
 module MinimumTerm
-  class Object
+  class ObjectDescription
     attr_reader :service, :name, :schema
     def initialize(defined_in_service, scoped_name, schema)
       @defined_in_service = defined_in_service
