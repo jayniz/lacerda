@@ -11,6 +11,7 @@ module MinimumTerm
     end
 
     def objects
+      return [] unless @schema[:definitions]
       @schema[:definitions].map do |scoped_name, schema|
         MinimumTerm::Object.new(service, scoped_name, schema)
       end
