@@ -4,18 +4,27 @@ module MinimumTerm
   class Infrastructure
     attr_reader :services
 
-    def initialize
+    def initialize(data_dir = MinimumTerm::Contract::DIR)
+      @data_dir = data_dir
       load_services
+    end
+
+    def mson_files
+      Dir.glob(File.join(@data_dir, "/**/*.mson"))
+    end
+
+    def json_files
+      Dir.glob(File.join(@data_dir, "/**/*.schema.json"))
     end
 
     private
 
     def load_services
       @services = {}.with_indifferent_access
-      dirs = Dir.glob(File.join(MinimumTerm::Contract::DIR, "*/"))
+      dirs = Dir.glob(File.join(@data_dir, "*/"))
       dirs.each do |dir|
-        service_name = File.basename(dir)
-        @services[service_name] = MinimumTerm::Service.new(service_name)
+        service = MinimumTerm::Service.new(dir)
+        @services[service.name] = service
       end
     end
   end

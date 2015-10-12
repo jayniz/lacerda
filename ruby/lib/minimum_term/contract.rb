@@ -3,17 +3,6 @@ require 'minimum_term/object'
 
 module MinimumTerm
   class Contract
-    DIR = File.expand_path("../contracts")
-
-    def self.mson_files
-      Dir.glob(File.join(DIR, "/**/*.mson"))
-    end
-
-    def self.json_files
-      Dir.glob(File.join(DIR, "/**/*.json"))
-    end
-
-
     attr_reader :service, :schema
 
     def initialize(service, schema_or_file)
@@ -32,8 +21,10 @@ module MinimumTerm
     def load_schema(schema_or_file)
       if schema_or_file.is_a?(Hash)
         @schema = @schema_or_file
-      else
+      elsif File.readable?(schema_or_file)
         @schema = JSON.parse(open(schema_or_file).read)
+      else
+        @schema = {}
       end
       @schema = @schema.with_indifferent_access
     end

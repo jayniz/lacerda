@@ -4,8 +4,9 @@ module MinimumTerm
   class Service
     attr_reader :publish, :consume, :name
 
-    def initialize(name)
-      @name = name
+    def initialize(data_dir)
+      @data_dir = data_dir
+      @name = File.basename(data_dir).underscore
       load_contracts
     end
 
@@ -20,9 +21,8 @@ module MinimumTerm
     private
 
     def load_contracts
-      path = File.join(MinimumTerm::Contract::DIR, @name)
-      @publish = MinimumTerm::Contract.new(@name, File.join(path, "publish.schema.json"))
-      @consume = MinimumTerm::Contract.new(@name, File.join(path, "consume.schema.json"))
+      @publish = MinimumTerm::Contract.new(self, File.join(@data_dir, "publish.schema.json"))
+      @consume = MinimumTerm::Contract.new(self, File.join(@data_dir, "consume.schema.json"))
     end
   end
 end
