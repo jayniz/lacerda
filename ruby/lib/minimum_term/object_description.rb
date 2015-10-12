@@ -1,3 +1,19 @@
+# This represents a description of an Object (as it was in MSON and later
+# JSON Schema). It can come in two flavors:
+#
+#   1) A published object
+#   2) A consumed object
+#
+# A published object only refers to one servce:
+#
+#   - its publisher
+#
+# However, a consumed object is referring to two services:
+#
+#   - its publisher
+#   - its consumer
+#
+#
 module MinimumTerm
   class ObjectDescription
     attr_reader :service, :name, :schema
@@ -6,12 +22,6 @@ module MinimumTerm
       @scoped_name = scoped_name
       @name = remove_service_from_scoped_name(scoped_name)
       @schema = schema
-    end
-
-    def service
-      i = @scoped_name.index(MinimumTerm::SCOPE_SEPARATOR)
-      return @defined_in_service unless i > 0
-      @defined_in_service.infrastructure.services[@scoped_name[0...i].underscore.to_sym]
     end
 
     private

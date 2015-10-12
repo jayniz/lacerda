@@ -1,5 +1,6 @@
 require 'active_support/core_ext/hash/indifferent_access'
-require 'minimum_term/object_description'
+require 'minimum_term/published_object'
+require 'minimum_term/consumed_object'
 
 module MinimumTerm
   class Contract
@@ -13,11 +14,15 @@ module MinimumTerm
     def objects
       return [] unless @schema[:definitions]
       @schema[:definitions].map do |scoped_name, schema|
-        MinimumTerm::ObjectDescription.new(service, scoped_name, schema)
+        object_description_class.new(service, scoped_name, schema)
       end
     end
 
     private
+
+    def object_description_for(scoped_name, schema)
+
+    end
 
     def load_schema(schema_or_file)
       if schema_or_file.is_a?(Hash)

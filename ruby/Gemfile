@@ -10,5 +10,7 @@ group :development, :test do
   gem 'guard-bundler'
   gem 'guard-ctags-bundler'
   gem 'guard-rspec'
+  gem 'simplecov-rcov', require: false
   gem 'rspec'
+  gem 'fuubar'
 end

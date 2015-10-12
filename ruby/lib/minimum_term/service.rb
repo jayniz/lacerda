@@ -12,7 +12,7 @@ module MinimumTerm
     end
 
     def dependant_on
-      consumed_objects.map(&:service)
+      consumed_objects.map(&:publisher)
     end
 
     def consumed_objects
