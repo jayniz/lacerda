@@ -29,8 +29,12 @@ end
 guard :rspec, cmd: 'rspec', all_on_start: true  do
   watch(%r{^spec/support/.*\.mson$}) { "spec" }
   watch(%r{^spec/support/.*\.rb$}) { "spec" }
-  watch(%r{^(spec/.+_spec\.rb)$}) { |m| m }
-  watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
   watch('spec/spec_helper.rb')  { "spec" }
+
+  # We could run individual specs, sure, but for now I dictate the tests
+  # are only green when we have 100% coverage, so partial runs will never
+  # succeed. Therefore, always run all the things.
+  watch(%r{^(spec/.+_spec\.rb)$}) { "spec" }
+  watch(%r{^lib/(.+)\.rb$})     { "spec" }
 end
 
