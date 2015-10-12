@@ -12,6 +12,16 @@ SimpleCov.start
 require "minimum_term"
 
 RSpec.configure do |config|
+
+  # Convert/load test infrastructure, services and contracts
+  config.before(:suite) do
+    contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
+    path = File.join(contracts_dir, "service_test")
+    $test_infrastructure = MinimumTerm::Infrastructure.new(path)
+    $test_infrastructure.convert_all!
+  end
+
+  # Enforce 100% test coverage
   config.after(:suite) do
     example_group = RSpec.describe('Code coverage')
     example = example_group.example('must be above 100%'){

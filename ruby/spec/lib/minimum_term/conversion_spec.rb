@@ -42,7 +42,7 @@ describe MinimumTerm::Conversion do
       invalidly_named_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/invalid_name.mson", __FILE__)
       expect{
         MinimumTerm::Conversion.mson_to_json_schema!(invalidly_named_mson_file)
-      }.to raise_error
+      }.to raise_error(MinimumTerm::Conversion::Error)
     end
 
     it "doesn't allow empty files" do

@@ -46,7 +46,7 @@ module MinimumTerm
       elsif basename.end_with?("consume.mson")
         data_structure_autoscope = nil
       else
-        raise "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
+        raise Error, "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
       end
 
       # The json schema we're constructing contains every known
