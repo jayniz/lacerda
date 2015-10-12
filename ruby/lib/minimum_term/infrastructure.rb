@@ -9,10 +9,10 @@ module MinimumTerm
       load_services
     end
 
-    def convert_all!
+    def convert_all!(keep_intermediary_files = false)
       json_files.each{ |file| FileUtils.rm_f(file) }
       mson_files.each do |file|
-        MinimumTerm::Conversion.mson_to_json_schema!(file)
+        MinimumTerm::Conversion.mson_to_json_schema!(file, keep_intermediary_files)
       end
     end
 

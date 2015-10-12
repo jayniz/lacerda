@@ -18,7 +18,7 @@ RSpec.configure do |config|
     contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
     path = File.join(contracts_dir, "service_test")
     $test_infrastructure = MinimumTerm::Infrastructure.new(path)
-    $test_infrastructure.convert_all!
+    $test_infrastructure.convert_all!(true)
   end
 
   # Enforce 100% test coverage
