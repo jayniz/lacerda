@@ -11,13 +11,13 @@ module MinimumTerm
       load_contracts
     end
 
-    def dependant_on
+    def consuming_from
       consumed_objects.map(&:publisher)
     end
 
     def consumers
       infrastructure.services.values.select do |service|
-        service.dependant_on.include?(self)
+        service.consuming_from.include?(self)
       end
     end
 

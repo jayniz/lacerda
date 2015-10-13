@@ -10,11 +10,11 @@ describe MinimumTerm::Service do
 
   context "dependencies of services" do
     it "publisher doesn't depend on anybody" do
-      expect(publisher.dependant_on.length).to be 0
+      expect(publisher.consuming_from.length).to be 0
     end
 
     it "consumer depends on publisher" do
-      expect(consumer.dependant_on.first).to be publisher
+      expect(consumer.consuming_from.first).to be publisher
     end
 
     it "publisher knows that consumer depends on it" do
