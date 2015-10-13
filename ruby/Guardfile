@@ -26,7 +26,7 @@ guard 'ctags-bundler', :src_path => ["lib"] do
   watch('Gemfile.lock')
 end
 
-guard :rspec, cmd: 'rspec', all_on_start: true  do
+guard :rspec, cmd: 'SKIP_COVERAGE=1 rspec', all_on_start: true  do
   watch(%r{^spec/support/.*\.mson$}) { "spec" }
   watch(%r{^spec/support/.*\.rb$}) { "spec" }
   watch('spec/spec_helper.rb')  { "spec" }
