@@ -21,12 +21,24 @@ module MinimumTerm
       end
     end
 
-    def consumed_objects
-      @consume.objects
+    def consumed_objects(publisher = nil)
+      @consume.objects.select do |o|
+        publisher.blank? or o.publisher == publisher
+      end
     end
 
     def published_objects
       @publish.objects
+    end
+
+    def satisfies?(service)
+      @publish.satisfies?(service)
+    end
+
+    def satisfies_dependants?
+      dependants.reduce(true) do |memo, service|
+        memo and satisfies?(service)
+      end
     end
 
     private

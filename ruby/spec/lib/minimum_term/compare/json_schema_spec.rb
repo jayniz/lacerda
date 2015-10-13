@@ -57,29 +57,29 @@ describe JsonSchema do
     context 'Json Schema a containing Json Schema b' do
 
       it 'when they are equal' do
-        expect(JsonSchema.new(schema_a).contains?(schema_a)).to be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_a)).to be true
       end
 
       it 'when one is contained in the other' do
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object as a ref' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/tag' }
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object instead of using a reference' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object via a pointer' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_a['definitions']['primary_tag'] = tag_as_inline_object
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object via a pointer but the containing object inline' do
@@ -123,7 +123,7 @@ describe JsonSchema do
 
       it 'a different type of reference' do
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to_not be_truthy
+        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be false
       end
 
       it 'a missing required property' do

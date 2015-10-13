@@ -1,0 +1,10 @@
+# Data structures
+
+# Publisher:Post
+We're making the tag property required here, which it isn't
+in the publisher.
+
+## Properties
+- title: (string, required)
+- tag: (object, required)
+  - name: (string, required)

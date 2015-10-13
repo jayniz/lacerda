@@ -1,5 +1,6 @@
 # Data structures
 
 # Publisher:Post
-
-- id (number, required)
+- title: (string, required)
+- tag: (object)
+  - name: (string, required)

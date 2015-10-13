@@ -1,5 +1,18 @@
 # Data structures
 
+# Tag
+We can write a description here, and then start defining the properties
+with the following headline (or as below for Post, just start with the
+properties right away):
+
+## Properties
+- id: (number, required)
+- name: (string, required)
+- slugs: (array[string])
+
+
 # Post
 
-
+- id: (number, required)
+- title: (string, required)
+- tag: (Tag)

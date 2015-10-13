@@ -1,0 +1,11 @@
+# Data structures
+
+# Publisher:Post
+We changed the name property to a number, but in the publisher
+it's a string.
+
+## Properties
+
+- title: (string, required)
+- tag: (object)
+  - name: (number, required)
