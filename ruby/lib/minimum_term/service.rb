@@ -15,7 +15,7 @@ module MinimumTerm
       consumed_objects.map(&:publisher)
     end
 
-    def dependants
+    def consumers
       infrastructure.services.values.select do |service|
         service.dependant_on.include?(self)
       end
@@ -35,8 +35,8 @@ module MinimumTerm
       @publish.satisfies?(service)
     end
 
-    def satisfies_dependants?
-      dependants.reduce(true) do |memo, service|
+    def satisfies_consumers?
+      consumers.reduce(true) do |memo, service|
         memo and satisfies?(service)
       end
     end

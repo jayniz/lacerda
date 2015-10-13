@@ -23,7 +23,7 @@ describe MinimumTerm::Service do
         consumer_invalid_property,
         consumer_missing_required
       ]
-      expect(publisher.dependants).to eq consumers
+      expect(publisher.consumers).to eq consumers
     end
 
     it "publisher publishes one object" do
@@ -43,6 +43,10 @@ describe MinimumTerm::Service do
   end
 
   context "incompatibilities because of" do
+    it "at least one consumer not being satisfied" do
+      expect(publisher.satisfies_consumers?).to be false
+    end
+
     it "invalid property" do
       expect(publisher.satisfies?(consumer_invalid_property)).to be false
     end
