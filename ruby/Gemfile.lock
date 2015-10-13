@@ -1,3 +1,11 @@
+PATH
+  remote: .
+  specs:
+    minimum-term (0.0.1)
+      activesupport (~> 4.2)
+      json-schema (~> 2.5)
+      rake (~> 10.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -59,11 +67,6 @@ GEM
     rb-fsevent (0.9.6)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
-    redsnow (0.4.3)
-      bundler (>= 1.7.0)
-      ffi (~> 1.9.3)
-      rake (>= 10.3.2)
-      yard (~> 0.8.7.4)
     rspec (3.3.0)
       rspec-core (~> 3.3.0)
       rspec-expectations (~> 3.3.0)
@@ -91,20 +94,16 @@ GEM
     thread_safe (0.3.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
-    yard (0.8.7.6)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
-  fuubar
-  guard-bundler
-  guard-ctags-bundler
-  guard-rspec
-  json-schema
-  pry
-  rake
-  redsnow
-  rspec
-  simplecov-rcov
+  bundler (~> 1)
+  fuubar (~> 2.0)
+  guard-bundler (~> 2.1)
+  guard-ctags-bundler (~> 1.4)
+  guard-rspec (~> 4.6)
+  minimum-term!
+  rspec (~> 3.3)
+  simplecov-rcov (~> 0.2)

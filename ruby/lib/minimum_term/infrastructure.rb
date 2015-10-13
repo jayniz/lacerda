@@ -4,7 +4,7 @@ module MinimumTerm
   class Infrastructure
     attr_reader :services
 
-    def initialize(data_dir = MinimumTerm::Contract::DIR)
+    def initialize(data_dir)
       @data_dir = data_dir
       load_services
     end

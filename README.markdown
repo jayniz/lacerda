@@ -12,9 +12,8 @@ Go there, and
   - run `bundle`
   - run `guard` in a spare terminal which will run the tests,
     install gems, and so forth
+  - run `bundle console` to play around with a console
 
-
-Example contracts are kept in the `/contracts` dir for now but will be fetched from the participating projects' repositories later.
 
 
 ## Structure

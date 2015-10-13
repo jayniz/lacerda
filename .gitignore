@@ -7,3 +7,4 @@ ruby/gems.tags
 ruby/spec/support/**/*blueprint-ast.json
 
 ruby/coverage
+ruby/**/*.gem
