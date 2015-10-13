@@ -6,7 +6,7 @@ require 'bundler/gem_tasks'
 Bundler.require
 
 $:.unshift File.join(File.dirname(__FILE__), "lib")
-require "minimum_term"
+require 'minimum-term'
 
 namespace :minimum_term do
   desc "Clean up intermediary json files"

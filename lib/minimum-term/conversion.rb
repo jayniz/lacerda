@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'open3'
-require 'minimum_term/conversion/apiary_to_json_schema'
-require 'minimum_term/conversion/error'
+require 'minimum-term/conversion/apiary_to_json_schema'
+require 'minimum-term/conversion/error'
 
 module MinimumTerm
   module Conversion

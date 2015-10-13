@@ -1,4 +1,4 @@
-require 'minimum_term/conversion/data_structure'
+require 'minimum-term/conversion/data_structure'
 
 module MinimumTerm
   module Conversion

@@ -1,6 +1,6 @@
 require 'active_support/core_ext/hash/indifferent_access'
-require 'minimum_term/published_object'
-require 'minimum_term/consumed_object'
+require 'minimum-term/published_object'
+require 'minimum-term/consumed_object'
 
 module MinimumTerm
   class Contract

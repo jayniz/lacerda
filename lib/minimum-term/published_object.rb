@@ -1,4 +1,4 @@
-require 'minimum_term/object_description'
+require 'minimum-term/object_description'
 
 module MinimumTerm
   class PublishedObject < MinimumTerm::ObjectDescription

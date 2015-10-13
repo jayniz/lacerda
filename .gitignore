@@ -1,10 +1,9 @@
-node/node_modules
 contracts/**/*.json
 **/*.schema.json
-ruby/spec/support/**.json
-ruby/tags
-ruby/gems.tags
-ruby/spec/support/**/*blueprint-ast.json
-
-ruby/coverage
-ruby/**/*.gem
+spec/support/**.json
+tags
+gems.tags
+**/*blueprint-ast.json
+coverage
+**/*.gem
+Gemfile.lock

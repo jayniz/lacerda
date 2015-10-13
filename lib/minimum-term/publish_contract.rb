@@ -1,4 +1,4 @@
-require 'minimum_term/contract'
+require 'minimum-term/contract'
 
 module MinimumTerm
   class PublishContract < MinimumTerm::Contract

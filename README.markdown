@@ -10,8 +10,12 @@ Go there, and
   - install drafter via `brew install --HEAD
     https://raw.github.com/apiaryio/drafter/master/tools/homebrew/drafter.rb`
   - run `bundle`
+
+## Tests and development
   - run `guard` in a spare terminal which will run the tests,
     install gems, and so forth
+  - run `rspec spec` to run all the tests
+  - check out the test `/coverage`
   - run `bundle console` to play around with a console
 
 

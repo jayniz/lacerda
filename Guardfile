@@ -18,15 +18,16 @@
 guard :bundler do
   watch('Gemfile')
   # Uncomment next line if your Gemfile contains the `gemspec' command.
-  # watch(/^.+\.gemspec/)
+  watch(/^.+\.gemspec/)
 end
 
 guard 'ctags-bundler', :src_path => ["lib"] do
   watch(/^(app|lib|spec\/support)\/.*\.rb$/)
   watch('Gemfile.lock')
+  watch(/^.+\.gemspec/)
 end
 
-guard :rspec, cmd: 'SKIP_COVERAGE=1 rspec', all_on_start: true  do
+guard :rspec, cmd: 'IGNORE_LOW_COVERAGE=1 rspec', all_on_start: true  do
   watch(%r{^spec/support/.*\.mson$}) { "spec" }
   watch(%r{^spec/support/.*\.rb$}) { "spec" }
   watch('spec/spec_helper.rb')  { "spec" }
