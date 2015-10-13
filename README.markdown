@@ -15,10 +15,8 @@ Go there, and
   - run `guard` in a spare terminal which will run the tests,
     install gems, and so forth
   - run `rspec spec` to run all the tests
-  - check out the test `/coverage`
+  - check out  `open coverage/index.html` or `open coverage/rcov/index.html`
   - run `bundle console` to play around with a console
-
-
 
 ## Structure
 - Infrastructure
