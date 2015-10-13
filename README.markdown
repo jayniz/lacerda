@@ -3,19 +3,7 @@
 This shall be a framework so that in each of our services one can define what messages it publishes and what messages it consumes. That way when changing what one service publishes or consumes, one cann immediately see the effects on our other services.
 
 
-## This gem needs to do N things:
-
-1. Convert [MSON](https://github.com/apiaryio/mson) into [JSON
-   Schema](http://json-schema.org/)
-2. Compare one json schema (X:provides:Y) to the other (Z:consumes:Y) to see if what X provides satisfies the needs of Z
-3. Know about all participating repositories
-4. Provide a test runner that, when making changes to project X, tests if the changes are compatible with all other participating repositories
-5. Validate published messages against the schema on the fly
-6. Validate consumed messages against the schema on the fly
-
-
 ## Prerequesites
-
 Most of the stuff happens in the `/ruby` directory right now.
 Go there, and
 
@@ -29,8 +17,27 @@ Go there, and
 Example contracts are kept in the `/contracts` dir for now but will be fetched from the participating projects' repositories later.
 
 
-## Convert MSON to JSON Schema files
+## Structure
+- Infrastructure
+  - Service
+    - Contracts
+      - Publish contract
+        - PublishedObjects
+      - Consume contract
+        - ConsumedObjects
 
+
+## This gem needs to do N things:
+1. Convert [MSON](https://github.com/apiaryio/mson) into [JSON
+   Schema](http://json-schema.org/)
+2. Compare one json schema (X:provides:Y) to the other (Z:consumes:Y) to see if what X provides satisfies the needs of Z
+3. Know about all participating repositories
+4. Provide a test runner that, when making changes to project X, tests if the changes are compatible with all other participating repositories
+5. Validate published messages against the schema on the fly
+6. Validate consumed messages against the schema on the fly
+
+
+## Convert MSON to JSON Schema files
 First, check out [this API Blueprint map](https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map) to understand how _API Blueprint_ documents are laid out:
 
 ![API Blueprint map](https://raw.githubusercontent.com/apiaryio/api-blueprint/master/assets/map.png)
@@ -50,12 +57,3 @@ Luckily, a rake task does all that for you. To convert all `*.mson` files in `co
 ✅  /Users/jannis/Dev/core/minimum-term/contracts/edward/consume.mson
 ➜  minimum-term/ruby $
 ```
-
-
-### Structure
-
-- Infrastructure
-  - Service
-    - Contracts
-      - Published contracts
-      - Consumed contracts
