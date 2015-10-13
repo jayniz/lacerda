@@ -9,6 +9,24 @@ module MinimumTerm
       load_services
     end
 
+    def contracts_fulfilled?
+      publishers.reduce(true) do |memo, publisher|
+        memo and publisher.satisfies_consumers?
+      end
+    end
+
+    def publishers
+      services.values.select do |service|
+        service.published_objects.length > 0
+      end
+    end
+
+    def consumers
+      services.values.select do |service|
+        service.consumed_objects.length > 0
+      end
+    end
+
     def convert_all!(keep_intermediary_files = false)
       json_files.each{ |file| FileUtils.rm_f(file) }
       mson_files.each do |file|
