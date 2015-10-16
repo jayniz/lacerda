@@ -3,9 +3,14 @@ require 'minimum-term/contract'
 module MinimumTerm
   class PublishContract < MinimumTerm::Contract
 
+    def errors
+      return [] unless @comparator
+      @comparator.errors
+    end
+
     def satisfies?(consumer)
-      comparator = Compare::JsonSchema.new(@schema)
-      comparator.contains?(consumer.consume.schema)
+      @comparator = Compare::JsonSchema.new(@schema)
+      @comparator.contains?(consumer.consume.schema)
     end
 
     private

@@ -2,14 +2,14 @@ module MinimumTerm
   module Compare
     class JsonSchema
       ERRORS = {
-        :ERR_ARRAY_ITEM_MISMATCH  => '',
-        :ERR_MISSING_DEFINITION   => '',
-        :ERR_MISSING_POINTER      => '',
-        :ERR_MISSING_PROPERTY     => '',
-        :ERR_MISSING_REQUIRED     => '',
-        :ERR_MISSING_TYPE_AND_REF => '',
-        :ERR_TYPE_MISMATCH        => '',
-        :ERR_NOT_SUPPORTED        => ''
+        :ERR_ARRAY_ITEM_MISMATCH  => nil,
+        :ERR_MISSING_DEFINITION   => nil,
+        :ERR_MISSING_POINTER      => nil,
+        :ERR_MISSING_PROPERTY     => nil,
+        :ERR_MISSING_REQUIRED     => nil,
+        :ERR_MISSING_TYPE_AND_REF => nil,
+        :ERR_TYPE_MISMATCH        => nil,
+        :ERR_NOT_SUPPORTED        => nil
       }
 
       attr_reader :errors
@@ -29,18 +29,19 @@ module MinimumTerm
       def definitions_contained?
         @contained_schema['definitions'].each do |property, contained_property|
           containing_property = @containing_schema['definitions'][property]
-          return _e(:ERR_MISSING_DEFINITION) unless containing_property
-          return false unless schema_contains?(containing_property, contained_property)
+          return _e(:ERR_MISSING_DEFINITION, [property]) unless containing_property
+          return false unless schema_contains?(containing_property, contained_property, [property])
         end
         true
       end
 
-      def _e(error, meta = {})
-        @errors.push({error: error, message: ERRORS[error]}.merge(meta))
+      def _e(error, location, extra = nil)
+        message = [ERRORS[error], extra].compact.join(": ")
+        @errors.push(error: error, message: message, location: location.join("/"))
         false
       end
 
-      def schema_contains?(publish, consume)
+      def schema_contains?(publish, consume, location = [])
 
         # We can only compare types and $refs, so let's make
         # sure they're there
@@ -64,40 +65,40 @@ module MinimumTerm
         # 1)
         if (consume['type'] and publish['type'])
           if consume['type'] != publish['type']
-            return _e(:ERR_TYPE_MISMATCH, types: [consume['type'], publish['type']])
+            return _e(:ERR_TYPE_MISMATCH, location, "#{consume['type']} != #{publish['type']}")
           end
 
         # 2)
         elsif(consume['$ref'] and publish['$ref'])
          resolved_consume = resolve_pointer(consume['$ref'], @contained_schema)
          resolved_publish = resolve_pointer(publish['$ref'], @containing_schema)
-         return schema_contains?(resolved_publish, resolved_consume)
+         return schema_contains?(resolved_publish, resolved_consume, location)
 
         # 3)
         elsif(consume['type'] and publish['$ref'])
           if resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
-            return schema_contains?(resolved_ref, consume)
+            return schema_contains?(resolved_ref, consume, location)
           else
-            return _e(:ERR_MISSING_POINTER, pointer: publish['$ref'])
+            return _e(:ERR_MISSING_POINTER, location, publish['$ref'])
           end
 
         # 4)
         elsif(consume['$ref'] and publish['type'])
-          return _e(:ERR_NOT_SUPPORTED)
+          return _e(:ERR_NOT_SUPPORTED, location)
         end
 
         # Make sure required properties in consume are required in publish
         consume_required = consume['required'] || []
         publish_required = publish['required'] || []
         missing = (consume_required - publish_required)
-        return _e(:ERR_MISSING_REQUIRED, missing: missing) unless missing.empty?
+        return _e(:ERR_MISSING_REQUIRED, location, missing.to_json) unless missing.empty?
 
         # We already know that publish and consume's type are equal
         # but if they're objects, we need to do some recursion
         if consume['type'] == 'object'
           consume['properties'].each do |property, schema|
-            return _e(:ERR_MISSING_PROPERTY) unless publish['properties'][property]
-            return false unless schema_contains?(publish['properties'][property], schema)
+            return _e(:ERR_MISSING_PROPERTY, location, property) unless publish['properties'][property]
+            return false unless schema_contains?(publish['properties'][property], schema, location + [property])
           end
         end
 
@@ -105,7 +106,7 @@ module MinimumTerm
           sorted_publish = publish['items'].sort
           consume['items'].sort.each_with_index do |item, i|
             next if schema_contains?(sorted_publish[i], item)
-            return _e(:ERR_ARRAY_ITEM_MISMATCH)
+            return _e(:ERR_ARRAY_ITEM_MISMATCH, location)
           end
         end
 

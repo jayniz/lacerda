@@ -138,6 +138,15 @@ describe JsonSchema do
         expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
       end
 
+      it 'a missing pointer' do
+        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+        schema_b['definitions']['tag'] = tag_as_inline_object
+        schema_a['definitions'].delete('tag')
+        expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.first[:error]).to be :ERR_MISSING_POINTER
+      end
+
       it 'a different type for the items of a property of type array' do
         schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
 

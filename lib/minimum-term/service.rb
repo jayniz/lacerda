@@ -2,7 +2,7 @@ module MinimumTerm
   # Models a service and its published objects as well as consumed
   # objects. The app itself is part of an Infrastructure
   class Service
-    attr_reader :infrastructure, :publish, :consume, :name
+    attr_reader :infrastructure, :publish, :consume, :name, :errors
 
     def initialize(infrastructure, data_dir)
       @infrastructure = infrastructure
@@ -36,9 +36,13 @@ module MinimumTerm
     end
 
     def satisfies_consumers?
-      consumers.reduce(true) do |memo, service|
-        memo and satisfies?(service)
+      @errors = {}
+      consumers.each do |consumer|
+        @publish.satisfies?(consumer)
+        next if @publish.errors.empty?
+        @errors["#{name} -> #{consumer.name}"] = @publish.errors
       end
+      @errors.empty?
     end
 
     private

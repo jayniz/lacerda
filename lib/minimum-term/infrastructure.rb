@@ -2,16 +2,28 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 module MinimumTerm
   class Infrastructure
-    attr_reader :services
+    attr_reader :services, :errors
 
     def initialize(data_dir)
       @data_dir = data_dir
+      @mutex = Mutex.new
+      load_services
+    end
+
+    def reload
       load_services
     end
 
     def contracts_fulfilled?
-      publishers.reduce(true) do |memo, publisher|
-        memo and publisher.satisfies_consumers?
+      load_services
+      @mutex.synchronize do
+        @errors = {}
+        publishers.each do |publisher|
+          publisher.satisfies_consumers?
+          next if publisher.errors.empty?
+          @errors.merge! publisher.errors
+        end
+        @errors.empty?
       end
     end
 
@@ -32,6 +44,7 @@ module MinimumTerm
       mson_files.each do |file|
         MinimumTerm::Conversion.mson_to_json_schema!(file, keep_intermediary_files)
       end
+      reload
     end
 
     def mson_files
@@ -45,11 +58,13 @@ module MinimumTerm
     private
 
     def load_services
-      @services = {}.with_indifferent_access
-      dirs = Dir.glob(File.join(@data_dir, "*/"))
-      dirs.each do |dir|
-        service = MinimumTerm::Service.new(self, dir)
-        @services[service.name] = service
+      @mutex.synchronize do
+        @services = {}.with_indifferent_access
+        dirs = Dir.glob(File.join(@data_dir, "*/"))
+        dirs.each do |dir|
+          service = MinimumTerm::Service.new(self, dir)
+          @services[service.name] = service
+        end
       end
     end
   end

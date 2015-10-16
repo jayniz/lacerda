@@ -6,6 +6,10 @@ describe MinimumTerm::Infrastructure do
   let(:consumer_invalid_property){ $test_infrastructure.services[:invalid_property] }
   let(:consumer_missing_required){ $test_infrastructure.services[:missing_required] }
 
+  it "allows to refresh the data" do
+    expect{$test_infrastructure.reload}.to_not raise_error
+  end
+
   it "counts publishers correctly" do
     expect($test_infrastructure.publishers).to eq [publisher]
   end
