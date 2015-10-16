@@ -5,7 +5,7 @@ module MinimumTerm
 
     def publisher
       i = @scoped_name.index(MinimumTerm::SCOPE_SEPARATOR)
-      return @defined_in_service unless i > 0
+      return @defined_in_service unless i
       @defined_in_service.infrastructure.services[@scoped_name[0...i].underscore.to_sym]
     end
 
