@@ -101,47 +101,49 @@ describe JsonSchema do
         schema_b['definitions']['user'] = {}
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_MISSING_DEFINITION
       end
 
       it 'different types for the object' do
         schema_b['definitions']['post']['type'] = 'string'
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
       end
 
       it 'a missing property' do
         schema_b['definitions']['post']['properties']['name'] = {}
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
       end
 
       it 'a different type of a property' do
         schema_b['definitions']['post']['properties']['id']['type'] = 'string'
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
       end
 
       it 'a different type of reference' do
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
       end
 
       it 'a missing required property' do
         schema_b['definitions']['post']['required'] << 'name'
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 1
+        expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
       end
 
       it 'a different type for the items of a property of type array' do
         schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
 
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 2
+        expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
       end
     end
   end
