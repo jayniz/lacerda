@@ -1,3 +1,4 @@
+require 'pry'
 require 'spec_helper'
 include MinimumTerm::Compare
 
@@ -100,36 +101,41 @@ describe JsonSchema do
         schema_b['definitions']['user'] = {}
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first).to eq true
+        expect(comparator.errors.length).to be 1
       end
 
       it 'different types for the object' do
         schema_b['definitions']['post']['type'] = 'string'
 
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 1
       end
 
       it 'a missing property' do
         schema_b['definitions']['post']['properties']['name'] = {}
 
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 1
       end
 
       it 'a different type of a property' do
         schema_b['definitions']['post']['properties']['id']['type'] = 'string'
 
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 1
       end
 
       it 'a different type of reference' do
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 1
       end
 
       it 'a missing required property' do
         schema_b['definitions']['post']['required'] << 'name'
 
         expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.length).to be 1
       end
 
       it 'a different type for the items of a property of type array' do
