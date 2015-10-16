@@ -43,6 +43,7 @@ describe JsonSchema do
   }
 
   describe '#contains?' do
+    let(:comparator){ JsonSchema.new(schema_a) }
 
     let(:tag_as_pointer){ { '$ref' => '#/definitions/tag' } }
     let(:tag_as_inline_object) {
@@ -57,29 +58,30 @@ describe JsonSchema do
     context 'Json Schema a containing Json Schema b' do
 
       it 'when they are equal' do
-        expect(JsonSchema.new(schema_a).contains?(schema_a)).to be true
+        expect(comparator.contains?(schema_a)).to be true
       end
 
       it 'when one is contained in the other' do
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
+        expect(comparator.contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object as a ref' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/tag' }
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
+        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+        schema_b['definitions']['tag'] = tag_as_inline_object
+        expect(comparator.contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object instead of using a reference' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
+        expect(comparator.contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object via a pointer' do
         schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
         schema_a['definitions']['primary_tag'] = tag_as_inline_object
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be true
+        expect(comparator.contains?(schema_b)).to be true
       end
 
       it 'when the child schema describes a child object via a pointer but the containing object inline' do
@@ -88,11 +90,8 @@ describe JsonSchema do
 
         schema_b['definitions']['tag'] = tag_as_inline_object
         schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsy
+        expect(comparator.contains?(schema_b)).to be_falsy
       end
-    end
-
-    context "Invalid data" do
     end
 
     context 'Json Schema a NOT containing other Json Schema b because of' do
@@ -100,42 +99,43 @@ describe JsonSchema do
       it 'a missing definition' do
         schema_b['definitions']['user'] = {}
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
+        expect(comparator.errors.first).to eq true
       end
 
       it 'different types for the object' do
         schema_b['definitions']['post']['type'] = 'string'
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
       end
 
       it 'a missing property' do
         schema_b['definitions']['post']['properties']['name'] = {}
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
       end
 
       it 'a different type of a property' do
         schema_b['definitions']['post']['properties']['id']['type'] = 'string'
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
       end
 
       it 'a different type of reference' do
         schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be false
+        expect(comparator.contains?(schema_b)).to be false
       end
 
       it 'a missing required property' do
         schema_b['definitions']['post']['required'] << 'name'
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
       end
 
       it 'a different type for the items of a property of type array' do
         schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
 
-        expect(JsonSchema.new(schema_a).contains?(schema_b)).to be_falsey
+        expect(comparator.contains?(schema_b)).to be false
       end
     end
   end

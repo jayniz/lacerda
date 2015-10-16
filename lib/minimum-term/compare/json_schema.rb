@@ -1,14 +1,19 @@
 module MinimumTerm
   module Compare
     class JsonSchema
+      ERR_MISSING_TYPE = 0
+
+      attr_reader :errors
 
       def initialize(containing_schema)
         @containing_schema = containing_schema
       end
 
       def contains?(contained_schema, pry = false)
+        @errors = []
         @contained_schema = contained_schema
-        definitions_contained?
+        @errors << true unless definitions_contained?
+        @errors.empty?
       end
 
       private
@@ -42,7 +47,9 @@ module MinimumTerm
         if (consume['type'] and publish['type'])
          return false if consume['type'] != publish['type']
         elsif(consume['$ref'] and publish['$ref'])
-         return false if consume['$ref'] != publish['$ref']
+         resolved_consume = resolve_pointer(consume['$ref'], @contained_schema)
+         resolved_publish = resolve_pointer(publish['$ref'], @containing_schema)
+         return schema_contains?(resolved_publish, resolved_consume)
         elsif(consume['type'] and publish['$ref'])
           return false unless resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
           return schema_contains?(resolved_ref, consume)
