@@ -5,16 +5,18 @@ require 'minimum-term/conversion/error'
 
 module MinimumTerm
   module Conversion
-    def self.mson_to_json_schema(filename, keep_intermediary_files = false)
+    def self.mson_to_json_schema(filename:, keep_intermediary_files: false, verbose: false)
       begin
-        mson_to_json_schema!(filename, keep_intermediary_files)
+        mson_to_json_schema!(filename: filename, keep_intermediary_files: keep_intermediary_files, verbose: verbose)
+        puts "OK ".green + filename if verbose
         true
       rescue
+        puts "ERROR ".red + filename if verbose
         false
       end
     end
 
-    def self.mson_to_json_schema!(filename, keep_intermediary_files = false)
+    def self.mson_to_json_schema!(filename:, keep_intermediary_files: false, verbose: true)
 
       # For now, we'll use the containing directory's name as a scope
       service_scope = File.dirname(filename).split(File::SEPARATOR).last.underscore

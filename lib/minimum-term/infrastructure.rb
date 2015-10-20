@@ -2,9 +2,10 @@ require 'active_support/core_ext/hash/indifferent_access'
 
 module MinimumTerm
   class Infrastructure
-    attr_reader :services, :errors
+    attr_reader :services, :errors, :data_dir
 
-    def initialize(data_dir)
+    def initialize(data_dir:, verbose: false)
+      @verbose = !!verbose
       @data_dir = data_dir
       @mutex = Mutex.new
       load_services
@@ -19,7 +20,7 @@ module MinimumTerm
       @mutex.synchronize do
         @errors = {}
         publishers.each do |publisher|
-          publisher.satisfies_consumers?
+          publisher.satisfies_consumers?(verbose: @verbose)
           next if publisher.errors.empty?
           @errors.merge! publisher.errors
         end
@@ -42,7 +43,10 @@ module MinimumTerm
     def convert_all!(keep_intermediary_files = false)
       json_files.each{ |file| FileUtils.rm_f(file) }
       mson_files.each do |file|
-        MinimumTerm::Conversion.mson_to_json_schema!(file, keep_intermediary_files)
+        MinimumTerm::Conversion.mson_to_json_schema!(
+          filename: file,
+          keep_intermediary_files: keep_intermediary_files,
+          verbose: @verbose)
       end
       reload
     end

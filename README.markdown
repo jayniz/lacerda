@@ -1,11 +1,9 @@
 # Minimum term
 
-This shall be a framework so that in each of our services one can define what messages it publishes and what messages it consumes. That way when changing what one service publishes or consumes, one cann immediately see the effects on our other services.
+This shall be a framework so that in each of our services one can define what messages it publishes and what messages it consumes. That way when changing what one service publishes or consumes, one can immediately see the effects on our other services.
 
 
 ## Prerequesites
-Most of the stuff happens in the `/ruby` directory right now.
-Go there, and
 
   - install drafter via `brew install --HEAD
     https://raw.github.com/apiaryio/drafter/master/tools/homebrew/drafter.rb`
@@ -28,16 +26,6 @@ Go there, and
         - ConsumedObjects
 
 
-## This gem needs to do N things:
-1. Convert [MSON](https://github.com/apiaryio/mson) into [JSON
-   Schema](http://json-schema.org/)
-2. Compare one json schema (X:provides:Y) to the other (Z:consumes:Y) to see if what X provides satisfies the needs of Z
-3. Know about all participating repositories
-4. Provide a test runner that, when making changes to project X, tests if the changes are compatible with all other participating repositories
-5. Validate published messages against the schema on the fly
-6. Validate consumed messages against the schema on the fly
-
-
 ## Convert MSON to JSON Schema files
 First, check out [this API Blueprint map](https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map) to understand how _API Blueprint_ documents are laid out:
 
@@ -52,9 +40,11 @@ So for now, we use a command line tool called [drafter](https://github.com/apiar
 Luckily, a rake task does all that for you. To convert all `*.mson` files in `contracts` into `*.schema.json` files, call:
 
 ```shell
-➜  minimum-term/ruby $ rake mson_to_json_schema
-✅  /Users/jannis/Dev/core/minimum-term/contracts/author/consume.mson
-✅  /Users/jannis/Dev/core/minimum-term/contracts/author/publish.mson
-✅  /Users/jannis/Dev/core/minimum-term/contracts/edward/consume.mson
-➜  minimum-term/ruby $
+/home/dev/minimum-term$ DATA_DIR=contracts/ rake minimum_term:mson_to_json_schema
+Converting 4 files:
+OK /home/dev/minimum-term/contracts/consumer/consume.mson
+OK /home/dev/minimum-term/contracts/invalid_property/consume.mson
+OK /home/dev/minimum-term/contracts/missing_required/consume.mson
+OK /home/dev/minimum-term/contracts/publisher/publish.mson
+/home/dev/minimum-term$                                                   2.2.1@default
 ```

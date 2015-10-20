@@ -16,10 +16,20 @@ module MinimumTerm
           end
         end
 
-        desc "Transform all MSON files to JSON Schema using drafter"
+        desc "Transform all MSON files in DATA_DIR to JSON Schema using drafter"
         task :mson_to_json_schema, [:keep_intermediary_files] => :cleanup do |t, args|
+          if ENV['DATA_DIR'].blank?
+            puts "Please set DATA_DIR for me to work in"
+            exit(-1)
+          end
 
-          infrastructure = MinimumTerm::Infrastructure.new(File.expand_path("../contracts"))
+          data_dir = File.expand_path(ENV['DATA_DIR'])
+          unless Dir.exist?(data_dir)
+            puts "Not such directory: #{data_dir}"
+            exit(-1)
+          end
+
+          infrastructure = MinimumTerm::Infrastructure.new(data_dir: data_dir, verbose: true)
 
           # For debugging it can be helpful to not clean up the
           # intermediary blueprint ast files.
@@ -29,15 +39,26 @@ module MinimumTerm
           files = ENV['FILES'].to_s.split(',')
 
           # OK then, we'll just convert all we find
-          files = infrastructure.mson_files if files.blank?
+          files = infrastructure.mson_files if files.empty?
 
-          files.each do |file|
-            if MinimumTerm::Conversion.mson_to_json_schema!(file, keep_intermediary_files)
-              puts "✅  #{file}"
-            else
-              puts "❌  #{file}"
-            end
+          # That can't be right
+          if files.empty?
+            puts "No FILES given and nothing found in #{data_dir}"
+            exit(-1)
           end
+
+          # Let's go
+          puts "Converting #{files.length} files:"
+
+          ok = true
+          files.each do |file|
+            ok = ok && MinimumTerm::Conversion.mson_to_json_schema(
+              filename: file,
+              keep_intermediary_files: keep_intermediary_files,
+              verbose: true)
+          end
+
+          exit(-1) unless ok
         end
       end
     end

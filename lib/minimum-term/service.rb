@@ -1,3 +1,5 @@
+require 'active_support/core_ext/string'
+
 module MinimumTerm
   # Models a service and its published objects as well as consumed
   # objects. The app itself is part of an Infrastructure
@@ -35,13 +37,19 @@ module MinimumTerm
       @publish.satisfies?(service)
     end
 
-    def satisfies_consumers?
+    def satisfies_consumers?(verbose: false)
       @errors = {}
+      print "#{name.camelize} satisfies: " if verbose
       consumers.each do |consumer|
         @publish.satisfies?(consumer)
-        next if @publish.errors.empty?
+        if @publish.errors.empty?
+          print "#{consumer.name.camelize}".green if verbose
+          next
+        end
+          print "#{consumer.name.camelize}".red if verbose
         @errors["#{name} -> #{consumer.name}"] = @publish.errors
       end
+      print "\n" if verbose
       @errors.empty?
     end
 

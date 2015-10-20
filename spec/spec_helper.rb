@@ -27,7 +27,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
     path = File.join(contracts_dir, "service_test")
-    $test_infrastructure = MinimumTerm::Infrastructure.new(path)
+    $test_infrastructure = MinimumTerm::Infrastructure.new(data_dir: path)
     $test_infrastructure.convert_all!(true)
   end
 

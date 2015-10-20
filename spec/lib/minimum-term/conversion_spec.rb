@@ -15,8 +15,8 @@ describe MinimumTerm::Conversion do
       publish_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/publish.mson", __FILE__)
       consume_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/consume.mson", __FILE__)
 
-      MinimumTerm::Conversion.mson_to_json_schema!(publish_mson_file)
-      MinimumTerm::Conversion.mson_to_json_schema!(consume_mson_file)
+      MinimumTerm::Conversion.mson_to_json_schema!(filename: publish_mson_file)
+      MinimumTerm::Conversion.mson_to_json_schema!(filename: consume_mson_file)
     end
 
     after(:all) do
@@ -27,28 +27,28 @@ describe MinimumTerm::Conversion do
       let(:f){ publish_schema_file }
       it "when it works" do
         expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
-          .with(f, false)
-        expect(MinimumTerm::Conversion.mson_to_json_schema(f)).to be true
+          .with(filename: f, keep_intermediary_files: false, verbose: false)
+        expect(MinimumTerm::Conversion.mson_to_json_schema(filename: f)).to be true
       end
 
       it "when it bangs" do
         expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
-          .with(f, false).and_raise
-        expect(MinimumTerm::Conversion.mson_to_json_schema(publish_schema_file)).to be false
+          .with(filename: f, keep_intermediary_files: false, verbose: false).and_raise
+        expect(MinimumTerm::Conversion.mson_to_json_schema(filename: publish_schema_file)).to be false
       end
     end
 
     it "doesn't allow names except for publish.mson and consume.mson" do
       invalidly_named_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/invalid_name.mson", __FILE__)
       expect{
-        MinimumTerm::Conversion.mson_to_json_schema!(invalidly_named_mson_file)
+        MinimumTerm::Conversion.mson_to_json_schema!(filename: invalidly_named_mson_file)
       }.to raise_error(MinimumTerm::Conversion::Error)
     end
 
     it "doesn't allow empty files" do
       empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/empty_publish.mson", __FILE__)
       expect{
-        MinimumTerm::Conversion.mson_to_json_schema!(empty_mson_file)
+        MinimumTerm::Conversion.mson_to_json_schema!(filename: empty_mson_file)
       }.to raise_error(MinimumTerm::Conversion::Error)
     end
 
