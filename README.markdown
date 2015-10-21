@@ -46,5 +46,5 @@ OK /home/dev/minimum-term/contracts/consumer/consume.mson
 OK /home/dev/minimum-term/contracts/invalid_property/consume.mson
 OK /home/dev/minimum-term/contracts/missing_required/consume.mson
 OK /home/dev/minimum-term/contracts/publisher/publish.mson
-/home/dev/minimum-term$                                                   2.2.1@default
+/home/dev/minimum-term$
 ```
