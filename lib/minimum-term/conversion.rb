@@ -114,13 +114,14 @@ module MinimumTerm
       RedSnow::Binding.drafter_c_parse(open(input).read, 0, parse_result)
       parse_result = parse_result.get_pointer(0)
 
-      if parse_result.null?
-        status = -1
-        result = ''
-      else
+      status = -1
+      result = ''
+
+      unless parse_result.null?
         status = 0
         result = parse_result.read_string
       end
+
       File.open(output, 'w'){ |f| f.puts(result)  }
 
       output
