@@ -45,11 +45,11 @@ describe MinimumTerm::Conversion do
       }.to raise_error(MinimumTerm::Conversion::Error)
     end
 
-    it "doesn't allow empty files" do
-      empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/empty_publish.mson", __FILE__)
+    it "allows empty files" do
+      empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/publish.mson", __FILE__)
       expect{
         MinimumTerm::Conversion.mson_to_json_schema!(filename: empty_mson_file)
-      }.to raise_error(MinimumTerm::Conversion::Error)
+      }.to_not raise_error
     end
 
     it "created a schema file" do
@@ -71,7 +71,11 @@ describe MinimumTerm::Conversion do
     end
 
     it "parsed child objects in the consume schema" do
+      begin
       expect(consume_schema['definitions']['another_app:post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
+      rescue =>e
+        binding.pry
+      end
     end
 
     it "found the tag description" do

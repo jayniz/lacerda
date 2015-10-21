@@ -1,41 +1,25 @@
 # Minimum term
 
-This shall be a framework so that in each of our services one can define what messages it publishes and what messages it consumes. That way when changing what one service publishes or consumes, one can immediately see the effects on our other services.
+This gem can:
 
+- convert MSON to JSON Schema files
+- read a directory which contains one directory per service
+- read a publish.mson and a consume.mson from each service
+- build a model of your infrastructure knowing
+  - which services publishes what to which other service
+  - which service consumes what from which other service
+  - if all services consume and publish conforming to their contracts.
 
-## Prerequesites
+You likely don't want to use it on its own but head on over to the [Old Maid](https://github.com/moviepilot/old-maid) gem which explains things in more detail. If you're just looking for ONE way to transform MSON files into JSON Schema, read on:
 
-  - install drafter via `brew install --HEAD
-    https://raw.github.com/apiaryio/drafter/master/tools/homebrew/drafter.rb`
-  - run `bundle`
-
-## Tests and development
-  - run `guard` in a spare terminal which will run the tests,
-    install gems, and so forth
-  - run `rspec spec` to run all the tests
-  - check out  `open coverage/index.html` or `open coverage/rcov/index.html`
-  - run `bundle console` to play around with a console
-
-## Structure
-- Infrastructure
-  - Service
-    - Contracts
-      - Publish contract
-        - PublishedObjects
-      - Consume contract
-        - ConsumedObjects
-
-
-## Convert MSON to JSON Schema files
+## Getting started
 First, check out [this API Blueprint map](https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map) to understand how _API Blueprint_ documents are laid out:
 
 ![API Blueprint map](https://raw.githubusercontent.com/apiaryio/api-blueprint/master/assets/map.png)
 
 You can see that their structure covers a full API use case with resource groups, single resources, actions on those resources including requests and responses. All we want, though, is the little red top level branch called `Data structures`.
 
-In theory, we'd use a ruby gem called [RedSnow](https://github.com/apiaryio/redsnow), which has bindings to [SnowCrash](https://github.com/apiaryio/snowcrash) which parses _API Blueprints_ into an AST. Unfortunately, RedSnow ignores that red `Data structures` branch we want (SnowCrash parses it just fine).
-
-So for now, we use a command line tool called [drafter](https://github.com/apiaryio/drafter) to convert MSON into an _API Blueprint_ AST. From that AST we pic the `Data structures` entry and convert it into [JSON Schema]()s
+We're using a ruby gem called [RedSnow](https://github.com/apiaryio/redsnow), which has bindings to [SnowCrash](https://github.com/apiaryio/snowcrash) which parses _API Blueprints_ into an AST.
 
 Luckily, a rake task does all that for you. To convert all `*.mson` files in `contracts/` into `*.schema.json` files,
 
@@ -56,3 +40,23 @@ OK /home/dev/minimum-term/contracts/missing_required/consume.mson
 OK /home/dev/minimum-term/contracts/publisher/publish.mson
 /home/dev/minimum-term$
 ```
+
+## Tests and development
+  - run `bundle` once
+  - run `guard` in a spare terminal which will run the tests,
+    install gems, and so forth
+  - run `rspec spec` to run all the tests
+  - check out  `open coverage/index.html` or `open coverage/rcov/index.html`
+  - run `bundle console` to play around with a console
+
+## Structure
+
+By converting all files in a directory this gem will build up the following relationships:
+
+- Infrastructure
+  - Service
+    - Contracts
+      - Publish contract
+        - PublishedObjects
+      - Consume contract
+        - ConsumedObjects

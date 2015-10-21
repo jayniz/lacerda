@@ -2,6 +2,7 @@ require 'fileutils'
 require 'open3'
 require 'minimum-term/conversion/apiary_to_json_schema'
 require 'minimum-term/conversion/error'
+require 'redsnow'
 
 module MinimumTerm
   module Conversion
@@ -23,11 +24,10 @@ module MinimumTerm
 
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
-      to_ast = mson_to_ast_json(filename)
-      raise Error, "Error: #{to_ast}" unless to_ast[:status] == 0
+      ast_file = mson_to_ast_json(filename)
 
       # Pluck out Data structures from it
-      data_structures = data_structures_from_blueprint_ast(to_ast[:outfile])
+      data_structures = data_structures_from_blueprint_ast(ast_file)
 
       # Generate json schema from each contained data structure
       schema = {
@@ -83,9 +83,8 @@ module MinimumTerm
       # }
       #
       data_structures.each do |data|
-        schema_data = data['content'].select{|d| d['element'] == 'object' }.first
-        id = schema_data['meta']['id']
-        json= DataStructure.new(id, schema_data, data_structure_autoscope).to_json
+        id = data['name']['literal']
+        json= DataStructure.new(id, data, data_structure_autoscope).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}
@@ -96,12 +95,12 @@ module MinimumTerm
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(schema) }
 
       # Clean up
-      FileUtils.rm_f(to_ast[:outfile]) unless keep_intermediary_files
+      FileUtils.rm_f(ast_file) unless keep_intermediary_files
       true
     end
 
     def self.data_structures_from_blueprint_ast(filename)
-      c = JSON.parse(open(filename).read)['content'].first
+      c = JSON.parse(open(filename).read)['ast']['content'].first
       return [] unless c
       c['content']
     end
@@ -110,16 +109,23 @@ module MinimumTerm
       input = filename
       output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
 
-      cmd = "drafter -u -f json -o #{Shellwords.escape(output)} #{Shellwords.escape(input)}"
-      stdin, stdout, status = Open3.capture3(cmd)
 
-      {
-        cmd: cmd,
-        outfile: output,
-        stdin: stdin,
-        stdout: stdout,
-        status: status
-      }
+      parse_result = FFI::MemoryPointer.new :pointer
+      RedSnow::Binding.drafter_c_parse(open(input).read, 0, parse_result)
+      parse_result = parse_result.get_pointer(0)
+
+      if parse_result.null?
+        status = -1
+        result = ''
+      else
+        status = 0
+        result = parse_result.read_string
+      end
+      File.open(output, 'w'){ |f| f.puts(result)  }
+
+      output
+    ensure
+      RedSnow::Memory.free(parse_result)
     end
   end
 end

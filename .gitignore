@@ -7,3 +7,4 @@ gems.tags
 coverage
 **/*.gem
 Gemfile.lock
+tmp/

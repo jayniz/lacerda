@@ -26,47 +26,46 @@ module MinimumTerm
       private
 
       def add_description_to_json_schema
-        return unless @data['meta']
-        description = @data['meta']['description']
+        return unless @data['sections']
+        description = @data['sections'].select{|d| d['class'] == 'blockDescription' }.first
         return unless description
-        @schema['description'] = description.strip
+        @schema['description'] = description['content'].strip
       end
 
       def add_properties_to_json_schema
-        return unless @data['content']
-        members = @data['content'].select{|d| d['element'] == 'member' }
+        return unless @data['sections']
+        members = @data['sections'].select{|d| d['class'] == 'memberType' }.first['content'].select{|d| d['class'] == 'property' }
         members.each do |s|
           content = s['content']
-          type = content['value']['element']
+          type_definition = content['valueDefinition']['typeDefinition']
+          type = type_definition['typeSpecification']['name']
 
           spec = {}
-          name = s['content']['key']['content'].underscore
+          name = content['name']['literal'].underscore
 
           # This is either type: primimtive or $ref: reference_name
           spec.merge!(primitive_or_reference(type))
 
-          value_content = content['value']['content']
-
           # We might have a description
-          spec['description'] = s['meta']['description'] if s['meta']
+          spec['description'] = s['description']
 
           # If it's an array, we need to pluck out the item types
           if type == 'array'
-            nestedTypes = value_content.map{|d| d['element'] }.compact
+            nestedTypes = type_definition['typeSpecification']['nestedTypes']
             spec['items'] = nestedTypes.map{|t| primitive_or_reference(t) }
 
           # If it's an object, we need recursion
           elsif type == 'object'
             spec['properties'] = {}
-            value_content.select{|d| d['element'] == 'member'}.each do |data|
-              data_structure = DataStructure.new('tmp', content['value'], @scope).to_json
+            content['sections'].select{|d| d['class'] == 'memberType'}.each do |data|
+              data_structure = DataStructure.new('tmp', content, @scope).to_json
               spec['properties'].merge!(data_structure['properties'])
             end
           end
 
           @schema['properties'][name] = spec
-          if attributes = s['attributes']
-            @schema['required'] << name if attributes['typeAttributes'].include?('required')
+          if attributes = type_definition['attributes']
+            @schema['required'] << name if attributes.include?('required')
           end
         end
       end
@@ -75,7 +74,7 @@ module MinimumTerm
         if PRIMITIVES.include?(type)
           { 'type' => type }
         else
-          { '$ref' => "#/definitions/#{self.class.scope(@scope, type)}" }
+          { '$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }
         end
       end
 
