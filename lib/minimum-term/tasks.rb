@@ -29,8 +29,6 @@ module MinimumTerm
             exit(-1)
           end
 
-          infrastructure = MinimumTerm::Infrastructure.new(data_dir: data_dir, verbose: true)
-
           # For debugging it can be helpful to not clean up the
           # intermediary blueprint ast files.
           keep_intermediary_files = args.to_hash.values.include?('keep_intermediary_files')
@@ -39,7 +37,7 @@ module MinimumTerm
           files = ENV['FILES'].to_s.split(',')
 
           # OK then, we'll just convert all we find
-          files = infrastructure.mson_files if files.empty?
+          files = Dir.glob(File.join(data_dir, '**/*.mson')) if files.empty?
 
           # That can't be right
           if files.empty?

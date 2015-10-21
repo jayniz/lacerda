@@ -37,7 +37,15 @@ In theory, we'd use a ruby gem called [RedSnow](https://github.com/apiaryio/reds
 
 So for now, we use a command line tool called [drafter](https://github.com/apiaryio/drafter) to convert MSON into an _API Blueprint_ AST. From that AST we pic the `Data structures` entry and convert it into [JSON Schema]()s
 
-Luckily, a rake task does all that for you. To convert all `*.mson` files in `contracts` into `*.schema.json` files, call:
+Luckily, a rake task does all that for you. To convert all `*.mson` files in `contracts/` into `*.schema.json` files,
+
+put this in your `Rakefile`:
+
+```ruby
+require "minimum-term/tasks"
+```
+
+and smoke it:
 
 ```shell
 /home/dev/minimum-term$ DATA_DIR=contracts/ rake minimum_term:mson_to_json_schema

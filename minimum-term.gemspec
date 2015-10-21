@@ -19,10 +19,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.license       = 'MIT'
 
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "http://gems.moviepilot.com"
-  end
-
   spec.add_runtime_dependency "activesupport", ["~> 4.2"]
   spec.add_runtime_dependency "rake",          ["~> 10.2"]
   spec.add_runtime_dependency "json-schema",   ["~> 2.5"]
