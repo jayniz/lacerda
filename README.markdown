@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) 
+[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master)
 # Minimum term
 
 This gem can:
