@@ -1,3 +1,4 @@
+[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) 
 # Minimum term
 
 This gem can:
