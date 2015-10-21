@@ -2,15 +2,13 @@ $:.unshift File.expand_path("../lib", __FILE__)
 
 require 'rubygems'
 require 'simplecov'
-require 'simplecov-rcov'
+require 'coveralls'
 
-class SimpleCov::Formatter::MergedFormatter
-  def format(result)
-     SimpleCov::Formatter::HTMLFormatter.new.format(result)
-     SimpleCov::Formatter::RcovFormatter.new.format(result)
-  end
-end
-SimpleCov.formatter = SimpleCov::Formatter::MergedFormatter
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+]
+
 SimpleCov.start do
   add_filter 'spec/'
 end
