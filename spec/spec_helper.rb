@@ -1,17 +1,16 @@
 $:.unshift File.expand_path("../lib", __FILE__)
-
 require 'rubygems'
+
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'simplecov'
 require 'coveralls'
-
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
-
-SimpleCov.start do
-  add_filter 'spec/'
-end
+SimpleCov.start{ add_filter 'spec/'}
 
 Dir[File.join(File.dirname(__FILE__), "/support/**/*.rb")].each{ |f| require f }
 
