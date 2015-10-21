@@ -1,5 +1,3 @@
-general:
-  build_dir: ruby
 machine:
   ruby:
     version: 2.2.1
