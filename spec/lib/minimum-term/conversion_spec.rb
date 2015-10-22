@@ -71,11 +71,7 @@ describe MinimumTerm::Conversion do
     end
 
     it "parsed child objects in the consume schema" do
-      begin
       expect(consume_schema['definitions']['another_app:post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
-      rescue =>e
-        binding.pry
-      end
     end
 
     it "found the tag description" do
