@@ -4,3 +4,6 @@
 - title: (string, required)
 - tag: (object)
   - name: (string, required)
+
+# SomeOtherService:Model
+- why: (string)

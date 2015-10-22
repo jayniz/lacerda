@@ -10,7 +10,7 @@ module MinimumTerm
 
     def satisfies?(consumer)
       @comparator = Compare::JsonSchema.new(@schema)
-      @comparator.contains?(consumer.consume.schema)
+      @comparator.contains?(consumer.consume.scoped_schema(service))
     end
 
     private
