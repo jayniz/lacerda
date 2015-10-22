@@ -71,6 +71,8 @@ module MinimumTerm
       end
 
       def primitive_or_reference(type)
+	return { 'type' => 'object' } if type.blank?
+
         if PRIMITIVES.include?(type)
           { 'type' => type }
         else
