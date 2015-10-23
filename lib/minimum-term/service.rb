@@ -14,7 +14,7 @@ module MinimumTerm
     end
 
     def consuming_from
-      consumed_objects.map(&:publisher)
+      consumed_objects.map(&:publisher).uniq
     end
 
     def consumers
