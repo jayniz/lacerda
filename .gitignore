@@ -8,3 +8,4 @@ coverage
 **/*.gem
 Gemfile.lock
 tmp/
+.ruby-version
