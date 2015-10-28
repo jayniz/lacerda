@@ -18,11 +18,33 @@ module Lacerda
     def contracts_fulfilled?
       @mutex1.synchronize do
         @errors = {}
+
+        # Check for incompatibility in published objects
         publishers.each do |publisher|
           publisher.satisfies_consumers?(verbose: @verbose)
           next if publisher.errors.empty?
           @errors.merge! publisher.errors
         end
+
+        # Check for missing publishers
+        missing_publishers = {}
+        consumers.each do |consumer|
+          consumer.consumed_objects.each do |object|
+            next if object.publisher
+            missing_publishers[object.publisher_name.camelize] ||= []
+            missing_publishers[object.publisher_name.camelize] << consumer.name.camelize
+          end
+        end
+
+        # Report missing publishers
+        unless missing_publishers.empty?
+          missing = []
+          missing_publishers.each do |publisher, consumers|
+            missing << "#{publisher} (consumed by #{consumers.join(', ')})"
+          end
+          errors["Missing publishers: "] = missing
+        end
+
         @errors.empty?
       end
     end

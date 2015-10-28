@@ -18,8 +18,9 @@ module Lacerda
         @containing_schema = containing_schema
       end
 
-      def contains?(contained_schema, pry = false)
+      def contains?(contained_schema, initial_location = nil)
         @errors = []
+        @initial_location = initial_location
         @contained_schema = contained_schema
         definitions_contained?
       end
@@ -29,7 +30,7 @@ module Lacerda
       def definitions_contained?
         @contained_schema['definitions'].each do |property, contained_property|
           containing_property = @containing_schema['definitions'][property]
-          return _e(:ERR_MISSING_DEFINITION, [property]) unless containing_property
+          return _e(:ERR_MISSING_DEFINITION, [@initial_location, property]) unless containing_property
           return false unless schema_contains?(containing_property, contained_property, [property])
         end
         true
@@ -37,7 +38,7 @@ module Lacerda
 
       def _e(error, location, extra = nil)
         message = [ERRORS[error], extra].compact.join(": ")
-        @errors.push(error: error, message: message, location: location.join("/"))
+        @errors.push(error: error, message: message, location: location.compact.join("/"))
         false
       end
 

@@ -21,4 +21,21 @@ describe Lacerda::Infrastructure do
   it "checks to see if all contracts are fulfilled" do
     expect($test_infrastructure.contracts_fulfilled?).to be false
   end
+
+  context "fail when there's consumed objects that nobody publishes" do
+    before(:all) do
+      path = File.join($contracts_dir, "only_consumer")
+      @i = Lacerda::Infrastructure.new(data_dir: path)
+      @i.convert_all!
+      @i.contracts_fulfilled?
+    end
+
+    it "contracts are not fulfilled" do
+      expect(@i.contracts_fulfilled?).to be false
+    end
+
+    it "has an error message" do
+      expect(@i.errors.length).to be 1
+    end
+  end
 end

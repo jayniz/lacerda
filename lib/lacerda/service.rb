@@ -43,10 +43,10 @@ module Lacerda
       consumers.each do |consumer|
         @publish.satisfies?(consumer)
         if @publish.errors.empty?
-          print "#{consumer.name.camelize}".green if verbose
+          print "#{consumer.name.camelize.green} "if verbose
           next
         end
-          print "#{consumer.name.camelize}".red if verbose
+          print "#{consumer.name.camelize.red} "if verbose
         @errors["#{name} -> #{consumer.name}"] = @publish.errors
       end
       print "\n" if verbose

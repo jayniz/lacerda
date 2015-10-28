@@ -10,7 +10,7 @@ module Lacerda
 
     def satisfies?(consumer)
       @comparator = Compare::JsonSchema.new(@schema)
-      @comparator.contains?(consumer.consume.scoped_schema(service))
+      @comparator.contains?(consumer.consume.scoped_schema(service), consumer.name)
     end
 
     private

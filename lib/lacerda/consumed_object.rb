@@ -4,9 +4,14 @@ module Lacerda
   class ConsumedObject < Lacerda::ObjectDescription
 
     def publisher
+      return unless publisher_name
+      @defined_in_service.infrastructure.services[publisher_name]
+    end
+
+    def publisher_name
       i = @scoped_name.index(Lacerda::SCOPE_SEPARATOR)
-      return @defined_in_service unless i
-      @defined_in_service.infrastructure.services[@scoped_name[0...i].underscore.to_sym]
+      return unless i
+      @scoped_name[0...i].underscore
     end
 
     def consumer
