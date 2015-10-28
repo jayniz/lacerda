@@ -1,3 +1,6 @@
+# 0.3.3 (28-Oct-15)
+- add error messages
+
 # 0.3.2 (28-Oct-15)
 - fix wrongly named rake task
 - fix case where an infrastructure with a missing publishing service was reported as valid
