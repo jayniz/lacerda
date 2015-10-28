@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/minimum-term/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/minimum-term)
+[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/minimum-term/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/minimum-term) [![Dependency Status](https://gemnasium.com/moviepilot/minimum-term.svg)](https://gemnasium.com/moviepilot/minimum-term)
 # Minimum term
 
 This gem can:
