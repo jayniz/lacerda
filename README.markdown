@@ -11,7 +11,7 @@ This gem can:
   - which service consumes what from which other service
   - if all services consume and publish conforming to their contracts.
 
-You likely don't want to use it on its own but head on over to the [Old Maid](https://github.com/moviepilot/old-maid) gem which explains things in more detail. If you're just looking for ONE way to transform MSON files into JSON Schema, read on:
+You likely don't want to use it on its own but head on over to the [Zeta](https://github.com/moviepilot/zeta) gem which explains things in more detail. If you're just looking for ONE way to transform MSON files into JSON Schema, read on:
 
 ## Getting started
 First, check out [this API Blueprint map](https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map) to understand how _API Blueprint_ documents are laid out:
