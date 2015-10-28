@@ -1,7 +1,7 @@
-# Lacerda [![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/minimum-term/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/minimum-term) [![Dependency Status](https://gemnasium.com/moviepilot/minimum-term.svg)](https://gemnasium.com/moviepilot/minimum-term)
+# Lacerda [![Circle CI](https://circleci.com/gh/moviepilot/lacerda/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/lacerda/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/lacerda/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/lacerda?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/lacerda/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/lacerda) [![Dependency Status](https://gemnasium.com/moviepilot/lacerda.svg)](https://gemnasium.com/moviepilot/lacerda)
 
 ![](https://dl.dropboxusercontent.com/u/1953503/lacerda.jpg)
-> «We need total coverage»<sup>[1](http://www.dailyscript.com/scripts/fearandloathing.html)</sup>
+> «No, no -- we have to go on. We need total coverage.»<sup>[1](#references)</sup>
 
 This gem can:
 
@@ -63,3 +63,7 @@ By converting all files in a directory this gem will build up the following rela
         - PublishedObjects
       - Consume contract
         - ConsumedObjects
+
+# References
+
+[1] This quote in French quotation marks is from "Fear and Loathing in Las Vegas". Since I can't link to the book, a link to the [movie script](http://www.dailyscript.com/scripts/fearandloathing.html) shall suffice. 

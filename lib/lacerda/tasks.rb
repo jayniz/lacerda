@@ -5,7 +5,7 @@ module Lacerda
     include Rake::DSL if defined? Rake::DSL
 
     def install_tasks
-      namespace :minimum_term do
+      namespace :lacerda do
         desc "Clean up intermediary json files"
         task :cleanup do
           path = File.expand_path("../contracts")

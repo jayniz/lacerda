@@ -1,3 +1,9 @@
+# 0.3.1 (28-Oct-15)
+- fix wrongly named rake task
+
+# 0.3.0 (28-Oct-15)
+- rename to Lacerda
+
 # 0.2.4 (23-Oct-15)
 - fix deep clone bug for schema scoping
 
