@@ -14,7 +14,7 @@
 #   - its consumer
 #
 #
-module MinimumTerm
+module Lacerda
   class ObjectDescription
     attr_reader :service, :name, :schema
     def initialize(defined_in_service, scoped_name, schema)
@@ -27,7 +27,7 @@ module MinimumTerm
     private
 
     def remove_service_from_scoped_name(n)
-      n[n.index(MinimumTerm::SCOPE_SEPARATOR)+1..-1]
+      n[n.index(Lacerda::SCOPE_SEPARATOR)+1..-1]
     end
 
   end

@@ -1,12 +1,12 @@
 require 'active_support/core_ext/string'
 
-module MinimumTerm
+module Lacerda
   module Conversion
     class DataStructure
       PRIMITIVES = %w{boolean string number array enum object}
 
       def self.scope(scope, string)
-        [scope, string.to_s].compact.join(MinimumTerm::SCOPE_SEPARATOR).underscore
+        [scope, string.to_s].compact.join(Lacerda::SCOPE_SEPARATOR).underscore
       end
 
       def initialize(id, data, scope = nil)

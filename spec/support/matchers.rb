@@ -1,6 +1,6 @@
 require 'json-schema'
 RSpec::Matchers.define :match_schema do |schema, type|
-  scoped_type = MinimumTerm::Conversion::DataStructure.scope(schema['title'], type)
+  scoped_type = Lacerda::Conversion::DataStructure.scope(schema['title'], type)
 
   match do |object|
     JSON::Validator.validate(schema, scoped_type => object)

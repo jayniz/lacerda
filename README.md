@@ -1,5 +1,7 @@
-[![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/minimum-term/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/minimum-term) [![Dependency Status](https://gemnasium.com/moviepilot/minimum-term.svg)](https://gemnasium.com/moviepilot/minimum-term)
-# Minimum term
+# Lacerda [![Circle CI](https://circleci.com/gh/moviepilot/minimum-term/tree/master.svg?style=svg)](https://circleci.com/gh/moviepilot/minimum-term/tree/master) [![Coverage Status](https://coveralls.io/repos/moviepilot/minimum-term/badge.svg?branch=master&service=github)](https://coveralls.io/github/moviepilot/minimum-term?branch=master) [![Code Climate](https://codeclimate.com/github/moviepilot/minimum-term/badges/gpa.svg)](https://codeclimate.com/github/moviepilot/minimum-term) [![Dependency Status](https://gemnasium.com/moviepilot/minimum-term.svg)](https://gemnasium.com/moviepilot/minimum-term)
+
+![](https://dl.dropboxusercontent.com/u/1953503/lacerda.jpg)
+> «We need total coverage»<sup>[1](http://www.dailyscript.com/scripts/fearandloathing.html)</sup>
 
 This gem can:
 
@@ -27,19 +29,19 @@ Luckily, a rake task does all that for you. To convert all `*.mson` files in `co
 put this in your `Rakefile`:
 
 ```ruby
-require "minimum-term/tasks"
+require "lacerda/tasks"
 ```
 
 and smoke it:
 
 ```shell
-/home/dev/minimum-term$ DATA_DIR=contracts/ rake minimum_term:mson_to_json_schema
+/home/dev/lacerda$ DATA_DIR=contracts/ rake lacerda:mson_to_json_schema
 Converting 4 files:
-OK /home/dev/minimum-term/contracts/consumer/consume.mson
-OK /home/dev/minimum-term/contracts/invalid_property/consume.mson
-OK /home/dev/minimum-term/contracts/missing_required/consume.mson
-OK /home/dev/minimum-term/contracts/publisher/publish.mson
-/home/dev/minimum-term$
+OK /home/dev/lacerda/contracts/consumer/consume.mson
+OK /home/dev/lacerda/contracts/invalid_property/consume.mson
+OK /home/dev/lacerda/contracts/missing_required/consume.mson
+OK /home/dev/lacerda/contracts/publisher/publish.mson
+/home/dev/lacerda$
 ```
 
 ## Tests and development

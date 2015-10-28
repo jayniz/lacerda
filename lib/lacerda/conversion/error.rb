@@ -1,4 +1,4 @@
-module MinimumTerm
+module Lacerda
   module Conversion
     class Error < StandardError
 

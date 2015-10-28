@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe MinimumTerm::PublishedObject do
+describe Lacerda::PublishedObject do
   let(:publisher){ $test_infrastructure.services[:publisher] }
   let(:o) { publisher.published_objects.first }
 

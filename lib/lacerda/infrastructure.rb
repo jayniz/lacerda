@@ -1,6 +1,6 @@
 require 'active_support/core_ext/hash/indifferent_access'
 
-module MinimumTerm
+module Lacerda
   class Infrastructure
     attr_reader :errors, :data_dir
 
@@ -42,7 +42,7 @@ module MinimumTerm
     def convert_all!(keep_intermediary_files = false)
       json_files.each{ |file| FileUtils.rm_f(file) }
       mson_files.each do |file|
-        MinimumTerm::Conversion.mson_to_json_schema!(
+        Lacerda::Conversion.mson_to_json_schema!(
           filename: file,
           keep_intermediary_files: keep_intermediary_files,
           verbose: @verbose)
@@ -64,7 +64,7 @@ module MinimumTerm
         @services = {}.with_indifferent_access
         dirs = Dir.glob(File.join(@data_dir, "*/"))
         dirs.each do |dir|
-          service = MinimumTerm::Service.new(self, dir)
+          service = Lacerda::Service.new(self, dir)
           @services[service.name] = service
         end
         @services

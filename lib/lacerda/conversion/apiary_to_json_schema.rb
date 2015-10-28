@@ -1,6 +1,6 @@
-require 'minimum-term/conversion/data_structure'
+require 'lacerda/conversion/data_structure'
 
-module MinimumTerm
+module Lacerda
   module Conversion
     class ApiaryToJsonSchema
 

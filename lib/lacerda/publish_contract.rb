@@ -1,7 +1,7 @@
-require 'minimum-term/contract'
+require 'lacerda/contract'
 
-module MinimumTerm
-  class PublishContract < MinimumTerm::Contract
+module Lacerda
+  class PublishContract < Lacerda::Contract
 
     def errors
       return [] unless @comparator
@@ -16,7 +16,7 @@ module MinimumTerm
     private
 
     def object_description_class
-      MinimumTerm::PublishedObject
+      Lacerda::PublishedObject
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'fileutils'
 
-module MinimumTerm
+module Lacerda
   class Tasks
     include Rake::DSL if defined? Rake::DSL
 
@@ -50,7 +50,7 @@ module MinimumTerm
 
           ok = true
           files.each do |file|
-            ok = ok && MinimumTerm::Conversion.mson_to_json_schema(
+            ok = ok && Lacerda::Conversion.mson_to_json_schema(
               filename: file,
               keep_intermediary_files: keep_intermediary_files,
               verbose: true)
@@ -63,4 +63,4 @@ module MinimumTerm
   end
  end
 
-MinimumTerm::Tasks.new.install_tasks
+Lacerda::Tasks.new.install_tasks

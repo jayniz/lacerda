@@ -1,17 +1,17 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'minimum-term/version'
+require 'lacerda/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "minimum-term"
-  spec.version       = MinimumTerm::VERSION
+  spec.name          = "lacerda"
+  spec.version       = Lacerda::VERSION
   spec.authors       = ["Jannis Hermanns"]
   spec.email         = ["jannis@gmail.com"]
 
   spec.summary       = 'Markdown publish/consume contract parser and validator'
   spec.description   = 'Specify which objects your services publish or consume in MSON (markdown) and let this gem validate these contracts.'
-  spec.homepage      = "https://github.com/moviepilot/minimum-term"
+  spec.homepage      = "https://github.com/moviepilot/lacerda"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "bin"
@@ -19,7 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.license       = 'MIT'
 
-  spec.add_runtime_dependency "activesupport", ["~> 4.2"]
+  spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "rake",          ["~> 10.2"]
   spec.add_runtime_dependency "json-schema",   ["~> 2.5"]
   spec.add_runtime_dependency "redsnow",       ["~> 0.4"]

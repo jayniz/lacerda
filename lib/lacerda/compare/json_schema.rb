@@ -1,4 +1,4 @@
-module MinimumTerm
+module Lacerda
   module Compare
     class JsonSchema
       ERRORS = {

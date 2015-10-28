@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 
-describe MinimumTerm::Conversion do
+describe Lacerda::Conversion do
   context "doing basic mson->json schema conversion" do
     let(:publish_schema_file) { File.expand_path("../../../support/contracts/json_schema_test/app/publish.schema.json", __FILE__)}
     let(:publish_schema){ JSON.parse(open(publish_schema_file).read) }
@@ -15,8 +15,8 @@ describe MinimumTerm::Conversion do
       publish_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/publish.mson", __FILE__)
       consume_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/consume.mson", __FILE__)
 
-      MinimumTerm::Conversion.mson_to_json_schema!(filename: publish_mson_file)
-      MinimumTerm::Conversion.mson_to_json_schema!(filename: consume_mson_file)
+      Lacerda::Conversion.mson_to_json_schema!(filename: publish_mson_file)
+      Lacerda::Conversion.mson_to_json_schema!(filename: consume_mson_file)
     end
 
     after(:all) do
@@ -26,29 +26,29 @@ describe MinimumTerm::Conversion do
     context "conversion without exceptions" do
       let(:f){ publish_schema_file }
       it "when it works" do
-        expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
+        expect(Lacerda::Conversion).to receive(:mson_to_json_schema!)
           .with(filename: f, keep_intermediary_files: false, verbose: false)
-        expect(MinimumTerm::Conversion.mson_to_json_schema(filename: f)).to be true
+        expect(Lacerda::Conversion.mson_to_json_schema(filename: f)).to be true
       end
 
       it "when it bangs" do
-        expect(MinimumTerm::Conversion).to receive(:mson_to_json_schema!)
+        expect(Lacerda::Conversion).to receive(:mson_to_json_schema!)
           .with(filename: f, keep_intermediary_files: false, verbose: false).and_raise
-        expect(MinimumTerm::Conversion.mson_to_json_schema(filename: publish_schema_file)).to be false
+        expect(Lacerda::Conversion.mson_to_json_schema(filename: publish_schema_file)).to be false
       end
     end
 
     it "doesn't allow names except for publish.mson and consume.mson" do
       invalidly_named_mson_file = File.expand_path("../../../support/contracts/json_schema_test/app/invalid_name.mson", __FILE__)
       expect{
-        MinimumTerm::Conversion.mson_to_json_schema!(filename: invalidly_named_mson_file)
-      }.to raise_error(MinimumTerm::Conversion::Error)
+        Lacerda::Conversion.mson_to_json_schema!(filename: invalidly_named_mson_file)
+      }.to raise_error(Lacerda::Conversion::Error)
     end
 
     it "allows empty files" do
       empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/publish.mson", __FILE__)
       expect{
-        MinimumTerm::Conversion.mson_to_json_schema!(filename: empty_mson_file)
+        Lacerda::Conversion.mson_to_json_schema!(filename: empty_mson_file)
       }.to_not raise_error
     end
 

@@ -1,10 +1,10 @@
 require 'fileutils'
 require 'open3'
-require 'minimum-term/conversion/apiary_to_json_schema'
-require 'minimum-term/conversion/error'
+require 'lacerda/conversion/apiary_to_json_schema'
+require 'lacerda/conversion/error'
 require 'redsnow'
 
-module MinimumTerm
+module Lacerda
   module Conversion
     def self.mson_to_json_schema(filename:, keep_intermediary_files: false, verbose: false)
       begin

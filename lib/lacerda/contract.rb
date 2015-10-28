@@ -1,8 +1,8 @@
 require 'active_support/core_ext/hash/indifferent_access'
-require 'minimum-term/published_object'
-require 'minimum-term/consumed_object'
+require 'lacerda/published_object'
+require 'lacerda/consumed_object'
 
-module MinimumTerm
+module Lacerda
   class Contract
     attr_reader :service, :schema
 

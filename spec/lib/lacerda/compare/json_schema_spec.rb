@@ -1,6 +1,6 @@
 require 'pry'
 require 'spec_helper'
-include MinimumTerm::Compare
+include Lacerda::Compare
 
 describe JsonSchema do
 

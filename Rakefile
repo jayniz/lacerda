@@ -6,4 +6,4 @@ Bundler.require
 
 $:.unshift File.join(File.dirname(__FILE__), "lib")
 
-require 'minimum-term/tasks'
+require 'lacerda/tasks'

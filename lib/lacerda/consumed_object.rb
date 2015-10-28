@@ -1,10 +1,10 @@
-require 'minimum-term/object_description'
+require 'lacerda/object_description'
 
-module MinimumTerm
-  class ConsumedObject < MinimumTerm::ObjectDescription
+module Lacerda
+  class ConsumedObject < Lacerda::ObjectDescription
 
     def publisher
-      i = @scoped_name.index(MinimumTerm::SCOPE_SEPARATOR)
+      i = @scoped_name.index(Lacerda::SCOPE_SEPARATOR)
       return @defined_in_service unless i
       @defined_in_service.infrastructure.services[@scoped_name[0...i].underscore.to_sym]
     end
