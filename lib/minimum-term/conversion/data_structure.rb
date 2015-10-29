@@ -35,47 +35,86 @@ module MinimumTerm
 
       def add_required_to_json_schema
         @schema['required'] = select_attr(members) do |member|
-          attributes = get_attr(member, *type_definistion_path, 'attributes')
-          !attributes.nil? and attributes.include?('required')
+          required_member?(member)
         end.reduce([]) do |array, member| 
-           array << content_name_attr(member)
+          array << member_name(member)
         end
+      end
+
+      def required_member?(member)
+        attributes = attr_val(member, *type_definition_path, 'attributes')
+        !attributes.nil? and attributes.include?('required')
       end
 
       def add_properties_to_json_schema
-        handle_type(array_type) do |content, spec|
-          nestedTypes = get_attr(content, 'valueDefinition', 'typeDefinition',
-                                          'typeSpecification', 'nestedTypes')
-          spec['items'] = nestedTypes.map{|t| primitive_or_reference(t) }
+        @schema['properties'].merge!(handle_array_type)
+        @schema['properties'].merge!(handle_object_type)
+        @schema['properties'].merge!(handle_other_types)
+      end
+
+      def handle_array_type
+        handle_type(array_type) do |member, spec|
+          spec.merge!(nested_types(member))
         end
+      end
 
-        handle_type(object_type) do |content, spec|
-          sections = select_attr(content['sections'], 'memberType', 'class')
+      def array_type
+        select_attr(members, 'array', *type_path)
+      end
 
-          spec['properties'] = sections.reduce({}) do |hash, section|
-            data_structure = DataStructure.new('tmp', content, @scope).to_json
+      def nested_types(member)
+        nestedTypes = attr_val(member, *type_definition_path, 
+                                       'typeSpecification', 'nestedTypes')
+        {'items' => nestedTypes.map{|t| primitive_or_reference(t) }}
+      end
+
+      def handle_object_type
+        handle_type(object_type) do |member, spec|
+          spec['properties'] = sub_sections(member).reduce({}) do |hash, section|
+            data_structure = DataStructure.new('tmp', member['content'], @scope).to_json
             hash.merge!(data_structure['properties'])
           end
         end
+      end
 
+      def object_type
+        select_attr(members, 'object', *type_path)
+      end
+
+      def sub_sections(member)
+        select_attr(attr_val(member, 
+                             'content', 
+                             'sections'), 
+                    'memberType', 
+                    'class')
+      end
+
+      def handle_other_types
         handle_type(other_types)
       end
 
+      def other_types
+        members - array_type - object_type
+      end
+
       def handle_type(members)
-        members.each do |member|
-          content = member['content']
-          type_definition = get_attr(member, *type_definistion_path)
-
+        members.reduce({}) do |hash, member|
           spec = {'description' => member['description']}
+          spec.merge!(member_type(member))
 
-          # This is either type: primimtive or $ref: reference_name
-          type = get_attr(member, *type_path)
-          spec.merge!(primitive_or_reference(type))
+          yield(member, spec) if block_given?
 
-          yield(content, spec) if block_given?
-
-          @schema['properties'][content_name_attr(member)] = spec
+          hash.merge!(member_name(member) => spec)
         end
+      end
+
+      def member_name(member)
+        attr_val(member, 'content', 'name', 'literal').underscore
+      end
+
+      def member_type(member)
+        type = attr_val(member, *type_path)
+        primitive_or_reference(type)
       end
 
       def primitive_or_reference(type)
@@ -96,60 +135,45 @@ module MinimumTerm
         }
       end
 
-      def type_definistion_path
-        ['content', 'valueDefinition', 'typeDefinition']
-      end
-      def type_path
-         type_definistion_path + ['typeSpecification', 'name']
-      end
-
-      def content_name_attr(member)
-        get_attr(member, 'content', 'name','literal').underscore
-      end
-
-      def array_type
-        select_attr(members, 'array', *type_path)
-      end
-
-      def object_type
-        select_attr(members, 'object', *type_path)
-      end
-
-      def other_types
-        members - array_type - object_type
-      end
-
-      def select_attr(arrs, val = nil, *args)
-        arrs.select do |arr|
-          if block_given?
-            yield arr
-          else
-            get_attr(arr, *args) == val
-          end
-        end
-      end
-
-      def find_attr(arrs, val, *args)
-        arrs.find do |arr|
-          if block_given?
-            yield arr
-          else
-            get_attr(arr, *args) == val
-          end
-        end
-      end
-
-      def get_attr arr, *args
-        args.reduce(arr) { |re, arg| re[arg] }
+      def members
+        @section ||= find_attr(sections, 'memberType', 'class')
+        @members ||= select_attr(@section['content'], 'property', 'class')
       end
 
       def sections
         @sections ||= @data['sections']
       end
 
-      def members
-        @section ||= find_attr(sections, 'memberType', 'class')
-        @members ||= select_attr(@section['content'], 'property', 'class')
+      def type_definition_path
+        @type_definition_path ||= ['content', 'valueDefinition', 'typeDefinition']
+      end
+
+      def type_path
+        @type_path ||= type_definition_path + ['typeSpecification', 'name']
+      end
+
+      def select_attr(attrs, val = nil, *args)
+        attrs.select do |attr|
+          if block_given?
+            yield attr
+          else
+            attr_val(attr, *args) == val
+          end
+        end
+      end
+
+      def find_attr(attrs, val, *args)
+        attrs.find do |attr|
+          if block_given?
+            yield attr
+          else
+            attr_val(attr, *args) == val
+          end
+        end
+      end
+
+      def attr_val attr, *args
+        args.reduce(attr) { |hash, arg| hash[arg] }
       end
     end
   end
