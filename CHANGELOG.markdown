@@ -1,3 +1,6 @@
+# 0.5.0 (29-Oct-15)
+- add `consume_object` method that returns Blumquist wrapped data
+
 # 0.4.0 (29-Oct-15)
 - validation helpers for published and consumed objects
 - enhance some error messages

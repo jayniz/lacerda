@@ -1,4 +1,5 @@
 require 'active_support/core_ext/string'
+require 'blumquist'
 require 'lacerda/service/error'
 
 module Lacerda
@@ -76,6 +77,11 @@ module Lacerda
     def validate_object_to_consume!(type, data)
       object_description = @consume.object(type)
       object_description.validate_data!(data)
+    end
+
+    def consume_object(type, data)
+      object_description = @consume.object(type)
+      Blumquist.new(object_description.schema, data)
     end
 
     private

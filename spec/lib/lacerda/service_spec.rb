@@ -87,6 +87,7 @@ describe Lacerda::Service do
     end
 
     context "to consume" do
+      let(:valid_post) { {id: 1, title: 'My title'} }
       it "complains about an unknokwn type" do
         expect(
           consumer.validate_object_to_consume('Publisher:unknown_type', {some: :data})
@@ -100,7 +101,6 @@ describe Lacerda::Service do
       end
 
       it "accepts a valid object" do
-        valid_post = {id: 1, title: 'My title'}
         expect(
           consumer.validate_object_to_consume('Publisher:Post', valid_post)
         ).to be true
@@ -111,6 +111,14 @@ describe Lacerda::Service do
         expect{
           consumer.validate_object_to_consume!('Publisher:Post', invalid_post)
         }.to raise_error(JSON::Schema::ValidationError)
+      end
+
+      it "returns a Blumquist object to consujme" do
+        schema = consumer.consume.object('Publisher:Post').schema
+        expect(Blumquist).to receive(:new).with(schema, valid_post).and_return :blumquist
+        expect(
+          consumer.consume_object('Publisher:Post', valid_post)
+        ).to eq :blumquist
       end
     end
 
