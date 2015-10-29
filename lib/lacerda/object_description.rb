@@ -24,6 +24,10 @@ module Lacerda
       @schema = schema
     end
 
+    def validate_data!(data)
+      JSON::Validator.validate!(@schema, data)
+    end
+
     private
 
     def remove_service_from_scoped_name(n)

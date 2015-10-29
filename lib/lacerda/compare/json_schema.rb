@@ -3,7 +3,7 @@ module Lacerda
     class JsonSchema
       ERRORS = {
         :ERR_ARRAY_ITEM_MISMATCH  => "The items in the published array don't match the consumer's specification.",
-        :ERR_MISSING_DEFINITION   => "The published object is missing a type defined the consumer's specification.",
+        :ERR_MISSING_DEFINITION   => "The publish specification is missing a type defined in esothe consumer's specification.",
         :ERR_MISSING_POINTER      => "A JSON pointer could not be resolved.",
         :ERR_MISSING_PROPERTY     => "The published object is missing a property required by your specification.",
         :ERR_MISSING_REQUIRED     => "The published object has an optional property that you marked as required in your specification.",

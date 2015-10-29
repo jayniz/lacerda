@@ -12,7 +12,6 @@ properties right away):
 
 
 # Post
-
 - id: (number, required)
 - title: (string, required)
 - tag: (Tag)

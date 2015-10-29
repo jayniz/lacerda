@@ -56,4 +56,37 @@ describe Lacerda::Service do
     end
   end
 
+  context "validating objects" do
+
+    context "to publish" do
+
+      it "complains about an unknokwn type" do
+        expect(
+          publisher.validate_object_to_publish(:unknown_type, {some: :data})
+        ).to be false
+      end
+
+      it "complains about an unknokwn type with an exception" do
+        expect{
+          publisher.validate_object_to_publish!(:unknown_type, {some: :data})
+        }.to raise_error(Lacerda::Service::InvalidObjectTypeError)
+      end
+
+      it "accepts a valid object" do
+        valid_post = {id: 1, title: 'My title'}
+        expect(
+          publisher.validate_object_to_publish(:post, valid_post)
+        ).to be true
+      end
+
+      it "rejects an valid object with an exception" do
+        invalid_post = {id: 'string', title: 'My title'}
+        expect{
+          publisher.validate_object_to_publish!(:post, invalid_post)
+        }.to raise_error(JSON::Schema::ValidationError)
+      end
+
+    end
+
+  end
 end
