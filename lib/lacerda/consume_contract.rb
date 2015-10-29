@@ -14,5 +14,11 @@ module Lacerda
       end
       filtered_schema
     end
+
+    def object(name)
+      schema = @schema[:definitions][name.to_s.underscore]
+      raise Lacerda::Service::InvalidObjectTypeError.new(name.to_s.underscore) unless schema
+      Lacerda::ConsumedObject.new(service, name, schema)
+    end
   end
 end

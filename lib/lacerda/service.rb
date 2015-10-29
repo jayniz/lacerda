@@ -66,6 +66,18 @@ module Lacerda
       object_description.validate_data!(data)
     end
 
+    def validate_object_to_consume(type, data)
+      validate_object_to_consume!(type, data)
+      true
+    rescue
+      false
+    end
+
+    def validate_object_to_consume!(type, data)
+      object_description = @consume.object(type)
+      object_description.validate_data!(data)
+    end
+
     private
 
     def load_contracts

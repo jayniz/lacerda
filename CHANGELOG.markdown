@@ -1,5 +1,5 @@
 # 0.3.5 (29-Oct-15)
-- validation helpers for published objects
+- validation helpers for published and consumed objects
 
 # 0.3.4 (29-Oct-15)
 - enhance some error messages
