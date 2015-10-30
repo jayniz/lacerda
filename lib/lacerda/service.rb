@@ -81,7 +81,7 @@ module Lacerda
 
     def consume_object(type, data)
       object_description = @consume.object(type)
-      Blumquist.new(object_description.schema, data)
+      Blumquist.new(schema: object_description.schema, data: data)
     end
 
     private

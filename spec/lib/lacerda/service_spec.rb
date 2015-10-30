@@ -113,9 +113,9 @@ describe Lacerda::Service do
         }.to raise_error(JSON::Schema::ValidationError)
       end
 
-      it "returns a Blumquist object to consujme" do
+      it "returns a Blumquist object to consume" do
         schema = consumer.consume.object('Publisher:Post').schema
-        expect(Blumquist).to receive(:new).with(schema, valid_post).and_return :blumquist
+        expect(Blumquist).to receive(:new).with(schema: schema, data: valid_post).and_return :blumquist
         expect(
           consumer.consume_object('Publisher:Post', valid_post)
         ).to eq :blumquist

@@ -4,9 +4,9 @@ module Lacerda
   class Infrastructure
     attr_reader :errors, :data_dir
 
-    def initialize(data_dir:, verbose: false)
-      @verbose = !!verbose
-      @data_dir = data_dir
+    def initialize(options)
+      @verbose = !!options.fetch(:verbose, false)
+      @data_dir = options.fetch(:data_dir)
       @mutex1 = Mutex.new
       @mutex2 = Mutex.new
     end

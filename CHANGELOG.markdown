@@ -1,3 +1,7 @@
+# 0.6.0 (30-Oct-15)
+- bump Blumquist version to the one that auto validates
+- be ruby <2 compatible
+
 # 0.5.0 (29-Oct-15)
 - add `consume_object` method that returns Blumquist wrapped data
 
