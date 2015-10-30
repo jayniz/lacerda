@@ -3,21 +3,27 @@ require 'open3'
 require 'lacerda/conversion/apiary_to_json_schema'
 require 'lacerda/conversion/error'
 require 'redsnow'
+require 'colorize'
 
 module Lacerda
   module Conversion
-    def self.mson_to_json_schema(filename:, keep_intermediary_files: false, verbose: false)
+    def self.mson_to_json_schema(options)
+      filename = options.fetch(:filename)
       begin
-        mson_to_json_schema!(filename: filename, keep_intermediary_files: keep_intermediary_files, verbose: verbose)
-        puts "OK ".green + filename if verbose
+        mson_to_json_schema!(
+          filename: filename,
+          keep_intermediary_files: options.fetch(:keep_intermediary_files, false)
+        )
+        puts "OK ".green + filename if options.fetch(:verbose, true)
         true
       rescue
-        puts "ERROR ".red + filename if verbose
+        puts "ERROR ".red + filename if options.fetch(:verbose, true)
         false
       end
     end
 
-    def self.mson_to_json_schema!(filename:, keep_intermediary_files: false, verbose: true)
+    def self.mson_to_json_schema!(options)
+      filename = options.fetch(:filename)
 
       # For now, we'll use the containing directory's name as a scope
       service_scope = File.dirname(filename).split(File::SEPARATOR).last.underscore
@@ -95,7 +101,7 @@ module Lacerda
       File.open(outfile, 'w'){ |f| f.puts JSON.pretty_generate(schema) }
 
       # Clean up
-      FileUtils.rm_f(ast_file) unless keep_intermediary_files
+      FileUtils.rm_f(ast_file) unless options.fetch(:keep_intermediary_files, false)
       true
     end
 

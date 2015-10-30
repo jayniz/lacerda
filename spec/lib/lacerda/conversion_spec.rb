@@ -27,14 +27,14 @@ describe Lacerda::Conversion do
       let(:f){ publish_schema_file }
       it "when it works" do
         expect(Lacerda::Conversion).to receive(:mson_to_json_schema!)
-          .with(filename: f, keep_intermediary_files: false, verbose: false)
-        expect(Lacerda::Conversion.mson_to_json_schema(filename: f)).to be true
+          .with(filename: f, keep_intermediary_files: false)
+        expect(Lacerda::Conversion.mson_to_json_schema(filename: f, verbose: false)).to be true
       end
 
       it "when it bangs" do
         expect(Lacerda::Conversion).to receive(:mson_to_json_schema!)
-          .with(filename: f, keep_intermediary_files: false, verbose: false).and_raise
-        expect(Lacerda::Conversion.mson_to_json_schema(filename: publish_schema_file)).to be false
+          .with(filename: f, keep_intermediary_files: false).and_raise
+        expect(Lacerda::Conversion.mson_to_json_schema(filename: publish_schema_file, verbose: false)).to be false
       end
     end
 

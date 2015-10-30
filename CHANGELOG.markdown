@@ -1,3 +1,6 @@
+# 0.6.1 (30-Oct-15)
+- fix some forgotten ruby 2.0 syntax
+
 # 0.6.0 (30-Oct-15)
 - bump Blumquist version to the one that auto validates
 - be ruby <2 compatible
