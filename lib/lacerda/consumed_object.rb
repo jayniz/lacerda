@@ -11,7 +11,7 @@ module Lacerda
     def publisher_name
       i = @scoped_name.index(Lacerda::SCOPE_SEPARATOR)
       return unless i
-      @scoped_name[0...i].underscore
+      Lacerda.underscore(@scoped_name[0...i])
     end
 
     def consumer

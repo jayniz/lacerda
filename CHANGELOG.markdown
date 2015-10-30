@@ -1,3 +1,6 @@
+# 0.7.0 (30-Oct-15)
+- change ServiceName:ObjectName to ServiceName::ObjectName
+
 # 0.6.2 (30-Oct-15)
 - fix some forgotten ruby 2.0 syntax
 - my name is Jannis and I am a compulsive obsessive rake releaser

@@ -63,19 +63,19 @@ describe Lacerda::Conversion do
     end
 
     it "registered both publish types with automatic scope from directory name" do
-      expect(publish_schema['definitions'].keys.sort).to eq ["app:post", "app:tag"]
+      expect(publish_schema['definitions'].keys.sort).to eq ["app::post", "app::tag"]
     end
 
     it "registered the consume type with the scope as in the schema" do
-      expect(consume_schema['definitions'].keys.sort).to eq ["another_app:post"]
+      expect(consume_schema['definitions'].keys.sort).to eq ["another_app::post"]
     end
 
     it "parsed child objects in the consume schema" do
-      expect(consume_schema['definitions']['another_app:post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
+      expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
     end
 
     it "found the tag description" do
-      expect(publish_schema['definitions']['app:tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
+      expect(publish_schema['definitions']['app::tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
     end
 
     context "validating objects that" do

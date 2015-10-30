@@ -1,9 +1,9 @@
 # Data structures
 
-# Publisher:Post
+# Publisher::Post
 - title: (string, required)
 - tag: (object)
   - name: (string, required)
 
-# SomeOtherService:Model
+# SomeOtherService::Model
 - why: (string)

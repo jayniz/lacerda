@@ -1,6 +1,6 @@
 # Data structures
 
-# Publisher:Post
+# Publisher::Post
 We're making the tag property required here, which it isn't
 in the publisher.
 

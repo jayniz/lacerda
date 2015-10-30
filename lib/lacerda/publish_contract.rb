@@ -14,11 +14,11 @@ module Lacerda
     end
 
     def object(name)
-      scoped_name = name.to_s.underscore
+      scoped_name = Lacerda.underscore(name.to_s)
 
       # Add our own prefix automatically if necessary
-      unless scoped_name.start_with?(service.name.underscore)
-        scoped_name = [service.name.underscore, scoped_name].join(Lacerda::SCOPE_SEPARATOR)
+      unless scoped_name.start_with?(Lacerda.underscore(service.name))
+        scoped_name = [Lacerda.underscore(service.name), scoped_name].join(Lacerda::SCOPE_SEPARATOR)
       end
 
       schema = @schema[:definitions][scoped_name]

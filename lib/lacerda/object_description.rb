@@ -31,7 +31,9 @@ module Lacerda
     private
 
     def remove_service_from_scoped_name(n)
-      n[n.index(Lacerda::SCOPE_SEPARATOR)+1..-1]
+      i = n.index(Lacerda::SCOPE_SEPARATOR)
+      return n unless i
+      n[i+Lacerda::SCOPE_SEPARATOR.length..-1]
     end
 
   end

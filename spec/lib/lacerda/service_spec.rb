@@ -90,34 +90,34 @@ describe Lacerda::Service do
       let(:valid_post) { {id: 1, title: 'My title'} }
       it "complains about an unknokwn type" do
         expect(
-          consumer.validate_object_to_consume('Publisher:unknown_type', {some: :data})
+          consumer.validate_object_to_consume('Publisher::unknown_type', {some: :data})
         ).to be false
       end
 
       it "complains about an unknokwn type with an exception" do
         expect{
-          consumer.validate_object_to_consume!('Publisher:unknown_type', {some: :data})
+          consumer.validate_object_to_consume!('Publisher::unknown_type', {some: :data})
         }.to raise_error(Lacerda::Service::InvalidObjectTypeError)
       end
 
       it "accepts a valid object" do
         expect(
-          consumer.validate_object_to_consume('Publisher:Post', valid_post)
+          consumer.validate_object_to_consume('Publisher::Post', valid_post)
         ).to be true
       end
 
       it "rejects an valid object with an exception" do
         invalid_post = {tag: 'string', title: 'My title'}
         expect{
-          consumer.validate_object_to_consume!('Publisher:Post', invalid_post)
+          consumer.validate_object_to_consume!('Publisher::Post', invalid_post)
         }.to raise_error(JSON::Schema::ValidationError)
       end
 
       it "returns a Blumquist object to consume" do
-        schema = consumer.consume.object('Publisher:Post').schema
+        schema = consumer.consume.object('Publisher::Post').schema
         expect(Blumquist).to receive(:new).with(schema: schema, data: valid_post).and_return :blumquist
         expect(
-          consumer.consume_object('Publisher:Post', valid_post)
+          consumer.consume_object('Publisher::Post', valid_post)
         ).to eq :blumquist
       end
     end

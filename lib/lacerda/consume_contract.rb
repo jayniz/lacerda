@@ -7,17 +7,20 @@ module Lacerda
     end
 
     def scoped_schema(service)
+      service_name_prefix = Lacerda.underscore(service.name + Lacerda::SCOPE_SEPARATOR)
+
       # Poor man's deep clone: json 🆗 🆒
       filtered_schema = JSON.parse(schema.to_json)
       filtered_schema['definitions'].select! do |k|
-        k.underscore.start_with?(service.name.underscore+Lacerda::SCOPE_SEPARATOR)
+        Lacerda.underscore(k).start_with?(service_name_prefix)
       end
       filtered_schema
     end
 
     def object(name)
-      schema = @schema[:definitions][name.to_s.underscore]
-      raise Lacerda::Service::InvalidObjectTypeError.new(name.to_s.underscore) unless schema
+      underscored_name = Lacerda.underscore(name)
+      schema = @schema[:definitions][underscored_name]
+      raise Lacerda::Service::InvalidObjectTypeError.new(underscored_name) unless schema
       Lacerda::ConsumedObject.new(service, name, schema)
     end
   end

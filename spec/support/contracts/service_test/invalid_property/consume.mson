@@ -1,6 +1,6 @@
 # Data structures
 
-# Publisher:Post
+# Publisher::Post
 We changed the name property to a number, but in the publisher
 it's a string.
 

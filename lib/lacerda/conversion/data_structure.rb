@@ -6,7 +6,9 @@ module Lacerda
       PRIMITIVES = %w{boolean string number array enum object}
 
       def self.scope(scope, string)
-        [scope, string.to_s].compact.join(Lacerda::SCOPE_SEPARATOR).underscore
+        Lacerda.underscore(
+          [scope, string.to_s].compact.join(Lacerda::SCOPE_SEPARATOR)
+        )
       end
 
       def initialize(id, data, scope = nil)
@@ -41,7 +43,7 @@ module Lacerda
           type = type_definition['typeSpecification']['name']
 
           spec = {}
-          name = content['name']['literal'].underscore
+          name = Lacerda.underscore(content['name']['literal'])
 
           # This is either type: primimtive or $ref: reference_name
           spec.merge!(primitive_or_reference(type))

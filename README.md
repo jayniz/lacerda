@@ -66,4 +66,4 @@ By converting all files in a directory this gem will build up the following rela
 
 # References
 
-[1] This quote in French quotation marks is from "Fear and Loathing in Las Vegas". Since I can't link to the book, a link to the [movie script](http://www.dailyscript.com/scripts/fearandloathing.html) shall suffice. 
+[1] This quote in French quotation marks is from "Fear and Loathing in Las Vegas". Since I can't link to the book, a link to the [movie script](http://www.dailyscript.com/scripts/fearandloathing.html) shall suffice.
