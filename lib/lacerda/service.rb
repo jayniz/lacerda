@@ -39,7 +39,8 @@ module Lacerda
       @publish.satisfies?(service)
     end
 
-    def satisfies_consumers?(verbose: false)
+    def satisfies_consumers?(options = {})
+      verbose = options.fetch(:verbose, false)
       @errors = {}
       print "#{name.camelize} satisfies: " if verbose
       consumers.each do |consumer|

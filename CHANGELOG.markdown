@@ -1,3 +1,7 @@
+# 0.6.2 (30-Oct-15)
+- fix some forgotten ruby 2.0 syntax
+- my name is Jannis and I am a compulsive obsessive rake releaser
+
 # 0.6.1 (30-Oct-15)
 - fix some forgotten ruby 2.0 syntax
 
