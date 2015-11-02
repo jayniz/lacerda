@@ -42,22 +42,14 @@ module Lacerda
     end
 
     def satisfies_consumers?(options = {})
-      reporter = options.fetch(:reporter, nil)
-      Lacerda.validate_reporter(reporter)
+      reporter = Lacerda.validate_reporter(options.fetch(:reporter, nil))
 
-      verbose = options.fetch(:verbose, false)
       @errors = {}
-      print "#{name.camelize} satisfies: " if verbose
       consumers.each do |consumer|
         @publish.satisfies?(consumer, reporter)
-        if @publish.errors.empty?
-          print "#{consumer.name.camelize.green} "if verbose
-          next
-        end
-          print "#{consumer.name.camelize.red} "if verbose
+        next if @publish.errors.empty?
         @errors["#{name} -> #{consumer.name}"] = @publish.errors
       end
-      print "\n" if verbose
       @errors.empty?
     end
 

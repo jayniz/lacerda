@@ -1,6 +1,7 @@
 # This is so you can write your own reporters
 module Lacerda
   class Reporter
+
     def check_publishing
       # Called before all publishers are iterated to check if they satisfy
       # their consumers.
