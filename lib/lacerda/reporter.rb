@@ -1,6 +1,8 @@
 # This is so you can write your own reporters
 module Lacerda
   class Reporter
+    def initialize(options = {})
+    end
 
     def check_publishing
       # Called before all publishers are iterated to check if they satisfy
@@ -28,6 +30,11 @@ module Lacerda
     def object_publisher_existing(consumed_object, is_published)
       # Called after a consumed object was inspected (does a publish specification
       # for this object exist?)
+    end
+
+    def result(errors)
+      # Called when everything is done with an array of errors. If that array
+      # is empty, go ahead and assume all specifications are valid
     end
   end
 end

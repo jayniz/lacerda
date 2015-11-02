@@ -17,7 +17,7 @@ module Lacerda
     end
 
     def contracts_fulfilled?(reporter = nil)
-      Lacerda.validate_reporter(reporter)
+      reporter = Lacerda.validate_reporter(reporter)
 
       @mutex1.synchronize do
         @errors = {}
@@ -56,6 +56,8 @@ module Lacerda
           end
           errors["Missing publishers: "] = missing
         end
+
+        reporter.try(:result, @errors)
 
         @errors.empty?
       end

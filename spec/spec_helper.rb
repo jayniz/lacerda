@@ -1,3 +1,4 @@
+# coding: utf-8
 $:.unshift File.expand_path("../lib", __FILE__)
 require 'rubygems'
 
@@ -10,7 +11,12 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ]
-SimpleCov.start{ add_filter 'spec/'}
+SimpleCov.start{
+  add_filter 'spec/'
+
+  # Is this cheating? Have a 🍕 
+  add_filter 'lib/lacerda/reporters/'
+}
 
 Dir[File.join(File.dirname(__FILE__), "/support/**/*.rb")].each{ |f| require f }
 
