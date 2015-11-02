@@ -8,7 +8,8 @@ module Lacerda
       @comparator.errors
     end
 
-    def satisfies?(consumer)
+    def satisfies?(consumer, reporter = nil)
+      Lacerda.validate_reporter(reporter)
       @comparator = Compare::JsonSchema.new(@schema)
       @comparator.contains?(consumer.consume.scoped_schema(service), consumer.name)
     end

@@ -1,4 +1,5 @@
 require 'active_support/core_ext/hash/indifferent_access'
+require 'active_support/core_ext/object/try'
 
 module Lacerda
   class Infrastructure
@@ -15,24 +16,35 @@ module Lacerda
       @services = nil
     end
 
-    def contracts_fulfilled?
+    def contracts_fulfilled?(reporter = nil)
+      Lacerda.validate_reporter(reporter)
+
       @mutex1.synchronize do
         @errors = {}
 
         # Check for incompatibility in published objects
+        reporter.try(:check_publishing)
         publishers.each do |publisher|
-          publisher.satisfies_consumers?(verbose: @verbose)
+          reporter.try(:check_publisher, publisher)
+          publisher.satisfies_consumers?(verbose: @verbose, reporter: reporter)
           next if publisher.errors.empty?
           @errors.merge! publisher.errors
         end
 
         # Check for missing publishers
+        reporter.try(:check_consuming)
         missing_publishers = {}
         consumers.each do |consumer|
+          reporter.try(:check_consumer, consumer)
           consumer.consumed_objects.each do |object|
-            next if object.publisher
-            missing_publishers[object.publisher_name.camelize] ||= []
-            missing_publishers[object.publisher_name.camelize] << consumer.name.camelize
+            if object.publisher
+              reporter.try(:object_publisher_existing, object, true)
+              next
+            else
+              reporter.try(:object_publisher_existing, object, false)
+              missing_publishers[object.publisher_name.camelize] ||= []
+              missing_publishers[object.publisher_name.camelize] << consumer.name.camelize
+            end
           end
         end
 

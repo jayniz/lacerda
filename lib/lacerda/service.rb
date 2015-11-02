@@ -1,4 +1,5 @@
 require 'active_support/core_ext/string'
+require 'active_support/core_ext/object/try'
 require 'blumquist'
 require 'lacerda/service/error'
 
@@ -35,16 +36,20 @@ module Lacerda
       @publish.objects
     end
 
-    def satisfies?(service)
-      @publish.satisfies?(service)
+    def satisfies?(service, reporter = nil)
+      Lacerda.validate_reporter(reporter)
+      @publish.satisfies?(service, reporter)
     end
 
     def satisfies_consumers?(options = {})
+      reporter = options.fetch(:reporter, nil)
+      Lacerda.validate_reporter(reporter)
+
       verbose = options.fetch(:verbose, false)
       @errors = {}
       print "#{name.camelize} satisfies: " if verbose
       consumers.each do |consumer|
-        @publish.satisfies?(consumer)
+        @publish.satisfies?(consumer, reporter)
         if @publish.errors.empty?
           print "#{consumer.name.camelize.green} "if verbose
           next

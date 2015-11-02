@@ -27,7 +27,7 @@ describe Lacerda::Infrastructure do
       path = File.join($contracts_dir, "only_consumer")
       @i = Lacerda::Infrastructure.new(data_dir: path)
       @i.convert_all!
-      @i.contracts_fulfilled?
+      @i.contracts_fulfilled?(Lacerda::Reporter.new)
     end
 
     it "contracts are not fulfilled" do
@@ -36,6 +36,13 @@ describe Lacerda::Infrastructure do
 
     it "has an error message" do
       expect(@i.errors.length).to be 1
+    end
+
+    it "refuses to work with a dubious reporter" do
+      class RaolDuke; end
+      expect{
+        @i.contracts_fulfilled?(RaolDuke.new)
+      }.to raise_error("reporter must inherit from Lacerda::Reporter, but RaolDuke doesn't")
     end
   end
 end

@@ -1,3 +1,6 @@
+# 0.8.0 (30-Oct-15)
+- support for custom reporters
+
 # 0.7.0 (30-Oct-15)
 - change ServiceName:ObjectName to ServiceName::ObjectName
 
