@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'lacerda/reporters/rspec'
 
 describe Lacerda::Infrastructure do
   let(:publisher){ $test_infrastructure.services[:publisher] }

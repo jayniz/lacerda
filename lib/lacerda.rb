@@ -6,7 +6,6 @@ require 'lacerda/infrastructure'
 require 'lacerda/compare/json_schema'
 require 'lacerda/reporter'
 require 'lacerda/reporters/multi'
-require 'lacerda/reporters/rspec'
 require 'lacerda/reporters/stdout'
 
 module Lacerda

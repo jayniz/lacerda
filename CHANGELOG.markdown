@@ -1,3 +1,6 @@
+# 0.9.0 (03-Nov-15)
+- add RSpec reporter
+
 # 0.8.0 (30-Oct-15)
 - support for custom reporters
 - extract current output into and stdout reporter
