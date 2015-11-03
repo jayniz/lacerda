@@ -1,3 +1,6 @@
+# 0.10.1 (03-Nov-15)
+- Use `# Data Structures` with an s
+
 # 0.10.0 (03-Nov-15)
 - Make `# Data Structure` header for specifications optional
 

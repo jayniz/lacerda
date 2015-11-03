@@ -118,7 +118,7 @@ module Lacerda
       # Add Data Structure section automatically
       mson = open(input).read
       unless mson[/^\#[ ]*data[ ]+structure/i]
-        mson = "# Data Structure\n#{mson}"
+        mson = "# Data Structures\n#{mson}"
       end
 
       parse_result = FFI::MemoryPointer.new :pointer
