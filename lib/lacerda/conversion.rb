@@ -115,9 +115,14 @@ module Lacerda
       input = filename
       output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
 
+      # Add Data Structure section automatically
+      mson = open(input).read
+      unless mson[/^\#[ ]*data[ ]+structure/i]
+        mson = "# Data Structure\n#{mson}"
+      end
 
       parse_result = FFI::MemoryPointer.new :pointer
-      RedSnow::Binding.drafter_c_parse(open(input).read, 0, parse_result)
+      RedSnow::Binding.drafter_c_parse(mson, 0, parse_result)
       parse_result = parse_result.get_pointer(0)
 
       status = -1

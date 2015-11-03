@@ -1,3 +1,6 @@
+# 0.10.0 (03-Nov-15)
+- Make `# Data Structure` header for specifications optional
+
 # 0.9.0 (03-Nov-15)
 - add RSpec reporter
 
