@@ -3,6 +3,10 @@ require 'lacerda/specification'
 module Lacerda
   class PublishSpecification < Lacerda::Specification
 
+    def initialize(service, schema_or_file)
+      super
+    end
+
     def errors
       return [] unless @comparator
       @comparator.errors

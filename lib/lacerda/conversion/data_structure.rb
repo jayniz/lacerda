@@ -6,6 +6,26 @@ module Lacerda
       PRIMITIVES = %w{boolean string number array enum object}
 
       def self.scope(scope, string)
+        # This allows users to enter either
+        #
+        #     # Message
+        #     - id (number, required)
+        #     - ...
+        #
+        # or
+        #
+        #     # MessageService::Message
+        #     - id (number, required)
+        #     - ...
+        #
+        # in their publish.mson specification files. Including the service name in
+        # a publish specification is redundant and not necessary, but let's let our
+        # friendly users do this if they wish.
+        #
+        scope = nil if Lacerda.underscore(string.to_s).start_with?(Lacerda.underscore(scope.to_s))
+
+        # Now that this is out of the way, let's put a
+        # scope in front and return the string.
         Lacerda.underscore(
           [scope, string.to_s].compact.join(Lacerda::SCOPE_SEPARATOR)
         )

@@ -11,7 +11,12 @@ properties right away):
 - slugs: (array[string])
 
 
-# Post
+# Publisher::Post
+Although it is not necessary or recommended to use the publishing
+service's name as a prefix to the published object, we want to test
+that Lacerda just ignores the Publisher:: prefix in this case.
+
+## Properties
 - id: (number, required)
 - title: (string, required)
 - tag: (Tag)

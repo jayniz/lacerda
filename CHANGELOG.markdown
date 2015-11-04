@@ -1,3 +1,7 @@
+# 0.11.0 (04-Nov-15)
+- rename ConsumeContract and PublishContract to ConsumeSpecification and PublishSpecification
+- omit redundant service name in model names of publish contracts
+
 # 0.10.2 (04-Nov-15)
 - report all missing definitions instead of just the first (fixes #8)
 
