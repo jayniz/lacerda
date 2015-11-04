@@ -37,10 +37,10 @@ and smoke it:
 ```shell
 /home/dev/lacerda$ DATA_DIR=contracts/ rake lacerda:mson_to_json_schema
 Converting 4 files:
-OK /home/dev/lacerda/contracts/consumer/consume.mson
-OK /home/dev/lacerda/contracts/invalid_property/consume.mson
-OK /home/dev/lacerda/contracts/missing_required/consume.mson
-OK /home/dev/lacerda/contracts/publisher/publish.mson
+OK /home/dev/lacerda/specifications/consumer/consume.mson
+OK /home/dev/lacerda/specifications/invalid_property/consume.mson
+OK /home/dev/lacerda/specifications/missing_required/consume.mson
+OK /home/dev/lacerda/specifications/publisher/publish.mson
 /home/dev/lacerda$
 ```
 
@@ -59,9 +59,9 @@ By converting all files in a directory this gem will build up the following rela
 - Infrastructure
   - Service
     - Contracts
-      - Publish contract
+      - Publish specification
         - PublishedObjects
-      - Consume contract
+      - Consume specification
         - ConsumedObjects
 
 # References

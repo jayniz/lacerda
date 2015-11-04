@@ -3,7 +3,7 @@ require 'lacerda/published_object'
 require 'lacerda/consumed_object'
 
 module Lacerda
-  class Contract
+  class Specification
     attr_reader :service, :schema
 
     def initialize(service, schema_or_file)

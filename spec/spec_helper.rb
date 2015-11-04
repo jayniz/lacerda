@@ -26,7 +26,7 @@ require 'lacerda'
 
 RSpec.configure do |config|
 
-  # Convert/load test infrastructure, services and contracts
+  # Convert/load test infrastructure, services and specifications
   config.before(:suite) do
     $contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
     path = File.join($contracts_dir, "service_test")

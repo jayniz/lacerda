@@ -85,8 +85,8 @@ module Lacerda
     private
 
     def load_contracts
-      @publish = Lacerda::PublishContract.new(self, File.join(@data_dir, "publish.schema.json"))
-      @consume = Lacerda::ConsumeContract.new(self, File.join(@data_dir, "consume.schema.json"))
+      @publish = Lacerda::PublishSpecification.new(self, File.join(@data_dir, "publish.schema.json"))
+      @consume = Lacerda::ConsumeSpecification.new(self, File.join(@data_dir, "consume.schema.json"))
     end
   end
 end

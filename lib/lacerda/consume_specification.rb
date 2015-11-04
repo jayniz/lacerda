@@ -1,7 +1,7 @@
-require 'lacerda/contract'
+require 'lacerda/specification'
 
 module Lacerda
-  class ConsumeContract < Lacerda::Contract
+  class ConsumeSpecification < Lacerda::Specification
     def object_description_class
       Lacerda::ConsumedObject
     end

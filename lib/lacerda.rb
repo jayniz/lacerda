@@ -1,6 +1,6 @@
 require 'lacerda/conversion'
-require 'lacerda/publish_contract'
-require 'lacerda/consume_contract'
+require 'lacerda/publish_specification'
+require 'lacerda/consume_specification'
 require 'lacerda/service'
 require 'lacerda/infrastructure'
 require 'lacerda/compare/json_schema'

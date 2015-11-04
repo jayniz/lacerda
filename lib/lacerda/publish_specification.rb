@@ -1,7 +1,7 @@
-require 'lacerda/contract'
+require 'lacerda/specification'
 
 module Lacerda
-  class PublishContract < Lacerda::Contract
+  class PublishSpecification < Lacerda::Specification
 
     def errors
       return [] unless @comparator
