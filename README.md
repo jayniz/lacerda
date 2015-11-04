@@ -13,18 +13,15 @@ This gem can:
   - which service consumes what from which other service
   - if all services consume and publish conforming to their contracts.
 
-You likely don't want to use it on its own but head on over to the [Zeta](https://github.com/moviepilot/zeta) gem which explains things in more detail. If you're just looking for ONE way to transform MSON files into JSON Schema, read on:
+You likely **don't want to use it on its own** but integrate your infrastructure via
 
-## Getting started
-First, check out [this API Blueprint map](https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map) to understand how _API Blueprint_ documents are laid out:
+⏩[Zeta](https://github.com/moviepilot/zeta) ⏪
 
-![API Blueprint map](https://raw.githubusercontent.com/apiaryio/api-blueprint/master/assets/map.png)
+. Click the link, it will explains things in more detail. If you're just looking for *one* way to transform MSON files into JSON Schema, read on:
 
-You can see that their structure covers a full API use case with resource groups, single resources, actions on those resources including requests and responses. All we want, though, is the little red top level branch called `Data structures`.
-
-We're using a ruby gem called [RedSnow](https://github.com/apiaryio/redsnow), which has bindings to [SnowCrash](https://github.com/apiaryio/snowcrash) which parses _API Blueprints_ into an AST.
-
-Luckily, a rake task does all that for you. To convert all `*.mson` files in `contracts/` into `*.schema.json` files,
+## MSON to JSON schema
+*Lacerda* offers a rake task that converts MSON files into JSON schemas.
+To convert all `*.mson` files in `contracts/` into `*.schema.json` files,
 
 put this in your `Rakefile`:
 
@@ -44,17 +41,10 @@ OK /home/dev/lacerda/specifications/publisher/publish.mson
 /home/dev/lacerda$
 ```
 
-## Tests and development
-  - run `bundle` once
-  - run `guard` in a spare terminal which will run the tests,
-    install gems, and so forth
-  - run `rspec spec` to run all the tests
-  - check out  `open coverage/index.html` or `open coverage/rcov/index.html`
-  - run `bundle console` to play around with a console
-
 ## Structure
 
-By converting all files in a directory this gem will build up the following relationships:
+By loading all files in a directory this gem will build up the following
+relationships:
 
 - Infrastructure
   - Service
@@ -64,6 +54,29 @@ By converting all files in a directory this gem will build up the following rela
       - Consume specification
         - ConsumedObjects
 
-# References
+## Compatibility
 
+Until there is a native MSON to JSON schema parser available, we do the
+conversion ourselves. These features from the MSON specification are currently supported:
+
+- [x] primitive properties: `string`, `number`, `boolean`, `null`
+- [x] `object` properties
+- [x] `array` properties with items of one type
+- [ ] `array` properties of mixed types
+- [ ] `array` properties of arrays
+- [ ] `enum` properties
+- [ ] `One of` properties mutually exclusive properties
+- [x] `Referencing`
+- [ ] `Mixins` 
+
+
+## Tests and development
+  - run `bundle` once
+  - run `guard` in a spare terminal which will run the tests,
+    install gems, and so forth
+  - run `rspec spec` to run all the tests
+  - check out  `open coverage/index.html` or `open coverage/rcov/index.html`
+  - run `bundle console` to play around with a console
+
+# References
 [1] This quote in French quotation marks is from "Fear and Loathing in Las Vegas". Since I can't link to the book, a link to the [movie script](http://www.dailyscript.com/scripts/fearandloathing.html) shall suffice.
