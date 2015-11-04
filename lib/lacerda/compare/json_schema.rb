@@ -30,10 +30,13 @@ module Lacerda
       def definitions_contained?
         @contained_schema['definitions'].each do |property, contained_property|
           containing_property = @containing_schema['definitions'][property]
-          return _e(:ERR_MISSING_DEFINITION, [@initial_location, property]) unless containing_property
-          return false unless schema_contains?(containing_property, contained_property, [property])
+          if !containing_property
+            _e(:ERR_MISSING_DEFINITION, [@initial_location, property]) 
+          else
+            schema_contains?(containing_property, contained_property, [property])
+          end
         end
-        true
+        @errors.empty?
       end
 
       def _e(error, location, extra = nil)
@@ -46,7 +49,7 @@ module Lacerda
 
         # We can only compare types and $refs, so let's make
         # sure they're there
-        return _e!(:ERR_MISSING_TYPE_AND_REF) unless
+        return _e(:ERR_MISSING_TYPE_AND_REF) unless
           (consume['type'] or consume['$ref']) and
           (publish['type'] or publish['$ref'])
 

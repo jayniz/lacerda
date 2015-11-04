@@ -1,3 +1,6 @@
+# 0.10.2 (04-Nov-15)
+- report all missing definitions instead of just the first (fixes #8)
+
 # 0.10.1 (03-Nov-15)
 - Use `# Data Structures` with an s
 

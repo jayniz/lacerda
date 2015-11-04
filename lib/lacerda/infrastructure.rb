@@ -54,7 +54,7 @@ module Lacerda
           missing_publishers.each do |publisher, consumers|
             missing << "#{publisher} (consumed by #{consumers.join(', ')})"
           end
-          errors["Missing publishers: "] = missing
+          errors["Missing publishers"] = missing
         end
 
         reporter.try(:result, @errors)

@@ -97,11 +97,13 @@ describe JsonSchema do
 
     context 'Json Schema a NOT containing other Json Schema b because of' do
 
-      it 'a missing definition' do
-        schema_b['definitions']['user'] = {}
+      it 'two missing definitions' do
+        schema_a['definitions'].delete 'post'
+        schema_b['definitions']['non_existant'] = { type: 'object', properties: {}}
 
         expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_MISSING_DEFINITION
+        expect(comparator.errors[0][:error]).to be :ERR_MISSING_DEFINITION
+        expect(comparator.errors[1][:error]).to be :ERR_MISSING_DEFINITION
       end
 
       it 'different types for the object' do

@@ -35,8 +35,8 @@ describe Lacerda::Infrastructure do
       expect(@i.contracts_fulfilled?).to be false
     end
 
-    it "has an error message" do
-      expect(@i.errors.length).to be 1
+    it "detected both missing publishers" do
+      expect(@i.errors['Missing publishers'].length).to be 2
     end
 
     it "refuses to work with a dubious reporter" do
