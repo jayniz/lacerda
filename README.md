@@ -68,6 +68,7 @@ conversion ourselves. These features from the MSON specification are currently s
 - [ ] `One of` properties mutually exclusive properties
 - [x] `Referencing`
 - [ ] `Mixins` 
+- [ ] Variable property names
 
 
 ## Tests and development
