@@ -20,20 +20,27 @@ module Lacerda
       result
     end
 
+    def object?(name)
+      scoped_name = scopify_name(name)
+      !!@schema[:definitions][scoped_name]
+    end
+
     def object(name)
-      scoped_name = Lacerda.underscore(name.to_s)
-
-      # Add our own prefix automatically if necessary
-      unless scoped_name.start_with?(Lacerda.underscore(service.name))
-        scoped_name = [Lacerda.underscore(service.name), scoped_name].join(Lacerda::SCOPE_SEPARATOR)
-      end
-
+      scoped_name = scopify_name(name)
       schema = @schema[:definitions][scoped_name]
       raise Lacerda::Service::InvalidObjectTypeError.new(scoped_name) unless schema
       Lacerda::PublishedObject.new(service, scoped_name, schema)
     end
 
     private
+
+    def scopify_name(name)
+      scoped_name = Lacerda.underscore(name.to_s)
+
+      # Add our own prefix automatically if necessary
+      return scoped_name if scoped_name.start_with?(Lacerda.underscore(service.name))
+      [Lacerda.underscore(service.name), scoped_name].join(Lacerda::SCOPE_SEPARATOR)
+    end
 
     def object_description_class
       Lacerda::PublishedObject

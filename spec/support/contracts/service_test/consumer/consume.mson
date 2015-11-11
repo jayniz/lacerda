@@ -1,7 +1,13 @@
+# Tag
+This structure has no publisher, so it doesn't have to exist in the publisher
+as a top level object.
+
+## Properties
+- name: (string, required)
+
 # Publisher::Post
 - title: (string, required)
-- tag: (object)
-  - name: (string, required)
+- tag: (Tag)
 
-# SomeOtherService::Model
+# NonexistantService::Model
 - why: (string)

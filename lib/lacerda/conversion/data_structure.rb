@@ -1,4 +1,3 @@
-require 'active_support/core_ext/string'
 
 module Lacerda
   module Conversion

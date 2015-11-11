@@ -27,14 +27,10 @@ guard 'ctags-bundler', :src_path => ["lib"] do
   watch(/^.+\.gemspec/)
 end
 
-guard :rspec, cmd: 'IGNORE_LOW_COVERAGE=1 rspec', all_on_start: true  do
+guard :rspec, cmd: 'rspec', all_on_start: true  do
   watch(%r{^spec/support/.*\.mson$}) { "spec" }
   watch(%r{^spec/support/.*\.rb$}) { "spec" }
   watch('spec/spec_helper.rb')  { "spec" }
-
-  # We could run individual specs, sure, but for now I dictate the tests
-  # are only green when we have 100% coverage, so partial runs will never
-  # succeed. Therefore, always run all the things.
   watch(%r{^(spec/.+_spec\.rb)$}) { "spec" }
   watch(%r{^lib/(.+)\.rb$})     { "spec" }
 end

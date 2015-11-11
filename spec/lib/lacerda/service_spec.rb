@@ -59,6 +59,14 @@ describe Lacerda::Service do
   context "validating objects" do
 
     context "to publish" do
+      it "knows that it publishes a certain object" do
+        expect(publisher.publishes?('Post')).to be true
+      end
+
+      it "knows that it doesn't publish a certain object" do
+        expect(publisher.publishes?('Automobile')).to be false
+      end
+
       it "complains about an unknokwn type" do
         expect(
           publisher.validate_object_to_publish('unknown_type', {some: :data})
@@ -88,6 +96,23 @@ describe Lacerda::Service do
 
     context "to consume" do
       let(:valid_post) { {id: 1, title: 'My title'} }
+
+      it "knows that it consume a certain object from a service" do
+        expect(consumer.consumes_from?('Publisher', 'Post')).to be true
+      end
+
+      it "knows that it doesn't consume a certain object from a service" do
+        expect(consumer.consumes_from?('NonExistantService', 'Automobile')).to be false
+      end
+
+      it "knows that it consume a certain object" do
+        expect(consumer.consumes?('Publisher::Post')).to be true
+      end
+
+      it "knows that it doesn't consume a certain object" do
+        expect(consumer.consumes?('Publisher::Automobile')).to be false
+      end
+
       it "complains about an unknokwn type" do
         expect(
           consumer.validate_object_to_consume('Publisher::unknown_type', {some: :data})
@@ -118,6 +143,14 @@ describe Lacerda::Service do
         expect(Blumquist).to receive(:new).with(schema: schema, data: valid_post).and_return :blumquist
         expect(
           consumer.consume_object('Publisher::Post', valid_post)
+        ).to eq :blumquist
+      end
+
+      it "returns a Blumquist object to consume with a given service" do
+        schema = consumer.consume.object('Publisher::Post').schema
+        expect(Blumquist).to receive(:new).with(schema: schema, data: valid_post).and_return :blumquist
+        expect(
+          consumer.consume_object_from(:publisher, :post, valid_post)
         ).to eq :blumquist
       end
     end

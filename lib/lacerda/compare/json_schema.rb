@@ -3,7 +3,7 @@ module Lacerda
     class JsonSchema
       ERRORS = {
         :ERR_ARRAY_ITEM_MISMATCH  => "The items in the published array don't match the consumer's specification.",
-        :ERR_MISSING_DEFINITION   => "The publish specification is missing a type defined in esothe consumer's specification.",
+        :ERR_MISSING_DEFINITION   => "The publish specification is missing a type defined in the consumer's specification.",
         :ERR_MISSING_POINTER      => "A JSON pointer could not be resolved.",
         :ERR_MISSING_PROPERTY     => "The published object is missing a property required by your specification.",
         :ERR_MISSING_REQUIRED     => "The published object has an optional property that you marked as required in your specification.",
@@ -22,18 +22,27 @@ module Lacerda
         @errors = []
         @initial_location = initial_location
         @contained_schema = contained_schema
-        definitions_contained?
+        properties_contained?
       end
 
       private
 
-      def definitions_contained?
-        @contained_schema['definitions'].each do |property, contained_property|
-          containing_property = @containing_schema['definitions'][property]
+      def properties_contained?
+        @contained_schema['properties'].each do |property, contained_property|
+          resolved_contained_property = data_for_pointer(property, @contained_schema)
+          containing_property = @containing_schema['properties'][property]
           if !containing_property
             _e(:ERR_MISSING_DEFINITION, [@initial_location, property]) 
           else
-            schema_contains?(containing_property, contained_property, [property])
+            resolved_containing_property = data_for_pointer(
+              containing_property,
+              @containing_schema
+            )
+            schema_contains?(
+              resolved_containing_property,
+              resolved_contained_property,
+              [property]
+            )
           end
         end
         @errors.empty?
@@ -49,7 +58,7 @@ module Lacerda
 
         # We can only compare types and $refs, so let's make
         # sure they're there
-        return _e(:ERR_MISSING_TYPE_AND_REF) unless
+        return _e(:ERR_MISSING_TYPE_AND_REF, location) unless
           (consume['type'] or consume['$ref']) and
           (publish['type'] or publish['$ref'])
 
@@ -117,6 +126,36 @@ module Lacerda
         true
       end
 
+      # Resolve pointer data idempotent(ally?). It will resolve
+      #
+      #     "foobar"
+      #
+      # or
+      #
+      #     { "$ref": "#/definitions/foobar" }
+      #
+      # or
+      #
+      #     { "type": "whatever", ... }
+      #
+      # to
+      #
+      #     { "type" :"whatever", ... }
+      #
+      def data_for_pointer(data_or_pointer, schema)
+        data = nil
+        if data_or_pointer['type']
+          data = data_or_pointer
+        elsif pointer = data_or_pointer['$ref']
+          data = resolve_pointer(pointer, schema)
+        else
+          data = schema['definitions'][data_or_pointer]
+        end
+        data
+      end
+
+      # Looks up a pointer like #/definitions/foobar and return
+      # its definition
       def resolve_pointer(pointer, schema)
         type = pointer[/\#\/definitions\/([^\/]+)$/, 1]
         return false unless type

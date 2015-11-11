@@ -1,3 +1,6 @@
+require 'json-schema'
+require 'active_support/core_ext/hash/indifferent_access'
+
 # This represents a description of an Object (as it was in MSON and later
 # JSON Schema). It can come in two flavors:
 #
@@ -21,7 +24,7 @@ module Lacerda
       @defined_in_service = defined_in_service
       @scoped_name = scoped_name
       @name = remove_service_from_scoped_name(scoped_name)
-      @schema = schema
+      @schema = schema.with_indifferent_access
     end
 
     def validate_data!(data)

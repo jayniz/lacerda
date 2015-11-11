@@ -31,11 +31,11 @@ describe Lacerda::Infrastructure do
       @i.contracts_fulfilled?(Lacerda::Reporter.new)
     end
 
-    it "contracts are not fulfilled" do
+    it "because contracts are not fulfilled" do
       expect(@i.contracts_fulfilled?).to be false
     end
 
-    it "detected both missing publishers" do
+    it "detecting both missing publishers" do
       expect(@i.errors['Missing publishers'].length).to be 2
     end
 

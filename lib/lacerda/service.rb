@@ -28,8 +28,21 @@ module Lacerda
 
     def consumed_objects(publisher = nil)
       @consume.objects.select do |o|
+        next if o.publisher_name.blank?
         publisher.blank? or o.publisher == publisher
       end
+    end
+
+    def publishes?(object_name)
+      @publish.object?(object_name.to_s)
+    end
+
+    def consumes?(object_name)
+      @consume.object?(object_name.to_s)
+    end
+
+    def consumes_from?(service_name, object_name)
+      @consume.object?([service_name, object_name].join(Lacerda::SCOPE_SEPARATOR))
     end
 
     def published_objects
@@ -75,6 +88,10 @@ module Lacerda
     def validate_object_to_consume!(type, data)
       object_description = @consume.object(type)
       object_description.validate_data!(data)
+    end
+
+    def consume_object_from(service_name, type, data)
+      consume_object([service_name, type].join(Lacerda::SCOPE_SEPARATOR), data)
     end
 
     def consume_object(type, data)

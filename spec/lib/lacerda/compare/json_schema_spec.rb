@@ -23,6 +23,10 @@ describe JsonSchema do
           },
           'required' => [ 'id', 'title' ]
         }
+      },
+      'properties' => {
+        'post' => { '$ref' => '#/definitions/post' },
+        'tag'  => { '$ref' => '#/definitions/tag' }
       }
     }
   }
@@ -39,6 +43,9 @@ describe JsonSchema do
           },
           'required' => [ 'id', 'title' ]
         }
+      },
+      'properties' => {
+        'post' => { '$ref' => '#/definitions/post' }
       }
     }
   }
@@ -98,8 +105,8 @@ describe JsonSchema do
     context 'Json Schema a NOT containing other Json Schema b because of' do
 
       it 'two missing definitions' do
-        schema_a['definitions'].delete 'post'
-        schema_b['definitions']['non_existant'] = { type: 'object', properties: {}}
+        schema_a['properties'].delete 'post'
+        schema_b['properties']['non_existant'] = { type: 'object', properties: {}}
 
         expect(comparator.contains?(schema_b)).to be false
         expect(comparator.errors[0][:error]).to be :ERR_MISSING_DEFINITION

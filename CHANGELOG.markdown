@@ -1,3 +1,14 @@
+# 0.12.0 (06-Nov-15)
+- add Lacerda::Service#publishes?(object_name)
+- add Lacerda::Service#consumes?(object_name)
+- add Lacerda::Service#consumes_from?(service_name, object_name)
+- add Lacerda::Service#consume_object_from(service_name, object_name)
+- load Lacerda::VERSION
+- add missing json-schema require
+- fix a typo in the ERR_MISSING_DEFINITION error message
+- update blumquist
+- allow top level types without a publishing service prefix in consume specifications
+
 # 0.11.0 (04-Nov-15)
 - rename ConsumeContract and PublishContract to ConsumeSpecification and PublishSpecification
 - omit redundant service name in model names of publish contracts

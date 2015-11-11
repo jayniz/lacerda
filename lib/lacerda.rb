@@ -1,3 +1,4 @@
+require 'lacerda/version'
 require 'lacerda/conversion'
 require 'lacerda/publish_specification'
 require 'lacerda/consume_specification'
@@ -7,6 +8,7 @@ require 'lacerda/compare/json_schema'
 require 'lacerda/reporter'
 require 'lacerda/reporters/multi'
 require 'lacerda/reporters/stdout'
+require 'active_support/core_ext/string'
 
 module Lacerda
   SCOPE_SEPARATOR = '::'
@@ -23,5 +25,10 @@ module Lacerda
     string.gsub(/#{SCOPE_SEPARATOR}/, ':')
           .underscore
           .gsub(/:/, SCOPE_SEPARATOR)
+  end
+
+  # Poor man's deep copy: json 🆗 🆒
+  def self.deep_copy(object)
+    JSON.parse({m: object}.to_json)['m']
   end
 end
