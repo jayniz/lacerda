@@ -55,6 +55,7 @@ module Lacerda
 
       def add_properties_to_json_schema
         return unless @data['sections']
+        return unless @data['sections'].length > 0
         members = @data['sections'].select{|d| d['class'] == 'memberType' }.first['content'].select{|d| d['class'] == 'property' }
         members.each do |s|
           content = s['content']
