@@ -1,4 +1,7 @@
-# 0.12.0 (06-Nov-15)
+# 0.12.1 (12-Nov-15)
+- allow empty publish specifications
+
+# 0.12.0 (11-Nov-15)
 - add Lacerda::Service#publishes?(object_name)
 - add Lacerda::Service#consumes?(object_name)
 - add Lacerda::Service#consumes_from?(service_name, object_name)
