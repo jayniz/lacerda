@@ -1,3 +1,6 @@
+# 0.12.2
+- don't crash when a specification has a missing definition, but report the error
+
 # 0.12.1 (12-Nov-15)
 - allow empty publish specifications
 

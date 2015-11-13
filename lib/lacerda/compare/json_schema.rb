@@ -85,6 +85,9 @@ module Lacerda
         elsif(consume['$ref'] and publish['$ref'])
          resolved_consume = resolve_pointer(consume['$ref'], @contained_schema)
          resolved_publish = resolve_pointer(publish['$ref'], @containing_schema)
+
+         return _e(:ERR_MISSING_POINTER, location, consume['$ref']) unless resolved_consume
+         return _e(:ERR_MISSING_POINTER, location, publish['$ref']) unless resolved_publish
          return schema_contains?(resolved_publish, resolved_consume, location)
 
         # 3)

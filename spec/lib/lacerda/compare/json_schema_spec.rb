@@ -54,7 +54,7 @@ describe JsonSchema do
     let(:schema){ {'definitions' => { "foo" => :bar }} }
     let(:js){ JsonSchema.new(schema) }
 
-    describe ":data_for_pointer" do
+    describe "#data_for_pointer" do
       it "inline object" do
         inline = {'type' => 'object', properties: :foo }
         expect(js.send(:data_for_pointer, inline, schema)).to eq inline

@@ -6,6 +6,7 @@ describe Lacerda::Service do
   let(:publisher){ $test_infrastructure.services[:publisher] }
   let(:consumer){ $test_infrastructure.services[:consumer] }
   let(:consumer_invalid_property){ $test_infrastructure.services[:invalid_property] }
+  let(:consumer_missing_definition){ $test_infrastructure.services[:missing_definition] }
   let(:consumer_missing_required){ $test_infrastructure.services[:missing_required] }
 
   context "dependencies of services" do
@@ -21,9 +22,10 @@ describe Lacerda::Service do
       consumers = [
         consumer,
         consumer_invalid_property,
+        consumer_missing_definition,
         consumer_missing_required
-      ]
-      expect(publisher.consumers).to eq consumers
+      ].map(&:name)
+      expect(publisher.consumers.map(&:name)).to eq consumers
     end
 
     it "publisher publishes one object" do

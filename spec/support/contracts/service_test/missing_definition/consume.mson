@@ -1,0 +1,6 @@
+# TagWithATypo
+- name: (string, required)
+
+# Publisher::Post
+- title: (string, required)
+- tag: (Tag)
