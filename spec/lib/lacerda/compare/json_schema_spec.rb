@@ -50,118 +50,142 @@ describe JsonSchema do
     }
   }
 
-  describe '#contains?' do
-    let(:comparator){ JsonSchema.new(schema_a) }
+  context "unit tests" do
+    let(:schema){ {'definitions' => { "foo" => :bar }} }
+    let(:js){ JsonSchema.new(schema) }
 
-    let(:tag_as_pointer){ { '$ref' => '#/definitions/tag' } }
-    let(:tag_as_inline_object) {
-      {
-        'type' => 'object',
-        'properties' => {
-          'id' => {'type' => 'number'}
-        }
-      }
-    }
-
-    context 'Json Schema a containing Json Schema b' do
-
-      it 'when they are equal' do
-        expect(comparator.contains?(schema_a)).to be true
+    describe ":data_for_pointer" do
+      it "inline object" do
+        inline = {'type' => 'object', properties: :foo }
+        expect(js.send(:data_for_pointer, inline, schema)).to eq inline
       end
 
-      it 'when one is contained in the other' do
-        expect(comparator.contains?(schema_b)).to be true
+      it "pointer via $ref" do 
+        ref = { "$ref" => "#/definitions/foo" }
+        expect(js.send(:data_for_pointer, ref, schema)).to eq :bar
       end
 
-      it 'when the child schema describes a child object as a ref' do
-        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_b['definitions']['tag'] = tag_as_inline_object
-        expect(comparator.contains?(schema_b)).to be true
-      end
-
-      it 'when the child schema describes a child object instead of using a reference' do
-        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
-        expect(comparator.contains?(schema_b)).to be true
-      end
-
-      it 'when the child schema describes a child object via a pointer' do
-        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_a['definitions']['primary_tag'] = tag_as_inline_object
-        expect(comparator.contains?(schema_b)).to be true
-      end
-
-      it 'when the child schema describes a child object via a pointer but the containing object inline' do
-        schema_a['definitions'].delete('tag')
-        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
-
-        schema_b['definitions']['tag'] = tag_as_inline_object
-        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        expect(comparator.contains?(schema_b)).to be_falsy
+      it "string pointer" do
+        string = "foo"
+        expect(js.send(:data_for_pointer, string, schema)).to eq :bar
       end
     end
+  end
 
-    context 'Json Schema a NOT containing other Json Schema b because of' do
+  context "integration tests" do
+    describe '#contains?' do
+      let(:comparator){ JsonSchema.new(schema_a) }
 
-      it 'two missing definitions' do
-        schema_a['properties'].delete 'post'
-        schema_b['properties']['non_existant'] = { type: 'object', properties: {}}
+      let(:tag_as_pointer){ { '$ref' => '#/definitions/tag' } }
+      let(:tag_as_inline_object) {
+        {
+          'type' => 'object',
+          'properties' => {
+            'id' => {'type' => 'number'}
+          }
+        }
+      }
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors[0][:error]).to be :ERR_MISSING_DEFINITION
-        expect(comparator.errors[1][:error]).to be :ERR_MISSING_DEFINITION
+      context 'Json Schema a containing Json Schema b' do
+
+        it 'when they are equal' do
+          expect(comparator.contains?(schema_a)).to be true
+        end
+
+        it 'when one is contained in the other' do
+          expect(comparator.contains?(schema_b)).to be true
+        end
+
+        it 'when the child schema describes a child object as a ref' do
+          schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          schema_b['definitions']['tag'] = tag_as_inline_object
+          expect(comparator.contains?(schema_b)).to be true
+        end
+
+        it 'when the child schema describes a child object instead of using a reference' do
+          schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+          expect(comparator.contains?(schema_b)).to be true
+        end
+
+        it 'when the child schema describes a child object via a pointer' do
+          schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          schema_a['definitions']['primary_tag'] = tag_as_inline_object
+          expect(comparator.contains?(schema_b)).to be true
+        end
+
+        it 'when the child schema describes a child object via a pointer but the containing object inline' do
+          schema_a['definitions'].delete('tag')
+          schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+
+          schema_b['definitions']['tag'] = tag_as_inline_object
+          schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          expect(comparator.contains?(schema_b)).to be_falsy
+        end
       end
 
-      it 'different types for the object' do
-        schema_b['definitions']['post']['type'] = 'string'
+      context 'Json Schema a NOT containing other Json Schema b because of' do
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
-      end
+        it 'two missing definitions' do
+          schema_a['properties'].delete 'post'
+          schema_b['properties']['non_existant'] = { type: 'object', properties: {}}
 
-      it 'a missing property' do
-        schema_b['definitions']['post']['properties']['name'] = {}
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors[0][:error]).to be :ERR_MISSING_DEFINITION
+          expect(comparator.errors[1][:error]).to be :ERR_MISSING_DEFINITION
+        end
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
-      end
+        it 'different types for the object' do
+          schema_b['definitions']['post']['type'] = 'string'
 
-      it 'a different type of a property' do
-        schema_b['definitions']['post']['properties']['id']['type'] = 'string'
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
+        end
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
-      end
+        it 'a missing property' do
+          schema_b['definitions']['post']['properties']['name'] = {}
 
-      it 'a different type of reference' do
-        schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
-      end
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
+        end
 
-      it 'a missing required property' do
-        schema_b['definitions']['post']['required'] << 'name'
+        it 'a different type of a property' do
+          schema_b['definitions']['post']['properties']['id']['type'] = 'string'
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
-      end
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
+        end
 
-      it 'a missing pointer' do
-        schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
-        schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
-        schema_b['definitions']['tag'] = tag_as_inline_object
-        schema_a['definitions'].delete('tag')
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.first[:error]).to be :ERR_MISSING_POINTER
-      end
+        it 'a different type of reference' do
+          schema_b['definitions']['post']['properties']['primary_tag'] = { '$ref' => '#/definitions/something_else' }
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
+        end
 
-      it 'a different type for the items of a property of type array' do
-        schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
+        it 'a missing required property' do
+          schema_b['definitions']['post']['required'] << 'name'
 
-        expect(comparator.contains?(schema_b)).to be false
-        expect(comparator.errors.length).to be 2
-        expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
+        end
+
+        it 'a missing pointer' do
+          schema_a['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
+          schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_inline_object
+          schema_b['definitions']['tag'] = tag_as_inline_object
+          schema_a['definitions'].delete('tag')
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_POINTER
+        end
+
+        it 'a different type for the items of a property of type array' do
+          schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
+
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.length).to be 2
+          expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
+        end
       end
     end
   end
