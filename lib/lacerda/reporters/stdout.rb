@@ -6,36 +6,58 @@ module Lacerda
         @verbose = options.fetch(:verbose, true)
         @io = options.fetch(:output, $stdout)
       end
-  
+
       def check_publishing
       end
-  
+
       def check_publisher(publisher)
-        @io.print "\n#{publisher.name.camelize} satisfies: " if @verbose
+        return unless @verbose
+        @consumers = 0
+        @consume_errors = 0
+        @io.print "\n#{publisher.name.camelize} satisfies: "
       end
-  
+
       def consume_specification_satisfied(consumer, is_valid)
+        @consumers += 1
         if is_valid
           @io.print "#{consumer.name.camelize.green} " if @verbose
         else
           @io.print "#{consumer.name.camelize.red} " if @verbose
+          @consume_errors += 1
         end
       end
-  
+
       def check_consuming
-        @io.print "\n" if @verbose
+        return unless @verbose
+        if @consumers == 0
+          @io.print " (no consumers)".yellow + "\n"
+        elsif @consume_errors == 0
+          @io.print " OK".green + "\n"
+        else
+          @io.print " ERROR".red + "\n"
+        end
       end
-  
+
       def check_consumer(consuming_service)
+        return unless @verbose
+        @io.print "Objects consumed by #{consuming_service.name.camelize}: "
       end
-  
+
       def object_publisher_existing(consumed_object, is_published)
+        return unless @verbose
+        if is_published
+          @io.print ".".green
+        else
+          @io.print "x".red
+        end
       end
 
       def result(errors)
+        @io.puts "\n" if @verbose
         if errors.blank?
           @io.puts "All contracts valid 🙌".green if @verbose
         else
+          @io.puts "Violations:".red
           @io.puts JSON.pretty_generate(errors)
           @io.puts "#{errors.length} contract violations".red
         end
