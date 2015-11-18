@@ -69,7 +69,7 @@ module Lacerda
           spec.merge!(primitive_or_reference(type))
 
           # We might have a description
-          spec['description'] = s['description']
+          spec['description'] = content['description']
 
           # If it's an array, we need to pluck out the item types
           if type == 'array'

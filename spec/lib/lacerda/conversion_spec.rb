@@ -78,6 +78,10 @@ describe Lacerda::Conversion do
       expect(publish_schema['definitions']['app::tag']['description']).to eq "Very basic tag implementation with a url slug and multiple variations of the tag name."
     end
 
+    it "found the tag's id property description" do
+      expect(publish_schema['definitions']['app::tag']['properties']['id']['description']).to eq "Just an id, carry on"
+    end
+
     context "validating objects that" do
       let(:valid_tag){ {'id' => 1} }
 
