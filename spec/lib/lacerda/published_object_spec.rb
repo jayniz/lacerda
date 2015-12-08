@@ -11,4 +11,19 @@ describe Lacerda::PublishedObject do
   it "knows the service its referring to" do
     expect(o.publisher).to eq publisher
   end
+
+  it "transfers definitions into sub schemas" do
+    d = {
+      id: 1,
+      title: 'title',
+      tag: {
+        id: 1,
+        name: 'name'
+      }
+    }
+    object_description = publisher.publish.object(:post)
+    expect{
+      object_description.validate_data!(d)
+    }.to_not raise_error
+  end
 end

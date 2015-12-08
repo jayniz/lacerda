@@ -27,9 +27,14 @@ module Lacerda
 
     def object(name)
       scoped_name = scopify_name(name)
-      schema = @schema[:definitions][scoped_name]
-      raise Lacerda::Service::InvalidObjectTypeError.new(scoped_name) unless schema
-      Lacerda::PublishedObject.new(service, scoped_name, schema)
+      object_schema = @schema[:definitions][scoped_name]
+      raise Lacerda::Service::InvalidObjectTypeError.new(scoped_name) unless object_schema
+
+      # Copy the definitions of our schema into the schema for the
+      # object in case its properties include json pointers
+      object_schema[:definitions] = Lacerda.deep_copy(@schema[:definitions])
+
+      Lacerda::PublishedObject.new(service, scoped_name, object_schema)
     end
 
     private

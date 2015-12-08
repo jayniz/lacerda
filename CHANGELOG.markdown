@@ -1,3 +1,9 @@
+# 0.12.4
+- fix https://github.com/moviepilot/lacerda/issues/17
+
+# 0.12.3
+- fix missing property descriptions in json schema conversion
+
 # 0.12.2
 - don't crash when a specification has a missing definition, but report the error
 - make stdout reporter a little more informative and pretty
