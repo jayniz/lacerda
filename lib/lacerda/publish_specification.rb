@@ -27,12 +27,16 @@ module Lacerda
 
     def object(name)
       scoped_name = scopify_name(name)
-      object_schema = @schema[:definitions][scoped_name]
+      schema_dup = Lacerda.deep_copy(@schema)
+
+      # It's critical to delete this object from the definitions
+      # or else the json validator gem will go into an endless loop
+      object_schema = schema_dup['definitions'].delete scoped_name.to_s
       raise Lacerda::Service::InvalidObjectTypeError.new(scoped_name) unless object_schema
 
       # Copy the definitions of our schema into the schema for the
       # object in case its properties include json pointers
-      object_schema[:definitions] = Lacerda.deep_copy(@schema[:definitions])
+      object_schema['definitions'] = schema_dup['definitions']
 
       Lacerda::PublishedObject.new(service, scoped_name, object_schema)
     end

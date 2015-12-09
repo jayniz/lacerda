@@ -1,3 +1,7 @@
+# 0.12.5
+- fix https://github.com/moviepilot/zeta/issues/18 (infinite loops
+  for some cases where json pointers are used)
+
 # 0.12.4
 - fix https://github.com/moviepilot/lacerda/issues/17
 

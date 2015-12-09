@@ -26,4 +26,11 @@ describe Lacerda::PublishedObject do
       object_description.validate_data!(d)
     }.to_not raise_error
   end
+
+  it "doesn't mind empty payloads" do
+    object_description = publisher.publish.object(:post)
+    expect{
+      object_description.validate_data!(nil).to be false
+    }.to raise_error(JSON::Schema::ValidationError)
+  end
 end
