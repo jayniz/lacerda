@@ -32,7 +32,11 @@ module Lacerda
       # It's critical to delete this object from the definitions
       # or else the json validator gem will go into an endless loop
       object_schema = schema_dup['definitions'].delete scoped_name.to_s
-      raise Lacerda::Service::InvalidObjectTypeError.new(scoped_name) unless object_schema
+
+      unless object_schema
+        msg = "Unknown object type: #{scoped_name.to_s.to_json} - did you specify it in publish.mson?"
+        raise Lacerda::Service::InvalidObjectTypeError.new(msg)
+      end
 
       # Copy the definitions of our schema into the schema for the
       # object in case its properties include json pointers

@@ -56,7 +56,7 @@ module Lacerda
       # or else the json validator gem will go into an endless loop
       object_schema =schema_dup['definitions'].delete underscored_name.to_s
 
-      raise Lacerda::Service::InvalidObjectTypeError.new("Invalid object type: #{underscored_name.to_s.to_json}") unless object_schema
+      raise Lacerda::Service::InvalidObjectTypeError.new("Unknown object type: #{underscored_name.to_s.to_json} - did you specify it in consume.mson?") unless object_schema
 
       # Copy the definitions of our schema into the schema for the
       # object in case its properties include json pointers
