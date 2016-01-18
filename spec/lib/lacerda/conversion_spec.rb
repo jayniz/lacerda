@@ -93,6 +93,16 @@ describe Lacerda::Conversion do
         expect('id' => '1').to_not match_schema(publish_schema, :tag)
       end
 
+      describe "have optional attributes are also nullable, until redsnow supports the nullable type" do
+        it "with the optional attribute not set at all" do
+          expect('id' => 1, 'author_id' => 2).to match_schema(publish_schema, :post)
+        end
+
+        it "with the optional attribute set to nil" do
+          expect('id' => 1, 'author_id' => 2, 'title' => nil).to match_schema(publish_schema, :post)
+        end
+      end
+
       it "have a wrong type array item" do
         expect('id' => 1, 'variations' => [1]).to_not match_schema(publish_schema, :tag)
       end
