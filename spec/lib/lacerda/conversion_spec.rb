@@ -71,7 +71,7 @@ describe Lacerda::Conversion do
     end
 
     it "parsed child objects in the consume schema" do
-      expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
+      expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq ["string", "null"]
     end
 
     it "found the tag description" do
