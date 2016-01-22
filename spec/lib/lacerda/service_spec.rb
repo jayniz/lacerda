@@ -40,6 +40,7 @@ describe Lacerda::Service do
 
   context "compatibilities" do
     it "publisher satisfies the consumer" do
+      binding.pry
       expect(publisher.satisfies?(consumer)).to be true
     end
   end
