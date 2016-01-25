@@ -25,35 +25,6 @@ module Lacerda
         properties_contained?
       end
 
-      private
-
-      def properties_contained?
-        @contained_schema['properties'].each do |property, contained_property|
-          resolved_contained_property = data_for_pointer(property, @contained_schema)
-          containing_property = @containing_schema['properties'][property]
-          if !containing_property
-            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], nil, false)
-          else
-            resolved_containing_property = data_for_pointer(
-              containing_property,
-              @containing_schema
-            )
-            schema_contains?(
-              publish: resolved_containing_property,
-              consume: resolved_contained_property,
-              location: [property]
-            )
-          end
-        end
-        @errors.empty?
-      end
-
-      def _e(error, location, extra = nil)
-        message = [ERRORS[error], extra].compact.join(": ")
-        @errors.push(error: error, message: message, location: location.compact.join("/"))
-        false
-      end
-
       def schema_contains?(options)
         publish      = options[:publish]
         consume      = options[:consume]
@@ -151,11 +122,15 @@ module Lacerda
 
             # Check all publish types for a compatible consume type
             publish_types.each do |publish_type|
+              original_errors = @errors
+              @errors = []
               compatible_consume_type_found = false
               consume_types.each do |consume_type|
-                next unless schema_contains?(publish: publish_type, consume: consume_type, location: location + [publish_type])
+                next unless publish_type == consume_type or # Because null types are stripped in schema_contains
+                            schema_contains?(publish: publish_type, consume: consume_type, location: location + [publish_type])
                 compatible_consume_type_found = true
               end
+              @errors = original_errors
               return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type) unless compatible_consume_type_found
             end
 
@@ -163,20 +138,26 @@ module Lacerda
           elsif consume['oneOf'] and publish['properties']
             consume_types = ([consume['oneOf']].flatten - [{"type" => "null"}]).sort
             compatible_consume_type_found = false
+            original_errors = @errors
+            @errors = []
             consume_types.each do |consume_type|
               next unless schema_contains?(publish: publish, consume: consume_type, location: location)
               compatible_consume_type_found = true
             end
+            @errors = original_errors
             return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish_type) unless compatible_consume_type_found
 
           # Mixed case 2/2:
           elsif consume['properties'] and publish['oneOf']
             publish_types = ([publish['oneOf']].flatten - [{"type" => "null"}]).sort
             incompatible_publish_type= nil
+            original_errors = @errors
+            @errors = []
             publish_types.each do |publish_type|
               next if schema_contains?(publish: publish_type, consume: consume, location: location)
               incompatible_publish_type = publish_type
             end
+            @errors = original_errors
             return _e(:ERR_MISSING_MULTI_PUBLISH_SINGLE_CONSUME, location, incompatible_publish_type) if incompatible_publish_type
 
           # We don't know how to handle this 😳
@@ -194,6 +175,37 @@ module Lacerda
         end
 
         true
+      end
+
+      private
+
+      def properties_contained?
+        @contained_schema['properties'].each do |property, contained_property|
+          resolved_contained_property = data_for_pointer(property, @contained_schema)
+          containing_property = @containing_schema['properties'][property]
+          if !containing_property
+            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in publish.mson)")
+          elsif !contained_property
+            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in consume.mson)")
+          else
+            resolved_containing_property = data_for_pointer(
+              containing_property,
+              @containing_schema
+            )
+            schema_contains?(
+              publish: resolved_containing_property,
+              consume: resolved_contained_property,
+              location: [property]
+            )
+          end
+        end
+        @errors.empty?
+      end
+
+      def _e(error, location, extra = nil)
+        message = [ERRORS[error], extra].compact.join(": ")
+        @errors.push(error: error, message: message, location: location.compact.join("/"))
+        false
       end
 
       # Resolve pointer data idempotent(ally?). It will resolve

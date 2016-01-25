@@ -14,4 +14,6 @@ properties right away):
 # Publisher::Post
 - id: (number, required)
 - title: (string, required)
+- body: (string, required)
+- abstract: (string)
 - tag: (Tag)

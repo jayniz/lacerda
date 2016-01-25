@@ -123,6 +123,138 @@ describe JsonSchema do
           schema_b['definitions']['post']['properties']['primary_tag'] = tag_as_pointer
           expect(comparator.contains?(schema_b)).to be_falsy
         end
+
+        describe "with oneOfs" do
+          it 'consume marks a property nullable that is not nullable in the publish' do
+            publish = <<-JSON
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "publisher",
+                "definitions": {
+                  "testObject": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "number"
+                        ],
+                        "description": ""
+                      }
+                    },
+                    "required": [ "id" ]
+                  }
+                },
+                "type": "object",
+                "properties": {
+                  "testObject": {
+                    "$ref": "#/definitions/testObject"
+                  }
+                }
+              }
+            JSON
+
+            consume = <<-JSON
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "publisher",
+                "definitions": {
+                  "testObject": {
+                    "type": "object",
+                    "oneOf": [
+                      { "type": "null" },
+                      {
+                        "type": "object",
+                        "required": [ "id" ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "number"
+                            ],
+                            "description": ""
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "type": "object",
+                "properties": {
+                  "testObject": {
+                    "$ref": "#/definitions/testObject"
+                  }
+                }
+              }
+            JSON
+
+            comparator = JsonSchema.new(JSON.parse(publish))
+            expect(comparator.contains?(JSON.parse(consume))).to be true
+          end
+
+          it 'consume marks a property nullable that is not nullable in the publish' do
+            consume = <<-JSON
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "publisher",
+                "definitions": {
+                  "testObject": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "number"
+                        ],
+                        "description": ""
+                      }
+                    },
+                    "required": [ "id" ]
+                  }
+                },
+                "type": "object",
+                "properties": {
+                  "testObject": {
+                    "$ref": "#/definitions/testObject"
+                  }
+                }
+              }
+            JSON
+
+            publish = <<-JSON
+              {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "publisher",
+                "definitions": {
+                  "testObject": {
+                    "type": "object",
+                    "oneOf": [
+                      { "type": "null" },
+                      {
+                        "type": "object",
+                        "required": [ "id" ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "number"
+                            ],
+                            "description": ""
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "type": "object",
+                "properties": {
+                  "testObject": {
+                    "$ref": "#/definitions/testObject"
+                  }
+                }
+              }
+            JSON
+
+            comparator = JsonSchema.new(JSON.parse(publish))
+            expect(comparator.contains?(JSON.parse(consume))).to be false
+          end
+        end
       end
 
       context 'Json Schema a NOT containing other Json Schema b because of' do

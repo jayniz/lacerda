@@ -40,7 +40,6 @@ describe Lacerda::Service do
 
   context "compatibilities" do
     it "publisher satisfies the consumer" do
-      binding.pry
       expect(publisher.satisfies?(consumer)).to be true
     end
   end
@@ -83,7 +82,7 @@ describe Lacerda::Service do
       end
 
       it "accepts a valid object" do
-        valid_post = {id: 1, title: 'My title'}
+        valid_post = {id: 1, title: 'My title', body: 'Body'}
         expect(
           publisher.validate_object_to_publish('Post', valid_post)
         ).to be true
