@@ -161,6 +161,7 @@ module Lacerda
             return _e(:ERR_MISSING_MULTI_PUBLISH_SINGLE_CONSUME, location, incompatible_publish_type) if incompatible_publish_type
 
           # We don't know how to handle this 😳
+          # an object can either have "properties" or "oneOf", if the schema has anything else, we break
           else
             return _e(:ERR_NOT_SUPPORTED, location, "Consume schema didn't have properties defined and publish schema no oneOf")
           end
