@@ -115,7 +115,7 @@ describe Lacerda::Service do
         expect(consumer.consumes?('Publisher::Automobile')).to be false
       end
 
-      it "complains about an unknokwn type" do
+      it "complains about an unknown type" do
         expect(
           consumer.validate_object_to_consume('Publisher::unknown_type', {some: :data})
         ).to be false
