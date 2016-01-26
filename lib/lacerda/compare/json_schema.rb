@@ -50,7 +50,7 @@ module Lacerda
         # Let's go:
 
         # 1)
-        if (consume['type'] and publish['type'])
+        if consume['type'] and publish['type']
           consume_types = ([consume['type']].flatten - ["null"]).sort
           publish_types = [publish['type']].flatten.sort
           if consume_types != publish_types
@@ -58,7 +58,7 @@ module Lacerda
           end
 
         # 2)
-        elsif(consume['$ref'] and publish['$ref'])
+        elsif consume['$ref'] and publish['$ref']
          resolved_consume = resolve_pointer(consume['$ref'], @contained_schema)
          resolved_publish = resolve_pointer(publish['$ref'], @containing_schema)
 
@@ -67,7 +67,7 @@ module Lacerda
          return schema_contains?(publish: resolved_publish, consume: resolved_consume, location: location)
 
         # 3)
-        elsif(consume['type'] and publish['$ref'])
+        elsif consume['type'] and publish['$ref']
           if resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
             return schema_contains?(publish: resolved_ref, consume: consume, location: location)
           else
@@ -75,7 +75,7 @@ module Lacerda
           end
 
         # 4)
-        elsif(consume['$ref'] and publish['type'])
+        elsif consume['$ref'] and publish['type']
           return _e(:ERR_NOT_SUPPORTED, location, nil)
         end
 
@@ -185,8 +185,6 @@ module Lacerda
           containing_property = @containing_schema['properties'][property]
           if !containing_property
             _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in publish.mson)")
-          elsif !contained_property
-            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in consume.mson)")
           else
             resolved_containing_property = data_for_pointer(
               containing_property,
