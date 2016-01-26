@@ -50,6 +50,25 @@ describe JsonSchema do
     }
   }
 
+  let(:schema_broken) {
+    {
+      '$schema' => 'http://json-schema.org/draft-04/schema#',
+      'definitions' => {
+        'post' => {
+          'type' => 'object',
+          'BROKEN' => {
+            'id' => { 'type' => 'number' },
+            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
+          },
+          'required' => [ 'id', 'title' ]
+        }
+      },
+      'properties' => {
+        'post' => { '$ref' => '#/definitions/post' }
+      }
+    }
+  }
+
   context "unit tests" do
     let(:schema){ {'definitions' => { "foo" => :bar }} }
     let(:js){ JsonSchema.new(schema) }
@@ -85,6 +104,16 @@ describe JsonSchema do
           }
         }
       }
+
+      context 'Json Schema with broken object (without "properties" or "oneOf")' do
+        # this is a very unlikely case where the schema for some reason neither has
+        # properties nor oneOf for type object
+        it 'fails to load the schema' do
+          schema = JsonSchema.new(schema_broken)
+          expect(schema.contains?(schema_broken)).to be false
+          expect(schema.errors[0][:error]).to be :ERR_NOT_SUPPORTED
+        end
+      end
 
       context 'Json Schema a containing Json Schema b' do
 
