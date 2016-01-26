@@ -145,7 +145,7 @@ module Lacerda
               compatible_consume_type_found = true
             end
             @errors = original_errors
-            return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish_type) unless compatible_consume_type_found
+            return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish['type']) unless compatible_consume_type_found
 
           # Mixed case 2/2:
           elsif consume['properties'] and publish['oneOf']
