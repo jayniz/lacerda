@@ -96,7 +96,7 @@ module Lacerda
           @schema['properties'][name] = spec
 
           # Mark the property as required
-          @schema['required'] << name if attributes.include?('required')
+          @schema['required'] << name if is_required
         end
       end
 
