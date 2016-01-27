@@ -82,7 +82,7 @@ describe Lacerda::Service do
       end
 
       it "accepts a valid object" do
-        valid_post = {id: 1, title: 'My title'}
+        valid_post = {id: 1, title: 'My title', body: 'Body'}
         expect(
           publisher.validate_object_to_publish('Post', valid_post)
         ).to be true
@@ -115,7 +115,7 @@ describe Lacerda::Service do
         expect(consumer.consumes?('Publisher::Automobile')).to be false
       end
 
-      it "complains about an unknokwn type" do
+      it "complains about an unknown type" do
         expect(
           consumer.validate_object_to_consume('Publisher::unknown_type', {some: :data})
         ).to be false

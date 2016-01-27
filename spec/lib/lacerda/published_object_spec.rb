@@ -16,6 +16,7 @@ describe Lacerda::PublishedObject do
     d = {
       id: 1,
       title: 'title',
+      body: 'text is nice',
       tag: {
         id: 1,
         name: 'name'

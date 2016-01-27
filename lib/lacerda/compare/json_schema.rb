@@ -25,36 +25,10 @@ module Lacerda
         properties_contained?
       end
 
-      private
-
-      def properties_contained?
-        @contained_schema['properties'].each do |property, contained_property|
-          resolved_contained_property = data_for_pointer(property, @contained_schema)
-          containing_property = @containing_schema['properties'][property]
-          if !containing_property
-            _e(:ERR_MISSING_DEFINITION, [@initial_location, property]) 
-          else
-            resolved_containing_property = data_for_pointer(
-              containing_property,
-              @containing_schema
-            )
-            schema_contains?(
-              resolved_containing_property,
-              resolved_contained_property,
-              [property]
-            )
-          end
-        end
-        @errors.empty?
-      end
-
-      def _e(error, location, extra = nil)
-        message = [ERRORS[error], extra].compact.join(": ")
-        @errors.push(error: error, message: message, location: location.compact.join("/"))
-        false
-      end
-
-      def schema_contains?(publish, consume, location = [])
+      def schema_contains?(options)
+        publish      = options[:publish]
+        consume      = options[:consume]
+        location     = options[:location] || []
 
         # We can only compare types and $refs, so let's make
         # sure they're there
@@ -76,31 +50,33 @@ module Lacerda
         # Let's go:
 
         # 1)
-        if (consume['type'] and publish['type'])
-          if consume['type'] != publish['type']
-            return _e(:ERR_TYPE_MISMATCH, location, "#{consume['type']} != #{publish['type']}")
+        if consume['type'] and publish['type']
+          consume_types = ([consume['type']].flatten - ["null"]).sort
+          publish_types = [publish['type']].flatten.sort
+          if consume_types != publish_types
+            return _e(:ERR_TYPE_MISMATCH, location, "Consume types #{consume_types.to_json} not compatible with publish types #{publish_types.to_json}")
           end
 
         # 2)
-        elsif(consume['$ref'] and publish['$ref'])
+        elsif consume['$ref'] and publish['$ref']
          resolved_consume = resolve_pointer(consume['$ref'], @contained_schema)
          resolved_publish = resolve_pointer(publish['$ref'], @containing_schema)
 
          return _e(:ERR_MISSING_POINTER, location, consume['$ref']) unless resolved_consume
          return _e(:ERR_MISSING_POINTER, location, publish['$ref']) unless resolved_publish
-         return schema_contains?(resolved_publish, resolved_consume, location)
+         return schema_contains?(publish: resolved_publish, consume: resolved_consume, location: location)
 
         # 3)
-        elsif(consume['type'] and publish['$ref'])
+        elsif consume['type'] and publish['$ref']
           if resolved_ref = resolve_pointer(publish['$ref'], @containing_schema)
-            return schema_contains?(resolved_ref, consume, location)
+            return schema_contains?(publish: resolved_ref, consume: consume, location: location)
           else
             return _e(:ERR_MISSING_POINTER, location, publish['$ref'])
           end
 
         # 4)
-        elsif(consume['$ref'] and publish['type'])
-          return _e(:ERR_NOT_SUPPORTED, location)
+        elsif consume['$ref'] and publish['type']
+          return _e(:ERR_NOT_SUPPORTED, location, nil)
         end
 
         # Make sure required properties in consume are required in publish
@@ -111,22 +87,124 @@ module Lacerda
 
         # We already know that publish and consume's type are equal
         # but if they're objects, we need to do some recursion
-        if consume['type'] == 'object'
-          consume['properties'].each do |property, schema|
-            return _e(:ERR_MISSING_PROPERTY, location, property) unless publish['properties'][property]
-            return false unless schema_contains?(publish['properties'][property], schema, location + [property])
+        if [consume['type']].flatten.include?('object')
+
+          # An object can either be described by its properties
+          # like this:
+          #
+          # (1) { "type": "object", "properties": { "active": { "type": "boolean" } }
+          #
+          # or by allowing a bunch of other types like this:
+          #
+          # (2) { "type": "object", "oneOf": [ {"$ref": "#/definitions/foo"}, {"type": "null"} ]
+          #
+          # So we need to take care of both cases for both "sides"
+          # (publish and consume), so 4 cases in total.
+          #
+          # First, the easy case:
+          if consume['properties'] and publish['properties']
+            consume['properties'].each do |property, schema|
+              return _e(:ERR_MISSING_PROPERTY, location, property) unless publish['properties'][property]
+              return false unless schema_contains?(publish: publish['properties'][property], consume: schema, location: location + [property])
+            end
+
+          # Now on to the trickier case, both have 'oneOf's:
+          #
+          # For each possible object type from the publish schema we have
+          # to check if we find a compatible type in the consume schema.
+          #
+          # It's not sufficient to just compare the names of the objects,
+          # because they might be different in the publish and consume
+          # schemas.
+          elsif publish['oneOf'] and consume['oneOf']
+            publish_types = publish['oneOf']
+            consume_types = [consume['oneOf']].flatten.compact
+
+            # Check all publish types for a compatible consume type
+            publish_types.each do |publish_type|
+              original_errors = @errors
+              @errors = []
+              compatible_consume_type_found = false
+              consume_types.each do |consume_type|
+                next unless publish_type == consume_type or # Because null types are stripped in schema_contains
+                            schema_contains?(publish: publish_type, consume: consume_type, location: location + [publish_type])
+                compatible_consume_type_found = true
+              end
+              @errors = original_errors
+              return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type) unless compatible_consume_type_found
+            end
+
+          # Mixed case 1/2:
+          elsif consume['oneOf'] and publish['properties']
+            consume_types = ([consume['oneOf']].flatten - [{"type" => "null"}]).sort
+            compatible_consume_type_found = false
+            original_errors = @errors
+            @errors = []
+            consume_types.each do |consume_type|
+              next unless schema_contains?(publish: publish, consume: consume_type, location: location)
+              compatible_consume_type_found = true
+            end
+            @errors = original_errors
+            return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish['type']) unless compatible_consume_type_found
+
+          # Mixed case 2/2:
+          elsif consume['properties'] and publish['oneOf']
+            publish_types = ([publish['oneOf']].flatten - [{"type" => "null"}]).sort
+            incompatible_publish_type= nil
+            original_errors = @errors
+            @errors = []
+            publish_types.each do |publish_type|
+              next if schema_contains?(publish: publish_type, consume: consume, location: location)
+              incompatible_publish_type = publish_type
+            end
+            @errors = original_errors
+            return _e(:ERR_MISSING_MULTI_PUBLISH_SINGLE_CONSUME, location, incompatible_publish_type) if incompatible_publish_type
+
+          # We don't know how to handle this 😳
+          # an object can either have "properties" or "oneOf", if the schema has anything else, we break
+          else
+            return _e(:ERR_NOT_SUPPORTED, location, "Consume schema didn't have properties defined and publish schema no oneOf")
           end
         end
 
         if consume['type'] == 'array'
           sorted_publish = publish['items'].sort
           consume['items'].sort.each_with_index do |item, i|
-            next if schema_contains?(sorted_publish[i], item)
-            return _e(:ERR_ARRAY_ITEM_MISMATCH, location)
+            next if schema_contains?(publish: sorted_publish[i], consume: item)
+            return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
           end
         end
 
         true
+      end
+
+      private
+
+      def properties_contained?
+        @contained_schema['properties'].each do |property, contained_property|
+          resolved_contained_property = data_for_pointer(property, @contained_schema)
+          containing_property = @containing_schema['properties'][property]
+          if !containing_property
+            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in publish.mson)")
+          else
+            resolved_containing_property = data_for_pointer(
+              containing_property,
+              @containing_schema
+            )
+            schema_contains?(
+              publish: resolved_containing_property,
+              consume: resolved_contained_property,
+              location: [property]
+            )
+          end
+        end
+        @errors.empty?
+      end
+
+      def _e(error, location, extra = nil)
+        message = [ERRORS[error], extra].compact.join(": ")
+        @errors.push(error: error, message: message, location: location.compact.join("/"))
+        false
       end
 
       # Resolve pointer data idempotent(ally?). It will resolve

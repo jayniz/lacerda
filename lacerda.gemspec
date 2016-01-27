@@ -21,8 +21,8 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "rake",          ["~> 10.2"]
-  spec.add_runtime_dependency "json-schema",   ["~> 2.5"]
-  spec.add_runtime_dependency "redsnow",       ["~> 0.4"]
+  spec.add_runtime_dependency "json-schema",   ["~> 2.5.1"]
+  spec.add_runtime_dependency "redsnow",       ["~> 0.4.3"]
   spec.add_runtime_dependency "colorize"
   spec.add_runtime_dependency "blumquist",     ["~> 0.3"]
 
@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "coveralls",           ["~> 0.8"]
   spec.add_development_dependency "codeclimate-test-reporter"
   spec.add_development_dependency 'pry'
-  spec.add_development_dependency 'pry-rescue'
-  spec.add_development_dependency 'pry-stack_explorer'
+  # spec.add_development_dependency 'pry-byebug'
+  # spec.add_development_dependency 'pry-rescue'
+  # spec.add_development_dependency 'pry-stack_explorer'
 end

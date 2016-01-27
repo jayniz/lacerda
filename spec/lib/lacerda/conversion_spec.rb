@@ -71,7 +71,7 @@ describe Lacerda::Conversion do
     end
 
     it "parsed child objects in the consume schema" do
-      expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq "string"
+      expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq ["string", "null"]
     end
 
     it "found the tag description" do
@@ -93,6 +93,16 @@ describe Lacerda::Conversion do
         expect('id' => '1').to_not match_schema(publish_schema, :tag)
       end
 
+      describe "have optional attributes are also nullable, until redsnow supports the nullable type" do
+        it "with the optional attribute not set at all" do
+          expect('id' => 1, 'author_id' => 2).to match_schema(publish_schema, :post)
+        end
+
+        it "with the optional attribute set to nil" do
+          expect('id' => 1, 'author_id' => 2, 'title' => nil).to match_schema(publish_schema, :post)
+        end
+      end
+
       it "have a wrong type array item" do
         expect('id' => 1, 'variations' => [1]).to_not match_schema(publish_schema, :tag)
       end
@@ -102,7 +112,7 @@ describe Lacerda::Conversion do
       end
 
       context "have properties with custom types that is" do
-        let(:valid_post){ {'id' => 1, 'title' => 'Servus', 'author_id' => 22} }
+        let(:valid_post){ {'id' => 1, 'title' => 'Servus', 'author_id' => 22, 'body' => 'We were somewhere around barstow on the edge of the desert' } }
         let(:invalid_tag){ {'id' => 1, 'variations' => [1]} }
 
         it "nonexistant" do

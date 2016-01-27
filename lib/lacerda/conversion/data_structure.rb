@@ -57,16 +57,23 @@ module Lacerda
         return unless @data['sections']
         return unless @data['sections'].length > 0
         members = @data['sections'].select{|d| d['class'] == 'memberType' }.first['content'].select{|d| d['class'] == 'property' }
+
+        # Iterate over each property
         members.each do |s|
+
+          # Pluck some things out of the AST
           content = s['content']
           type_definition = content['valueDefinition']['typeDefinition']
           type = type_definition['typeSpecification']['name']
+          attributes = type_definition['attributes'] || []
+          is_required = attributes.include?('required')
 
+          # Prepare the json schema fragment
           spec = {}
           name = Lacerda.underscore(content['name']['literal'])
 
           # This is either type: primimtive or $ref: reference_name
-          spec.merge!(primitive_or_reference(type))
+          spec.merge!(primitive_or_reference(type, is_required))
 
           # We might have a description
           spec['description'] = content['description']
@@ -74,7 +81,7 @@ module Lacerda
           # If it's an array, we need to pluck out the item types
           if type == 'array'
             nestedTypes = type_definition['typeSpecification']['nestedTypes']
-            spec['items'] = nestedTypes.map{|t| primitive_or_reference(t) }
+            spec['items'] = nestedTypes.map{|t| primitive_or_reference(t, is_required) }
 
           # If it's an object, we need recursion
           elsif type == 'object'
@@ -85,20 +92,28 @@ module Lacerda
             end
           end
 
+          # Add the specification of this property to the schema
           @schema['properties'][name] = spec
-          if attributes = type_definition['attributes']
-            @schema['required'] << name if attributes.include?('required')
-          end
+
+          # Mark the property as required
+          @schema['required'] << name if is_required
         end
       end
 
-      def primitive_or_reference(type)
-	return { 'type' => 'object' } if type.blank?
+      def primitive_or_reference(type, is_required)
+      	return { 'type' => 'object' } if type.blank?
 
         if PRIMITIVES.include?(type)
-          { 'type' => type }
+          types = [type]
+          types << 'null' unless is_required
+          { 'type' => types }
         else
-          { '$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }
+          types = [{'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }]
+          types << { 'type' => 'null' } unless is_required
+          {
+            'type' => 'object',
+            'oneOf' => types
+          }
         end
       end
 

@@ -7,6 +7,7 @@ as a top level object.
 
 # Publisher::Post
 - title: (string, required)
+- body: (string)
 - tag: (Tag)
 
 # NonexistantService::Model
