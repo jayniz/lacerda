@@ -1,3 +1,7 @@
+# 0.13.0
+- enhance some error messages (invalid object types)
+- make non required properties nullable https://github.com/moviepilot/lacerda/pull/21
+
 # 0.12.5
 - fix https://github.com/moviepilot/zeta/issues/18 (infinite loops
   for some cases where json pointers are used)
