@@ -1,5 +1,6 @@
 # 0.13.1
 - don't set type and oneOf in json schema, just oneOf
+- update blumquist from ~> 0.3 to ~> 0.4
 
 # 0.13.0
 - enhance some error messages (invalid object types)
