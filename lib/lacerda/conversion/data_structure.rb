@@ -111,7 +111,6 @@ module Lacerda
           types = [{'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }]
           types << { 'type' => 'null' } unless is_required
           {
-            'type' => 'object',
             'oneOf' => types
           }
         end

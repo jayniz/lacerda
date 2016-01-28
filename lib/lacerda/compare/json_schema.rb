@@ -7,7 +7,7 @@ module Lacerda
         :ERR_MISSING_POINTER      => "A JSON pointer could not be resolved.",
         :ERR_MISSING_PROPERTY     => "The published object is missing a property required by your specification.",
         :ERR_MISSING_REQUIRED     => "The published object has an optional property that you marked as required in your specification.",
-        :ERR_MISSING_TYPE_AND_REF => 'A property has to either have a "type" or a "$ref" property.',
+        :ERR_MISSING_TYPE_AND_REF_AND_ONE_OF => 'A property has to either have a "type", "oneOf" or "$ref" property.',
         :ERR_TYPE_MISMATCH        => "The published object has a property with a different type than the consumer's specification.",
         :ERR_NOT_SUPPORTED        => 'I don\'t yet know what to do when the consumer\'s specification has a "$ref" defined and the publisher\'s specification has a "type".'
       }
@@ -32,9 +32,9 @@ module Lacerda
 
         # We can only compare types and $refs, so let's make
         # sure they're there
-        return _e(:ERR_MISSING_TYPE_AND_REF, location) unless
-          (consume['type'] or consume['$ref']) and
-          (publish['type'] or publish['$ref'])
+        return _e(:ERR_MISSING_TYPE_AND_REF_AND_ONE_OF, location) unless
+          (consume['type'] or consume['$ref'] or consume['oneOf']) and
+          (publish['type'] or publish['$ref'] or publish['oneOf'])
 
         # There's four possibilities here:
         #

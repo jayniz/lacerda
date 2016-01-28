@@ -1,3 +1,6 @@
+# 0.13.1
+- don't set type and oneOf in json schema, just oneOf
+
 # 0.13.0
 - enhance some error messages (invalid object types)
 - make non required properties nullable https://github.com/moviepilot/lacerda/pull/21
