@@ -1,6 +1,10 @@
 # Data structures
 
-# Tag
+# Comment
+- body: (string, required)
+- author: (string, required)
+
+# Publisher::Tag
 We can write a description here, and then start defining the properties
 with the following headline (or as below for Post, just start with the
 properties right away):
@@ -16,4 +20,5 @@ properties right away):
 - title: (string, required)
 - body: (string, required)
 - abstract: (string)
-- tag: (Tag)
+- tag: (Publisher::Tag)
+- comments: (array[Comment], required)

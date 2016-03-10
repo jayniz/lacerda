@@ -50,7 +50,7 @@ module Lacerda
       # schema says 'i consume object X from service Y'.
       basename = File.basename(filename)
       if basename.end_with?("publish.mson")
-        data_structure_autoscope = service_scope
+        data_structure_autoscope = nil
       elsif basename.end_with?("consume.mson")
         data_structure_autoscope = nil
       else

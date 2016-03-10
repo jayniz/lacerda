@@ -82,7 +82,7 @@ describe Lacerda::Service do
       end
 
       it "accepts a valid object" do
-        valid_post = {id: 1, title: 'My title', body: 'Body'}
+        valid_post = {id: 1, title: 'My title', body: 'Body', comments: []}
         expect(
           publisher.validate_object_to_publish('Post', valid_post)
         ).to be true

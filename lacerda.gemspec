@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rake",          ["~> 10.2"]
 
   # json-schema 2.6.0 validates differently than 2.5.1
-  spec.add_runtime_dependency "json-schema",   ["~> 2.5.1"]
+  spec.add_runtime_dependency "json-schema"#,   ["~> 2.5.1"]
 
   spec.add_runtime_dependency "redsnow",       ["~> 0.4.3"]
   spec.add_runtime_dependency "colorize"

@@ -14,8 +14,9 @@ module Lacerda
     def objects
       return [] unless @schema[:definitions]
       @schema[:definitions].map do |scoped_name, schema|
+        next if !scoped_name.index(SCOPE_SEPARATOR)
         object_description_class.new(service, scoped_name, schema)
-      end
+      end.compact
     end
 
     private

@@ -25,6 +25,7 @@ module Lacerda
       @scoped_name = scoped_name
       @name = remove_service_from_scoped_name(scoped_name)
       @schema = schema.with_indifferent_access
+      @schema['$schema'] ||= 'http://json-schema.org/draft-04/schema#'
     end
 
     def validate_data!(data)
