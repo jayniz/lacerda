@@ -1,4 +1,7 @@
 # 0.13.1
+- don't choke on schemas without local definitions
+
+# 0.13.1
 - don't set type and oneOf in json schema, just oneOf
 - update blumquist from ~> 0.3 to ~> 0.4
 
