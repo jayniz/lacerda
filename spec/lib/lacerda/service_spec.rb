@@ -83,9 +83,8 @@ describe Lacerda::Service do
 
       it "accepts a valid object" do
         valid_post = {id: 1, title: 'My title', body: 'Body', comments: []}
-        expect(
-          publisher.validate_object_to_publish('Post', valid_post)
-        ).to be true
+        result = publisher.validate_object_to_publish('Post', valid_post)
+        expect(result).to be true
       end
 
       it "rejects an valid object with an exception" do

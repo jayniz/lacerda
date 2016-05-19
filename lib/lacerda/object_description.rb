@@ -32,6 +32,12 @@ module Lacerda
       JSON::Validator.validate!(@schema, data)
     end
 
+    def validate_data(data)
+      JSON::Validator.validate!(@schema, data)
+    rescue JSON::Schema::ValidationError
+      false
+    end
+
     private
 
     def remove_service_from_scoped_name(n)
