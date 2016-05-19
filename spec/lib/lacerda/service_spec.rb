@@ -28,8 +28,12 @@ describe Lacerda::Service do
       expect(publisher.consumers.map(&:name)).to eq consumers
     end
 
-    it "publisher publishes one object" do
-      expect(publisher.published_objects.length).to eq 2
+    it "publisher publishes two objects" do
+      expect(publisher.published_objects.map(&:name).sort).to eq ['post', 'tag']
+    end
+
+    it "doesn't expose Comment because it's just a local definition" do
+      expect(publisher.published_objects.map(&:name).include?("comment")).to be_falsey
     end
 
     it "consumed objects filtered by service" do
