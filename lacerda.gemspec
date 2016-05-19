@@ -22,8 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "activesupport"
   spec.add_runtime_dependency "rake",          ["~> 10.2"]
 
-  # json-schema 2.6.0 validates differently than 2.5.1
-  spec.add_runtime_dependency "json-schema"#,   ["~> 2.5.1"]
+  spec.add_runtime_dependency "json-schema",   ["~> 2.6.2"]
 
   spec.add_runtime_dependency "redsnow",       ["~> 0.4.3"]
   spec.add_runtime_dependency "colorize"
@@ -32,12 +31,12 @@ Gem::Specification.new do |spec|
   # Tins 1.7.0 is ruby 2.0 only
   spec.add_runtime_dependency "tins", ["~> 1.6.0"]
 
-  spec.add_development_dependency "bundler",             ["~> 1"]
-  spec.add_development_dependency "guard-bundler",       ["~> 2.1"]
-  spec.add_development_dependency "guard-ctags-bundler", ["~> 1.4"]
-  spec.add_development_dependency "guard-rspec",         ["~> 4.6"]
-  spec.add_development_dependency "rspec",               ["~> 3.3"]
-  spec.add_development_dependency "coveralls",           ["~> 0.8"]
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "guard-bundler"
+  spec.add_development_dependency "guard-ctags-bundler"
+  spec.add_development_dependency "guard-rspec"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "coveralls"
   spec.add_development_dependency "codeclimate-test-reporter"
   spec.add_development_dependency 'pry'
   # spec.add_development_dependency 'pry-byebug'
