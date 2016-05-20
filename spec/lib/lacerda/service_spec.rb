@@ -44,7 +44,8 @@ describe Lacerda::Service do
 
   context "compatibilities" do
     it "publisher satisfies the consumer" do
-      expect(publisher.satisfies?(consumer)).to be true
+      result = publisher.satisfies?(consumer)
+      expect(result).to be true
     end
   end
 

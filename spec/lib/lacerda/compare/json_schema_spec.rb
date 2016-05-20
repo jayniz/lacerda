@@ -349,5 +349,106 @@ describe JsonSchema do
         end
       end
     end
+
+    context 'oneOfs' do
+
+      context 'in just consume' do
+        let(:including){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "type": "object",
+              "properties": {"id": {"type": "number"}, "name": {"type": "string"}},
+              "required": ["name"]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "$ref": "#/definitions/testObject"
+            }
+          }
+        }
+        JSON
+        }
+        let(:included){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "consumer",
+          "definitions": {
+            "testObject": {
+              "oneOf": [{"type": "object", "properties": {"true": {"type": "boolean"}}} ]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "$ref": "#/definitions/testObject"
+            }
+          }
+        }
+        JSON
+        }
+
+        it 'no compatible oneOf in the consume schema is found' do
+          comparator = JsonSchema.new(including)
+          result = comparator.contains?(included)
+          expect(result).to be_falsy
+        end
+      end
+
+      context 'in both publish and consume' do
+        let(:including){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "oneOf": [{"type": "object", "properties": {"id": {"type": "number"}, "name": {"type": "string"}}, "required": ["name"]}, {"type": "null"} ]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "$ref": "#/definitions/testObject"
+            }
+          }
+        }
+                         JSON
+        }
+        let(:included){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "consumer",
+          "definitions": {
+            "testObject": {
+              "oneOf": [{"type": "object", "properties": {"id": {"type": "number"}}}, {"type": "null"} ]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "$ref": "#/definitions/testObject"
+            }
+          }
+        }
+                        JSON
+        }
+        it 'one schema containing the other' do
+          comparator = JsonSchema.new(including)
+          result = comparator.contains?(included)
+          expect(result).to be_truthy
+        end
+
+        it 'one schema not containing the other' do
+          comparator = JsonSchema.new(included)
+          $debug = ENV['DEBUG'].present?
+          result = comparator.contains?(including)
+          expect(result).to be_falsy
+        end
+      end
+    end
   end
 end
