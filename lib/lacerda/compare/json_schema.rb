@@ -16,6 +16,7 @@ module Lacerda
 
       def initialize(containing_schema)
         @containing_schema = containing_schema
+        @errors = []
       end
 
       def contains?(contained_schema, initial_location = nil)
@@ -29,6 +30,7 @@ module Lacerda
         publish      = options[:publish]
         consume      = options[:consume]
         location     = options[:location] || []
+        return false unless publish and consume
 
         # We can only compare types and $refs, so let's make
         # sure they're there
@@ -87,7 +89,8 @@ module Lacerda
 
         # We already know that publish and consume's type are equal
         # but if they're objects, we need to do some recursion
-        if [consume['type']].flatten.include?('object')
+        isnt_a_primitive  = [consume['type']].flatten.include?('object') || consume['oneOf'] || publish['oneOf']
+        if isnt_a_primitive
 
           # An object can either be described by its properties
           # like this:
@@ -122,16 +125,16 @@ module Lacerda
 
             # Check all publish types for a compatible consume type
             publish_types.each do |publish_type|
-              original_errors = @errors
-              @errors = []
               compatible_consume_type_found = false
               consume_types.each do |consume_type|
-                next unless publish_type == consume_type or # Because null types are stripped in schema_contains
-                            schema_contains?(publish: publish_type, consume: consume_type, location: location + [publish_type])
+                next unless publish_type == consume_type or
+                            compare_sub_types(publish_type, consume_type, location + [publish_type])
                 compatible_consume_type_found = true
               end
-              @errors = original_errors
-              return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type) unless compatible_consume_type_found
+
+              unless compatible_consume_type_found
+                return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type)
+              end
             end
 
           # Mixed case 1/2:
@@ -145,7 +148,9 @@ module Lacerda
               compatible_consume_type_found = true
             end
             @errors = original_errors
-            return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish['type']) unless compatible_consume_type_found
+            unless compatible_consume_type_found
+              return _e(:ERR_MISSING_SINGLE_PUBLISH_MULTI_CONSUME, location, publish['type'])
+            end
 
           # Mixed case 2/2:
           elsif consume['properties'] and publish['oneOf']
@@ -158,7 +163,9 @@ module Lacerda
               incompatible_publish_type = publish_type
             end
             @errors = original_errors
-            return _e(:ERR_MISSING_MULTI_PUBLISH_SINGLE_CONSUME, location, incompatible_publish_type) if incompatible_publish_type
+            if incompatible_publish_type
+              return _e(:ERR_MISSING_MULTI_PUBLISH_SINGLE_CONSUME, location, incompatible_publish_type)
+            end
 
           # We don't know how to handle this 😳
           # an object can either have "properties" or "oneOf", if the schema has anything else, we break
@@ -170,6 +177,7 @@ module Lacerda
         if consume['type'] == 'array'
           sorted_publish = publish['items'].sort
           consume['items'].sort.each_with_index do |item, i|
+            # TODO why just compare sorted_publish[i] and not all??
             next if schema_contains?(publish: sorted_publish[i], consume: item)
             return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
           end
@@ -182,7 +190,7 @@ module Lacerda
 
       def properties_contained?
         @contained_schema['properties'].each do |property, contained_property|
-          resolved_contained_property = data_for_pointer(property, @contained_schema)
+          resolved_contained_property = data_for_pointer(contained_property, @contained_schema)
           containing_property = @containing_schema['properties'][property]
           if !containing_property
             _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in publish.mson)")
@@ -241,6 +249,22 @@ module Lacerda
         type = pointer[/\#\/definitions\/([^\/]+)$/, 1]
         return false unless type
         schema['definitions'][type]
+      end
+
+      # If you just want to compare two json objects/types,
+      # this method wraps them into full schemas, creates a new
+      # instance of self and compares
+      def compare_sub_types(containing, contained, location)
+        resolved_containing = data_for_pointer(containing, @containing_schema)
+        resolved_contained  = data_for_pointer(contained,  @contained_schema)
+        containing_schema = {
+          'definitions' => { 'foo' =>  resolved_containing },
+          'properties' => { 'bar' => { '$ref' => '#/definitions/foo' } }
+        }
+        comparator = self.class.new(containing_schema)
+        # TODO we need errorrs to bubble up here
+        result = comparator.schema_contains?(publish: resolved_containing, consume: resolved_contained)
+        result
       end
     end
   end

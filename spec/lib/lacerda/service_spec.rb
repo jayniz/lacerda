@@ -28,8 +28,12 @@ describe Lacerda::Service do
       expect(publisher.consumers.map(&:name)).to eq consumers
     end
 
-    it "publisher publishes one object" do
-      expect(publisher.published_objects.length).to eq 2
+    it "publisher publishes two objects" do
+      expect(publisher.published_objects.map(&:name).sort).to eq ['post', 'tag']
+    end
+
+    it "doesn't expose Comment because it's just a local definition" do
+      expect(publisher.published_objects.map(&:name).include?("comment")).to be_falsey
     end
 
     it "consumed objects filtered by service" do
@@ -40,7 +44,8 @@ describe Lacerda::Service do
 
   context "compatibilities" do
     it "publisher satisfies the consumer" do
-      expect(publisher.satisfies?(consumer)).to be true
+      result = publisher.satisfies?(consumer)
+      expect(result).to be true
     end
   end
 
@@ -82,10 +87,9 @@ describe Lacerda::Service do
       end
 
       it "accepts a valid object" do
-        valid_post = {id: 1, title: 'My title', body: 'Body'}
-        expect(
-          publisher.validate_object_to_publish('Post', valid_post)
-        ).to be true
+        valid_post = {id: 1, title: 'My title', body: 'Body', comments: []}
+        result = publisher.validate_object_to_publish('Post', valid_post)
+        expect(result).to be true
       end
 
       it "rejects an valid object with an exception" do

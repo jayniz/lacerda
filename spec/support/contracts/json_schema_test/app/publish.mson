@@ -1,6 +1,6 @@
 # Data Structures
 
-# Tag
+# App::Tag
 
 Very basic tag implementation with a url slug and multiple variations of the tag name.
 
@@ -10,7 +10,7 @@ Very basic tag implementation with a url slug and multiple variations of the tag
 - variations: "test", "testing" (array[string], optional)
 
 
-# Post
+# App::Post
 
 A post that only has a title, but no text body. Weird, right?
 
@@ -18,5 +18,5 @@ A post that only has a title, but no text body. Weird, right?
 - id: 1 (number, required) - The unique identifier for a post
 - title: Work from home (string) - Title of the product
 - author_id: 2 (number, required) - User id of author
-- primary_tag: (Tag, optional) - Property of custom type
+- primary_tag: (App::Tag, optional) - Property of custom type
 - tags: (array[Tag]) - An array with a custom type

@@ -44,16 +44,8 @@ module Lacerda
         "properties"  => {},
       }
 
-      # The scope for the data structure is the name of the service
-      # publishing the object. So if we're parsing a 'consume' schema,
-      # the containing objects are alredy scoped (because a consume
-      # schema says 'i consume object X from service Y'.
       basename = File.basename(filename)
-      if basename.end_with?("publish.mson")
-        data_structure_autoscope = service_scope
-      elsif basename.end_with?("consume.mson")
-        data_structure_autoscope = nil
-      else
+      if !basename.end_with?("publish.mson") and !basename.end_with?("consume.mson")
         raise Error, "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
       end
 
@@ -90,7 +82,7 @@ module Lacerda
       #
       data_structures.each do |data|
         id = data['name']['literal']
-        json= DataStructure.new(id, data, data_structure_autoscope).to_json
+        json= DataStructure.new(id, data, nil).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}

@@ -20,7 +20,8 @@ describe Lacerda::PublishedObject do
       tag: {
         id: 1,
         name: 'name'
-      }
+      },
+      comments: []
     }
     object_description = publisher.publish.object(:post)
     expect{
@@ -28,10 +29,8 @@ describe Lacerda::PublishedObject do
     }.to_not raise_error
   end
 
-  it "doesn't mind empty payloads" do
+  it "doesn't mind checking empty payloads" do
     object_description = publisher.publish.object(:post)
-    expect{
-      object_description.validate_data!(nil).to be false
-    }.to raise_error(JSON::Schema::ValidationError)
+    expect(object_description.validate_data(nil)).to be false
   end
 end
