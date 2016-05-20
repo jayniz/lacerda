@@ -1,3 +1,7 @@
+# 0.14.0
+- FIX: a required array property may contain an empty array
+- don't expose local definitions as published objects
+
 # 0.13.1
 - don't choke on schemas without local definitions
 
