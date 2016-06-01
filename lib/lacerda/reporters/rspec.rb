@@ -13,11 +13,11 @@ module Lacerda
 
       def check_publisher(service)
         @current_publisher.try(:run)
-        @current_publisher = @publish_group.describe(service.name)
+        @current_publisher = @publish_group.describe(service.try(:name))
       end
 
       def object_publish_specificaiton_valid(object, valid)
-        @current_publisher.it "-> #{object.consumer.name}" do
+        @current_publisher.it "-> #{object.try(:consumer).try(:name)}" do
           expect(valid).to be true
         end
       end
@@ -29,11 +29,11 @@ module Lacerda
 
       def check_consumer(service)
         @current_consumer.try(:run)
-        @current_consumer = @consume_group.describe("#{service.name} consuming")
+        @current_consumer = @consume_group.describe("#{service.try(:name)} consuming")
       end
 
       def object_publisher_existing(object, valid)
-        @current_consumer.it "#{object.name} from #{object.publisher.name}" do
+        @current_consumer.it "#{object.name} from #{object.try(:publisher).try(:name)}" do
           expect(valid).to be true
         end
       end

@@ -1,3 +1,6 @@
+# 0.14.1
+- make rspec reporter be a little more ignorant
+
 # 0.14.0
 - FIX: a required array property may contain an empty array
 - don't expose local definitions as published objects
