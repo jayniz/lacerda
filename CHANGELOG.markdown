@@ -1,3 +1,7 @@
+# 0.14.2
+- fix compatibility check for types that allow multiple primitives
+  (e.g. `"type": ["number", "null"]`)
+
 # 0.14.1
 - make rspec reporter be a little more ignorant
 

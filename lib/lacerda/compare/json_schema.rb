@@ -53,9 +53,9 @@ module Lacerda
 
         # 1)
         if consume['type'] and publish['type']
-          consume_types = ([consume['type']].flatten - ["null"]).sort
+          consume_types = ([consume['type']].flatten).sort
           publish_types = [publish['type']].flatten.sort
-          if consume_types != publish_types
+          if !(publish_types - consume_types).blank?
             return _e(:ERR_TYPE_MISMATCH, location, "Consume types #{consume_types.to_json} not compatible with publish types #{publish_types.to_json}")
           end
 
