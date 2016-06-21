@@ -1,3 +1,6 @@
+# 0.14.3
+- "don't choke on schemas without local definitions" part 2
+
 # 0.14.2
 - fix compatibility check for types that allow multiple primitives
   (e.g. `"type": ["number", "null"]`)

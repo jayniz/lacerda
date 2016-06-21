@@ -30,6 +30,8 @@ module Lacerda
         @schema = {}
       end
       @schema = @schema.with_indifferent_access
+      @schema[:definitions] ||= {}
+      @schema
     end
   end
 end

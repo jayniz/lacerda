@@ -45,7 +45,6 @@ module Lacerda
 
     def object?(name)
       underscored_name = Lacerda.underscore(name)
-      return false unless @schema[:definitions]
       !!@schema[:definitions][underscored_name]
     end
 
