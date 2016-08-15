@@ -248,6 +248,10 @@ module Lacerda
       def resolve_pointer(pointer, schema)
         type = pointer[/\#\/definitions\/([^\/]+)$/, 1]
         return false unless type
+        # TODO: Not so sure if we should raise an error
+        # when schema['definitions'] is missing?
+        return false unless schema
+        return false unless schema['definitions']
         schema['definitions'][type]
       end
 

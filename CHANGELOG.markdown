@@ -1,3 +1,6 @@
+# 0.14.4
+- don't raise an error when a sub schema is missing a property/definition
+
 # 0.14.3
 - "don't choke on schemas without local definitions" part 2
 
