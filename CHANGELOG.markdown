@@ -1,3 +1,6 @@
+# 0.14.5
+- more verbose description for InvalidObjectTypeErrors
+
 # 0.14.4
 - don't raise an error when a sub schema is missing a property/definition
 

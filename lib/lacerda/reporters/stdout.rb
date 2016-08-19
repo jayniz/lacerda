@@ -32,15 +32,15 @@ module Lacerda
         if @consumers == 0
           @io.print " (no consumers)".yellow + "\n"
         elsif @consume_errors == 0
-          @io.print " OK".green + "\n"
+          @io.print " OK".green
         else
-          @io.print " ERROR".red + "\n"
+          @io.print " ERROR".red
         end
       end
 
       def check_consumer(consuming_service)
         return unless @verbose
-        @io.print "Objects consumed by #{consuming_service.name.camelize}: "
+        @io.print "\nObjects consumed by #{consuming_service.name.camelize}: "
       end
 
       def object_publisher_existing(consumed_object, is_published)
@@ -53,11 +53,13 @@ module Lacerda
       end
 
       def result(errors)
-        @io.puts "\n" if @verbose
+        return unless @verbose
         if errors.blank?
-          @io.puts "All contracts valid 🙌".green if @verbose
+          @io.puts "\n----------------------"
+          @io.puts "All contracts valid 🙌 ".green
         else
-          @io.puts "Violations:".red
+          @io.puts "--------------"
+          @io.puts "😱  Violations:".red
           @io.puts JSON.pretty_generate(errors)
           @io.puts "#{errors.length} contract violations".red
         end

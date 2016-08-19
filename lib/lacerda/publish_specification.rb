@@ -34,7 +34,7 @@ module Lacerda
       object_schema = schema_dup['definitions'].delete scoped_name.to_s
 
       unless object_schema
-        msg = "Unknown object type: #{scoped_name.to_s.to_json} - did you specify it in publish.mson?"
+        msg = "Unknown object type: #{scoped_name.to_s.to_json} not in #{schema['definitions'].keys.to_json} - did you specify it in publish.mson?"
         raise Lacerda::Service::InvalidObjectTypeError.new(msg)
       end
 
