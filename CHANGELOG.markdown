@@ -1,3 +1,7 @@
+# 0.14.6
+- relax rake dependency
+- relax tins dependency
+
 # 0.14.5
 - more verbose description for InvalidObjectTypeErrors
 
