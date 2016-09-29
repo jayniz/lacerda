@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "redsnow",       ["~> 0.4.3"]
   spec.add_runtime_dependency "colorize"
-  spec.add_runtime_dependency "blumquist",     ["~> 0.4"]
+  spec.add_runtime_dependency "blumquist",     ["~> 0.5"]
 
   spec.add_runtime_dependency "tins"
 
