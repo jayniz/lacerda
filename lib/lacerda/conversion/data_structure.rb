@@ -100,10 +100,17 @@ module Lacerda
         end
       end
 
+      # returns the type of an array, given its specified type(s). This will be
+      # either exactly one basic type, or a oneOf in case there are 1+ types 
+      # or exactly 1 non-basic type. 
+      # As there are specied types in the array, `nil` should not be a valid value
+      # and therefore required should be true.
       def array_items(types)
-        # Passing false here, because an empty array is still an array
-        return primitive_or_oneOf(types.first, true) if types.size == 1 
-        oneOf(types, false)
+        if types.size == 1 && PRIMITIVES.include?(types.first)
+          primitive(types.first, true) 
+        else
+          oneOf(types, true)
+        end
       end
 
       def primitive_or_oneOf(type, is_required)

@@ -110,7 +110,7 @@ describe Lacerda::Conversion do
           expect(hash).to match_schema(publish_schema, :post)
         end
         it "are invalid if there are nil objects" do
-          expect({ 'id' => 1, 'author_id' => 2, 'multiple_props' => [nil] }).to match_schema(publish_schema, :post)
+          expect({ 'id' => 1, 'author_id' => 2, 'multiple_props' => [nil] }).not_to match_schema(publish_schema, :post)
         end
 
         it "are valid if empty" do
