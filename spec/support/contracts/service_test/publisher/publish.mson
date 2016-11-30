@@ -14,7 +14,6 @@ properties right away):
 - name: (string, required)
 - slugs: (array[string])
 
-
 # Publisher::Post
 - id: (number, required)
 - title: (string, required)
@@ -22,3 +21,11 @@ properties right away):
 - abstract: (string)
 - tag: (Publisher::Tag)
 - comments: (array[Comment], required)
+- multi_props: (array[PropA, PropB])
+
+# PropA
+- num: (number, required)
+
+# PropB
+- text: (string, required)
+

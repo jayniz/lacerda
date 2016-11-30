@@ -98,6 +98,24 @@ describe Lacerda::Service do
           publisher.validate_object_to_publish!('Post', invalid_post)
         }.to raise_error(JSON::Schema::ValidationError)
       end
+
+      context '(multitype) arrays' do
+        let(:valid_post) do
+          { id: 1, title: 'My title', body: 'Body', comments: [] }
+        end
+        it 'works' do
+          post = valid_post.merge(multi_props: [{num: 1}, {text: '2'}])
+          result = publisher.validate_object_to_publish!('Post', post)
+          expect(result).to be true
+
+        end
+        it 'rejects arrays with invalid types' do
+          invalid_post = valid_post.merge(multi_props: [{text: 2}])
+          result = publisher.validate_object_to_publish('Post', invalid_post)
+          expect(result).to be false
+
+        end
+      end
     end
 
     context "to consume" do
