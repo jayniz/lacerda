@@ -9,6 +9,11 @@ Very basic tag implementation with a url slug and multiple variations of the tag
 - slug: Test (string, optional) - Some kind of slug
 - variations: "test", "testing" (array[string], optional)
 
+# PropA
+- name: (string, required)
+
+# PropB
+- num: (number, required)
 
 # App::Post
 
@@ -20,3 +25,5 @@ A post that only has a title, but no text body. Weird, right?
 - author_id: 2 (number, required) - User id of author
 - primary_tag: (App::Tag, optional) - Property of custom type
 - tags: (array[Tag]) - An array with a custom type
+- multiple_props: (array[PropA, PropB]) - A multitype array
+- numbers: (array[number]) - An array of numbers

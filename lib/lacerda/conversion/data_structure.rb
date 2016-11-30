@@ -82,7 +82,11 @@ module Lacerda
           if type == 'array'
             nestedTypes = type_definition['typeSpecification']['nestedTypes']
             # Passing false here, because an empty array is still an array
-            spec['items'] = nestedTypes.map{|t| primitive_or_reference(t, false) }
+            if nestedTypes.size > 1
+              spec['items'] = { 'oneOf' => nestedTypes.map{|t| primitive_or_reference(t, false) }.map {|item| item['oneOf'] }.flatten.uniq }
+            else
+              spec['items'] = nestedTypes.map{|t| primitive_or_reference(t, false) }
+            end 
 
           # If it's an object, we need recursion
           elsif type == 'object'
