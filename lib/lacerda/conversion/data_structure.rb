@@ -73,7 +73,7 @@ module Lacerda
           name = Lacerda.underscore(content['name']['literal'])
 
           # This is either type: primimtive or $ref: reference_name
-          spec.merge!(primitive_or_reference(type, is_required))
+          spec.merge!(primitive_or_oneOf(type, is_required))
 
           # We might have a description
           spec['description'] = content['description']
@@ -81,12 +81,7 @@ module Lacerda
           # If it's an array, we need to pluck out the item types
           if type == 'array'
             nestedTypes = type_definition['typeSpecification']['nestedTypes']
-            # Passing false here, because an empty array is still an array
-            if nestedTypes.size > 1
-              spec['items'] = { 'oneOf' => nestedTypes.map{|t| primitive_or_reference(t, false) }.map {|item| item['oneOf'] }.flatten.uniq }
-            else
-              spec['items'] = nestedTypes.map{|t| primitive_or_reference(t, false) }
-            end 
+            spec['items'] = array_items(nestedTypes)
 
           # If it's an object, we need recursion
           elsif type == 'object'
@@ -105,20 +100,55 @@ module Lacerda
         end
       end
 
-      def primitive_or_reference(type, is_required)
-      	return { 'type' => 'object' } if type.blank?
+      def array_items(types)
+        # Passing false here, because an empty array is still an array
+        return primitive_or_oneOf(types.first, true) if types.size == 1 
+        oneOf(types, false)
+      end
 
+      def primitive_or_oneOf(type, is_required)
+      	return { 'type' => 'object' } if type.blank?
         if PRIMITIVES.include?(type)
-          types = [type]
-          types << 'null' unless is_required
-          { 'type' => types }
+          primitive(type, is_required)
         else
-          types = [{'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }]
-          types << { 'type' => 'null' } unless is_required
-          {
-            'oneOf' => types
-          }
+          oneOf(type, is_required)
         end
+      end
+
+
+      # type can be a String representing a basic type name
+      # or a Hash representing another type with the form:
+      #
+      #   { 'literal' => <name>, 'variable' => <boolean> }
+      #
+      # with a basic type name
+      # returns a Hash representing the type
+      def primitive_or_reference(type)
+        return { 'type' => 'object' } if type.blank?
+        if PRIMITIVES.include?(type)
+          primitive(type, false)
+        else
+          reference(type)
+        end
+      end
+
+      def oneOf(types, is_required)
+        types = [types] unless types.is_a?(Array)
+        types = types.map { |type| primitive_or_reference(type)}
+        types << { 'type' => 'null' } unless is_required
+        {
+          'oneOf' => types.uniq
+        }
+      end
+
+      def primitive(type, is_required) 
+        types = [type]
+        types << 'null' unless is_required
+        { 'type' => types }
+      end
+
+      def reference(type)
+        {'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }
       end
 
       def json_schema_blueprint
