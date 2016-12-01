@@ -72,7 +72,7 @@ module Lacerda
           spec = {}
           name = Lacerda.underscore(content['name']['literal'])
 
-          # This is either type: primimtive or $ref: reference_name
+          # This is either type: primimtive or a oneOf { $ref: reference_name }
           spec.merge!(primitive_or_oneOf(type, is_required))
 
           # We might have a description
@@ -118,19 +118,18 @@ module Lacerda
         if PRIMITIVES.include?(type)
           primitive(type, is_required)
         else
-          oneOf(type, is_required)
+          oneOf([type], is_required)
         end
       end
 
-
-      # type can be a String representing a basic type name
-      # or a Hash representing another type with the form:
-      #
-      #   { 'literal' => <name>, 'variable' => <boolean> }
-      #
-      # with a basic type name
-      # returns a Hash representing the type
-      def primitive_or_reference(type)
+      # A basic type is either a primitive type with exactly 1 primitive type
+      #   {'type' => [boolean] }
+      # a reference
+      #   { '$ref' => "#/definitions/name" }
+      # or an object if the type in not there
+      #   { 'type' => object }
+      # Basic types don't care about being required or not.
+      def basic_type(type)
         return { 'type' => 'object' } if type.blank?
         if PRIMITIVES.include?(type)
           primitive(type, false)
@@ -140,8 +139,7 @@ module Lacerda
       end
 
       def oneOf(types, is_required)
-        types = [types] unless types.is_a?(Array)
-        types = types.map { |type| primitive_or_reference(type)}
+        types = types.map { |type| basic_type(type) }
         types << { 'type' => 'null' } unless is_required
         {
           'oneOf' => types.uniq
