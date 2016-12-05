@@ -117,23 +117,18 @@ describe Lacerda::Service do
           }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
-        # See https://github.com/moviepilot/lacerda/issues/25 for a more
-        # detailed explanation if this surprises you.
-        it 'fails if it matches two types' do
+        it 'works even if two of the types have (some) fields with the same name' do
           post = valid_post.merge(multiple_matches: [{ num: 1, text: "2" }])
           expect {
             publisher.validate_object_to_publish!('Post', post)
-          }.to raise_error(JSON::Schema::ValidationError)
+          }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
-        # If the object matches one of the types, and another
-        # has no required fields, the object will match both of them.
-        # https://github.com/moviepilot/lacerda/issues/25
-        it 'fails if one of the object has 0 required fields' do
+        it 'does not fail if one of the object has 0 required fields' do
           post = valid_post.merge(unrequired: [{num: 1}])
           expect {
             publisher.validate_object_to_publish!('Post', post)
-          }.to raise_error(JSON::Schema::ValidationError)
+          }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
         it 'rejects arrays with invalid types' do
