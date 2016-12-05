@@ -92,6 +92,12 @@ describe Lacerda::Service do
         expect(result).to be true
       end
 
+      it "rejects objects with additional properties" do
+        valid_post = {id: 1, title: 'My title', body: 'Body', comments: []}
+        result = publisher.validate_object_to_publish('Post', valid_post.merge(foo: 'bar'))
+        expect(result).to be false
+      end
+
       it "rejects an valid object with an exception" do
         invalid_post = {id: 'string', title: 'My title'}
         expect{
@@ -140,7 +146,7 @@ describe Lacerda::Service do
     end
 
     context "to consume" do
-      let(:valid_post) { {id: 1, title: 'My title'} }
+      let(:valid_post) { {title: 'My title'} }
 
       it "knows that it consume a certain object from a service" do
         expect(consumer.consumes_from?('Publisher', 'Post')).to be true
@@ -174,6 +180,13 @@ describe Lacerda::Service do
         expect(
           consumer.validate_object_to_consume('Publisher::Post', valid_post)
         ).to be true
+      end
+      
+      it "rejects objects with additional properties" do
+        expect(
+          consumer.validate_object_to_consume('Publisher::Post', valid_post.merge(id: '1') )
+        ).to be false
+
       end
 
       it "rejects an valid object with an exception" do

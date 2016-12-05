@@ -4,6 +4,9 @@ require 'json'
 require 'rubygems'
 require 'pry'
 
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
+
 require 'simplecov'
 require 'coveralls'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
@@ -25,8 +28,6 @@ require 'lacerda'
 
 RSpec.configure do |config|
 
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
   # Convert/load test infrastructure, services and specifications
   config.before(:suite) do
     $contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
