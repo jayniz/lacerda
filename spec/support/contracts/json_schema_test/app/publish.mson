@@ -22,8 +22,10 @@ A post that only has a title, but no text body. Weird, right?
 ## Properties
 - id: 1 (number, required) - The unique identifier for a post
 - title: Work from home (string) - Title of the product
+- body: (string) - Body of the post
 - author_id: 2 (number, required) - User id of author
 - primary_tag: (App::Tag, optional) - Property of custom type
 - tags: (array[Tag]) - An array with a custom type
 - multiple_props: (array[PropA, PropB, string]) - A multitype array
+- comments: (array[string]) - An array with a primitive type
 - numbers: (array[number]) - An array of numbers
