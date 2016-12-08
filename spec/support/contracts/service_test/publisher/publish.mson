@@ -14,7 +14,6 @@ properties right away):
 - name: (string, required)
 - slugs: (array[string])
 
-
 # Publisher::Post
 - id: (number, required)
 - title: (string, required)
@@ -22,3 +21,33 @@ properties right away):
 - abstract: (string)
 - tag: (Publisher::Tag)
 - comments: (array[Comment], required)
+- multi_props: (array[PropA, PropB])
+- multiple_matches: (array[SameNameA, SameNameB])
+- similar_properties: (array[RelatedPostA, RelatedPostB])
+- unrequired: (array[CanBeCompletelyEmpty, PropA])
+
+# RelatedPostA
+- post_a_id: (number, required)
+- title: (string)
+
+# RelatedPostB
+- post_b_id: (number, required)
+- title: (string)
+
+# CanBeCompletelyEmpty
+- idontcarewhatshere: (number)
+
+# SameNameA
+- num: (number, required)
+
+# SameNameB
+- text: (string, required)
+- num: (number, required)
+
+# PropA
+- num: (number, required)
+
+# PropB
+- text: (string, required)
+- nbr: (number, required)
+

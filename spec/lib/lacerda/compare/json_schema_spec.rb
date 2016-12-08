@@ -19,7 +19,12 @@ describe JsonSchema do
             'id' => { 'type' => 'number', 'description' => 'The unique identifier for a post' },
             'title' => { 'type' => 'string', 'description' => 'Title of the product' },
             'author' => { 'type' => 'number', 'description' => 'External user id of author' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
+            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
+            'multi_props'=> { 'type'=>'array', 'items'=> [ {
+              'oneOf' => [
+                { 'type' => 'string' },
+                { '$ref' => '#/definitions/post' } ]
+            } ] }
           },
           'required' => [ 'id', 'title' ]
         }
@@ -39,7 +44,12 @@ describe JsonSchema do
           'type' => 'object',
           'properties' => {
             'id' => { 'type' => 'number' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
+            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
+            'multi_props'=> { 'type'=> 'array', 'items'=> [{
+            'oneOf' => [
+              { 'type' => 'string' },
+              { '$ref' => '#/definitions/post' } ]
+          } ]},
           },
           'required' => [ 'id', 'title' ]
         }
@@ -302,6 +312,12 @@ describe JsonSchema do
 
           expect(comparator.contains?(schema_b)).to be false
           expect(comparator.errors.first[:error]).to be :ERR_TYPE_MISMATCH
+        end
+
+        it 'misses a type in the oneOf' do
+          schema_b['definitions']['post']['properties']['multi_props']['items'][0]['oneOf'].delete({'type' => 'string'})
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME
         end
 
         it 'a missing property' do

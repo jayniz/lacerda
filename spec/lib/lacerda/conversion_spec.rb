@@ -62,8 +62,8 @@ describe Lacerda::Conversion do
       }.to_not raise_error
     end
 
-    it "registered both publish types with automatic scope from directory name" do
-      expect(publish_schema['definitions'].keys.sort).to eq ["app::post", "app::tag"]
+    it "registered all types with automatic scope from directory name" do
+      expect(publish_schema['definitions'].keys.sort).to eq ["app::post", "app::tag", "prop_a", "prop_b"]
     end
 
     it "registered the consume type with the scope as in the schema" do
@@ -100,6 +100,29 @@ describe Lacerda::Conversion do
 
         it "with the optional attribute set to nil" do
           expect('id' => 1, 'author_id' => 2, 'title' => nil).to match_schema(publish_schema, :post)
+        end
+      end
+
+      context 'have multitype arrays' do
+        it "are valid" do
+          hash = { 'id' => 1, 'author_id' => 2, 
+                   'multiple_props' => [{'num' => 1}, {'name' => 'foo'}, ':D'] }
+          expect(hash).to match_schema(publish_schema, :post)
+        end
+        it "are invalid if there are nil objects" do
+          expect({ 'id' => 1, 'author_id' => 2, 'multiple_props' => [nil] }).not_to match_schema(publish_schema, :post)
+        end
+
+        it "are valid if empty" do
+          expect({ 'id' => 1, 'author_id' => 2, 'multiple_props' => [] }).to match_schema(publish_schema, :post)
+        end
+
+        it "are invalid if 1+ elements do not match any of the types" do 
+          expect({ 'id' => 1, 'author_id' => 2, 'multiple_props' => [true, {'num' =>1}] }).not_to match_schema(publish_schema, :post)
+        end
+
+        it "are valid with 1 single item of a basic type" do
+          expect({ 'id' => 1, 'author_id' => 2, 'numbers' => [1] }).to match_schema(publish_schema, :post)
         end
       end
 

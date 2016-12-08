@@ -29,7 +29,7 @@ module Lacerda
       service_scope = File.dirname(filename).split(File::SEPARATOR).last.underscore
 
       # Parse MSON to an apiary blueprint AST
-      # (see https://github.com/apiaryio/api-blueprint/wiki/API-Blueprint-Map)
+      # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
 
       # Pluck out Data structures from it

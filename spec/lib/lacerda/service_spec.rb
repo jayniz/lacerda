@@ -98,6 +98,50 @@ describe Lacerda::Service do
           publisher.validate_object_to_publish!('Post', invalid_post)
         }.to raise_error(JSON::Schema::ValidationError)
       end
+
+      context '(multitype) arrays' do
+        let(:valid_post) do
+          { id: 1, title: 'My title', body: 'Body', comments: [] }
+        end
+        it 'works' do
+          post = valid_post.merge(multi_props: [{num: 1}, {nbr: 1,text: '2'}])
+          result = publisher.validate_object_to_publish('Post', post)
+          expect(result).to be true
+        end
+
+        it "works with similar types" do
+          similar_properties = [{post_a_id: 1, title: 'a'}, {post_b_id: 1, title: 'b'}]
+          post = valid_post.merge(similar_properties: similar_properties)
+          expect {
+            publisher.validate_object_to_publish!('Post', post)
+          }.not_to raise_error(JSON::Schema::ValidationError)
+        end
+
+        # See https://github.com/moviepilot/lacerda/issues/25 for a more
+        # detailed explanation if this surprises you.
+        it 'fails if it matches two types' do
+          post = valid_post.merge(multiple_matches: [{ num: 1, text: "2" }])
+          expect {
+            publisher.validate_object_to_publish!('Post', post)
+          }.to raise_error(JSON::Schema::ValidationError)
+        end
+
+        # If the object matches one of the types, and another
+        # has no required fields, the object will match both of them.
+        # https://github.com/moviepilot/lacerda/issues/25
+        it 'fails if one of the object has 0 required fields' do
+          post = valid_post.merge(unrequired: [{num: 1}])
+          expect {
+            publisher.validate_object_to_publish!('Post', post)
+          }.to raise_error(JSON::Schema::ValidationError)
+        end
+
+        it 'rejects arrays with invalid types' do
+          invalid_post = valid_post.merge(multi_props: [{text: 2}])
+          result = publisher.validate_object_to_publish('Post', invalid_post)
+          expect(result).to be false
+        end
+      end
     end
 
     context "to consume" do
