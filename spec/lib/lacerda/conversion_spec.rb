@@ -136,6 +136,7 @@ describe Lacerda::Conversion do
 
       context "have properties with custom types that is" do
         let(:valid_post){ {'id' => 1, 'title' => 'Servus', 'author_id' => 22, 'body' => 'We were somewhere around barstow on the edge of the desert', comments: [] } }
+
         let(:invalid_tag){ {'id' => 1, 'variations' => [1]} }
 
         it "nonexistant" do

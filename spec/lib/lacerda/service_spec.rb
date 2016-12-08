@@ -92,6 +92,12 @@ describe Lacerda::Service do
         expect(result).to be true
       end
 
+      it "rejects objects with additional properties" do
+        valid_post = {id: 1, title: 'My title', body: 'Body', comments: []}
+        result = publisher.validate_object_to_publish('Post', valid_post.merge(foo: 'bar'))
+        expect(result).to be false
+      end
+
       it "rejects an valid object with an exception" do
         invalid_post = {id: 'string', title: 'My title'}
         expect{
@@ -117,23 +123,18 @@ describe Lacerda::Service do
           }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
-        # See https://github.com/moviepilot/lacerda/issues/25 for a more
-        # detailed explanation if this surprises you.
-        it 'fails if it matches two types' do
+        it 'works even if two of the types have (some) fields with the same name' do
           post = valid_post.merge(multiple_matches: [{ num: 1, text: "2" }])
           expect {
             publisher.validate_object_to_publish!('Post', post)
-          }.to raise_error(JSON::Schema::ValidationError)
+          }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
-        # If the object matches one of the types, and another
-        # has no required fields, the object will match both of them.
-        # https://github.com/moviepilot/lacerda/issues/25
-        it 'fails if one of the object has 0 required fields' do
+        it 'does not fail if one of the object has 0 required fields' do
           post = valid_post.merge(unrequired: [{num: 1}])
           expect {
             publisher.validate_object_to_publish!('Post', post)
-          }.to raise_error(JSON::Schema::ValidationError)
+          }.not_to raise_error(JSON::Schema::ValidationError)
         end
 
         it 'rejects arrays with invalid types' do
@@ -145,7 +146,7 @@ describe Lacerda::Service do
     end
 
     context "to consume" do
-      let(:valid_post) { {id: 1, title: 'My title'} }
+      let(:valid_post) { {title: 'My title'} }
 
       it "knows that it consume a certain object from a service" do
         expect(consumer.consumes_from?('Publisher', 'Post')).to be true
@@ -179,6 +180,13 @@ describe Lacerda::Service do
         expect(
           consumer.validate_object_to_consume('Publisher::Post', valid_post)
         ).to be true
+      end
+      
+      it "rejects objects with additional properties" do
+        expect(
+          consumer.validate_object_to_consume('Publisher::Post', valid_post.merge(id: '1') )
+        ).to be false
+
       end
 
       it "rejects an valid object with an exception" do
