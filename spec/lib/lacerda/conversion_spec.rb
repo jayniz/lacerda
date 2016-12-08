@@ -106,7 +106,7 @@ describe Lacerda::Conversion do
       context 'have multitype arrays' do
         it "are valid" do
           hash = { 'id' => 1, 'author_id' => 2, 
-                   'multiple_props' => [{'num' => 1}, {'name' => 'foo'}] }
+                   'multiple_props' => [{'num' => 1}, {'name' => 'foo'}, ':D'] }
           expect(hash).to match_schema(publish_schema, :post)
         end
         it "are invalid if there are nil objects" do

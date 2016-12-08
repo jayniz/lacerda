@@ -132,7 +132,7 @@ module Lacerda
       def basic_type(type)
         return { 'type' => 'object' } if type.blank?
         if PRIMITIVES.include?(type)
-          primitive(type, false)
+          primitive(type, true)
         else
           reference(type)
         end
