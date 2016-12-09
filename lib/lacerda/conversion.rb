@@ -2,6 +2,7 @@ require 'fileutils'
 require 'open3'
 require 'lacerda/conversion/apiary_to_json_schema'
 require 'lacerda/conversion/error'
+require 'lacerda/drafter'
 require 'redsnow'
 require 'colorize'
 
@@ -22,7 +23,7 @@ module Lacerda
       end
     end
 
-    def self.mson_to_json_schema!(options)
+    def self.mson_to_json_schema!(options, old = false)
       filename = options.fetch(:filename)
 
       # For now, we'll use the containing directory's name as a scope
@@ -33,7 +34,7 @@ module Lacerda
       ast_file = mson_to_ast_json(filename)
 
       # Pluck out Data structures from it
-      data_structures = data_structures_from_blueprint_ast(ast_file)
+      data_structures = data_structures_from_blueprint_ast(ast_file, old)
 
       # Generate json schema from each contained data structure
       schema = {
@@ -81,7 +82,7 @@ module Lacerda
       # }
       #
       data_structures.each do |data|
-        id = data['name']['literal']
+        id = old ? data['name']['literal'] : data['content'].first['meta']['id']
         json= DataStructure.new(id, data, nil).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
@@ -97,13 +98,15 @@ module Lacerda
       true
     end
 
-    def self.data_structures_from_blueprint_ast(filename)
-      c = JSON.parse(open(filename).read)['ast']['content'].first
-      return [] unless c
-      c['content']
+    def self.data_structures_from_blueprint_ast(filename, old)
+      json = JSON.parse(open(filename).read)
+      content = old ? json['ast']['content'].first : ['content'].first
+      return [] if content.nil?
+      return [] unless old || content.is_a?(Array)
+      content['content'].first 
     end
 
-    def self.mson_to_ast_json(filename)
+    def self.mson_to_ast_json(filename, old = false)
       input = filename
       output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
 
@@ -114,7 +117,12 @@ module Lacerda
       end
 
       parse_result = FFI::MemoryPointer.new :pointer
-      RedSnow::Binding.drafter_c_parse(mson, 0, parse_result)
+      old ?  RedSnow::Binding.drafter_c_parse(mson, 0, parse_result) : Lacerda::Drafter.drafter_parse_blueprint_to(mson, parse_result, Lacerda::Drafter.options)
+      pointer_to_file(parse_result, output)
+      # TODO: FREE MEMORY FOR THE POINTER!
+    end
+
+    def self.pointer_to_file(parse_result, output)
       parse_result = parse_result.get_pointer(0)
 
       status = -1
@@ -128,8 +136,6 @@ module Lacerda
       File.open(output, 'w'){ |f| f.puts(result)  }
 
       output
-    ensure
-      RedSnow::Memory.free(parse_result)
     end
   end
 end
