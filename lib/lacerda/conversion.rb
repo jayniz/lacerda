@@ -32,9 +32,11 @@ module Lacerda
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
+      old_ast_file = mson_to_ast_json(filename, true)
 
       # Pluck out Data structures from it
-      data_structures = data_structures_from_blueprint_ast(ast_file, old)
+      data_structures = data_structures_from_blueprint_ast(ast_file)
+      old_data_structures = data_structures_from_blueprint_ast(old_ast_file, true)
 
       # Generate json schema from each contained data structure
       schema = {
@@ -98,7 +100,7 @@ module Lacerda
       true
     end
 
-    def self.data_structures_from_blueprint_ast(filename, old)
+    def self.data_structures_from_blueprint_ast(filename, old = false)
       json = JSON.parse(open(filename).read)
       content = old ? json['ast']['content'].first : ['content'].first
       return [] if content.nil?
@@ -108,7 +110,8 @@ module Lacerda
 
     def self.mson_to_ast_json(filename, old = false)
       input = filename
-      output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
+      name = old ?  '.old-blueprint-ast.json' :  '.blueprint-ast.json'
+      output = filename.gsub(/\.\w+$/, name)
 
       # Add Data Structure section automatically
       mson = open(input).read
