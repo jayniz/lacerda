@@ -102,10 +102,16 @@ module Lacerda
 
     def self.data_structures_from_blueprint_ast(filename, old = false)
       json = JSON.parse(open(filename).read)
-      content = old ? json['ast']['content'].first : ['content'].first
-      return [] if content.nil?
-      return [] unless old || content.is_a?(Array)
-      content['content'].first 
+      content = old ? json['ast'] : json['content'].first 
+      return [] unless content
+      unless content['content'].is_a?(Array)
+        # TODO Handle errors, this would fail if you reference App::Tag as Tag in a contract,
+        # with redsnow it didn't happen
+        puts "WARN: It seems your contract is borken `#{content}` "\
+             " should have be an array, but its probably an error message..."
+        return []
+      end
+      content['content'].first['content'] 
     end
 
     def self.mson_to_ast_json(filename, old = false)
