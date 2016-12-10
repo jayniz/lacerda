@@ -155,7 +155,7 @@ module Lacerda
       end
 
       def reference(type)
-        {'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }
+        {'$ref' => "#/definitions/#{self.class.scope(@scope, type)}" }
       end
 
       def json_schema_blueprint
