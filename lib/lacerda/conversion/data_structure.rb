@@ -66,7 +66,7 @@ module Lacerda
           content = s['content']
           type_definition = content['value']
           type = type_definition['element']
-          attributes = s['attributes'] || []
+          attributes = s.dig('attributes', 'typeAttributes') || []
           is_required = attributes.include?('required')
 
           # Prepare the json schema fragment
