@@ -49,15 +49,18 @@ module Lacerda
 
       def add_description_to_json_schema
         # Should we check here if content is an array as well?
-        return unless @data&.dig('content')
-        description = @data['content'].detect { |c| c.dig('meta', 'description') }
+        return unless @data
+        description = @data.detect { |c| c.dig('meta', 'description') }
         return unless description
         @schema['description'] = description['meta']['description'].strip
       end
 
       def add_properties_to_json_schema
-        possible_members  = @data&.dig('content')&.first&.dig('content')
-        return unless possible_members.is_a?(Array)
+        possible_members  = @data&.first&.dig('content')
+        return unless possible_members
+        # In the case that you create a nested data structure when type == 'object', 
+        # the possible_members can be just a Hash, instead of an array
+        possible_members = [possible_members] if possible_members.is_a?(Hash)
         members = possible_members.select { |d| d['element'] == 'member' }
         # Iterate over each property
         members.each do |s|
@@ -87,11 +90,12 @@ module Lacerda
           # If it's an object, we need recursion
           elsif type == 'object'
             spec['properties'] = {}
-            possible_members = Array(content['value']['content'])
-            possible_members.select{ |d| d['element'] == 'member' }.each do |data|
-              data_structure = DataStructure.new('tmp', content, @scope).to_json
-              spec['properties'].merge!(data_structure['properties'])
-            end
+            # The object has a value that will represent a data structure. the data
+            # passed to DataStructure normally is an array, but in this case if wouldn't
+            # So we have to wrap it if it's not an Array.
+            data = [content['value']] unless content['value'].is_a?(Array)
+            data_structure = DataStructure.new('tmp', [content['value']], @scope).to_json
+            spec['properties'].merge!(data_structure['properties'])
           end
 
           # Add the specification of this property to the schema
