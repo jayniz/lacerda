@@ -10,5 +10,5 @@ in the title and the primary tag, though. The author is optional for us.
 - title: (string, required)
 - author_id: (number, optional)
 - primary_tag (object)
-- name: (string)
+  - name: (string)
 - default_to_object

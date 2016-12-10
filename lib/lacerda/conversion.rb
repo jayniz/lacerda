@@ -23,7 +23,7 @@ module Lacerda
       end
     end
 
-    def self.mson_to_json_schema!(options, old = false)
+    def self.mson_to_json_schema!(options)
       filename = options.fetch(:filename)
 
       # For now, we'll use the containing directory's name as a scope
@@ -32,12 +32,10 @@ module Lacerda
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
-      old_ast_file = mson_to_ast_json(filename, true)
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
-      old_data_structures = data_structures_from_blueprint_ast(old_ast_file, true)
-
+      
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
@@ -84,8 +82,8 @@ module Lacerda
       # }
       #
       data_structures.each do |data|
-        id = old ? data['name']['literal'] : data['content'].first['meta']['id']
-        json= DataStructure.new(id, data, nil).to_json
+        id = data['content'].first['meta']['id']
+        json= DataStructure.new(id, data['content'], nil).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}
@@ -100,9 +98,9 @@ module Lacerda
       true
     end
 
-    def self.data_structures_from_blueprint_ast(filename, old = false)
+    def self.data_structures_from_blueprint_ast(filename)
       json = JSON.parse(open(filename).read)
-      content = old ? json['ast'] : json['content'].first 
+      content = json['content'].first 
       return [] unless content
       unless content['content'].is_a?(Array)
         # TODO Handle errors, this would fail if you reference App::Tag as Tag in a contract,
@@ -114,10 +112,9 @@ module Lacerda
       content['content'].first['content'] 
     end
 
-    def self.mson_to_ast_json(filename, old = false)
+    def self.mson_to_ast_json(filename)
       input = filename
-      name = old ?  '.old-blueprint-ast.json' :  '.blueprint-ast.json'
-      output = filename.gsub(/\.\w+$/, name)
+      output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
 
       # Add Data Structure section automatically
       mson = open(input).read
@@ -126,7 +123,7 @@ module Lacerda
       end
 
       parse_result = FFI::MemoryPointer.new :pointer
-      old ?  RedSnow::Binding.drafter_c_parse(mson, 0, parse_result) : Lacerda::Drafter.drafter_parse_blueprint_to(mson, parse_result, Lacerda::Drafter.options)
+      Lacerda::Drafter.drafter_parse_blueprint_to(mson, parse_result, Lacerda::Drafter.options)
       pointer_to_file(parse_result, output)
       # TODO: FREE MEMORY FOR THE POINTER!
     end
