@@ -87,7 +87,8 @@ module Lacerda
           # If it's an object, we need recursion
           elsif type == 'object'
             spec['properties'] = {}
-            content['value']['content'].select{|d| d['element'] == 'member'}.each do |data|
+            possible_members = Array(content['value']['content'])
+            possible_members.select{ |d| d['element'] == 'member' }.each do |data|
               data_structure = DataStructure.new('tmp', content, @scope).to_json
               spec['properties'].merge!(data_structure['properties'])
             end
