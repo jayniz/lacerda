@@ -32,6 +32,7 @@ module Lacerda
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
+      raise_parsing_errors(filename, ast_file)
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
@@ -98,6 +99,12 @@ module Lacerda
       true
     end
 
+    def self.raise_parsing_errors(mson_file, ast_file)
+      parsing_errors = ast_parsing_errors(ast_file)
+      return if parsing_errors.empty? 
+      raise Error, parsing_errors.prepend("The following errors were found in #{mson_file}:").join("\n")
+    end
+
     # The structure is of an AST is normally something like
     #    parseResult
     #      - category             # (meta => api)            It seems there is always only 1
@@ -134,16 +141,18 @@ module Lacerda
       end
     end
 
-    def self.warnings_from_blueprint_ast(filename)
-      annotations_from_blueprint_ast.select do |annotation|
-        annotation['meta']['classes'] == 'error'
+    def self.ast_parsing_annotation_messages(filename, type)
+      annotations = annotations_from_blueprint_ast(filename).select do |annotation|
+        annotation['meta']['classes'].include?(type)
+      end
+      return [] if annotations.empty?
+      annotations.map do |annotation|
+        "#{type.capitalize} code #{annotation['attributes']['code']}: #{annotation['content']}"
       end
     end
 
-    def self.errors_from_blueprint_ast(filename)
-      annotations_from_blueprint_ast.select do |annotation|
-        annotation['meta']['classes'] == 'error'
-      end
+    def self.ast_parsing_errors(filename)
+      ast_parsing_annotation_messages(filename, 'error')
     end
 
     def self.mson_to_ast_json(filename)
@@ -186,13 +195,12 @@ module Lacerda
       json&.dig('content') || []
     end
 
-    def self.annotations_from_blueprint_ast(clazz = nil)
+    def self.annotations_from_blueprint_ast(filename)
       elements = parse_result_contents_from_ast_file(filename)
       elements.select { |element| element['element'] == 'annotation' }
     end
 
     private_class_method :annotations_from_blueprint_ast, :pointer_to_file,
-                         :parse_result_contents_from_ast_file
-
+                         :parse_result_contents_from_ast_file, :ast_parsing_errors
   end
 end

@@ -57,6 +57,13 @@ describe Lacerda::Conversion do
         }.to raise_error(Lacerda::Conversion::Error)
       end
 
+      it "doesn't allow missing definitions" do
+        missing_definition = File.expand_path("../../../support/contracts/json_schema_test/missing_definition/consume.mson", __FILE__)
+        expect { 
+          Lacerda::Conversion.mson_to_json_schema!(filename: missing_definition)
+        }.to raise_error(Lacerda::Conversion::Error) 
+      end
+
       it "allows empty files" do
         empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/publish.mson", __FILE__)
         expect{
