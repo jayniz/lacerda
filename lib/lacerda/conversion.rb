@@ -98,18 +98,40 @@ module Lacerda
       true
     end
 
+    # The structure is of an AST is normally something like
+    #    parseResult
+    #      - category             # (meta => api)            It seems there is always only 1
+    #        - category           # (meta => dataStructures) It seems there is always only 1
+    #            - dataStructure  #                          Bunch of data structures
+    #              . . .
+    #            - dataStructure
+    #              . . .
+    #
+    #      - annotation  # Bunch of annotations(errors/warnings
+    #        . . .
+    #      - annotation
+    #        . . .
     def self.data_structures_from_blueprint_ast(filename)
-      json = JSON.parse(open(filename).read)
-      content = json['content'].first 
-      return [] unless content
-      unless content['content'].is_a?(Array)
-        # TODO Handle errors, this would fail if you reference App::Tag as Tag in a contract,
-        # with redsnow it didn't happen
-        puts "WARN: It seems your contract is borken `#{content}` "\
-             " should have be an array, but its probably an error message..."
-        return []
+      # The content of the ast parsing
+      elements = parse_result_contents_from_ast_file(filename)
+
+      # We keep the content of the categories only, they could be annotations otherwise
+      result_categories = elements.select do |element|
+        element['element'] == 'category'
+      end.map { |category| category['content'] }.flatten 
+
+      # From these categories we keep the 'dataStructures' category contents. 
+      # If there could be other types, no idea ¯\_(ツ)_/¯
+      data_structures_categories_contents = result_categories.select do |result_category|
+        result_category['meta']['classes'].include?('dataStructures')
+      end.map { |data_structures_category| data_structures_category['content'] }.flatten
+
+      # From the contents of 'dataStructures' categories we keep
+      # the 'dataStructure' elements. If there could be other types, 
+      # no idea ¯\_(ツ)_/¯
+      data_structures_categories_contents.select do |data_structures_content|
+        data_structures_content['element'] == 'dataStructure'
       end
-      content['content'].first['content'] 
     end
 
     def self.mson_to_ast_json(filename)
@@ -143,5 +165,16 @@ module Lacerda
 
       output
     end
+
+    # Reads a file containing a json representation of a blueprint AST file,
+    # and returns the content of a parse result. 
+    # It always returns an array.
+    def self.parse_result_contents_from_ast_file(filename)
+      json = JSON.parse(open(filename).read)
+      json&.dig('content') || []
+    end
+
+    private_class_method :parse_result_contents_from_ast_file, :pointer_to_file
+
   end
 end
