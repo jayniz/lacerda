@@ -22,7 +22,6 @@ describe Lacerda::Service do
       consumers = [
         consumer,
         consumer_invalid_property,
-        consumer_missing_definition,
         consumer_missing_required
       ].map(&:name)
       expect(publisher.consumers.map(&:name)).to eq consumers

@@ -134,6 +134,18 @@ module Lacerda
       end
     end
 
+    def self.warnings_from_blueprint_ast(filename)
+      annotations_from_blueprint_ast.select do |annotation|
+        annotation['meta']['classes'] == 'error'
+      end
+    end
+
+    def self.errors_from_blueprint_ast(filename)
+      annotations_from_blueprint_ast.select do |annotation|
+        annotation['meta']['classes'] == 'error'
+      end
+    end
+
     def self.mson_to_ast_json(filename)
       input = filename
       output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
@@ -174,7 +186,13 @@ module Lacerda
       json&.dig('content') || []
     end
 
-    private_class_method :parse_result_contents_from_ast_file, :pointer_to_file
+    def self.annotations_from_blueprint_ast(clazz = nil)
+      elements = parse_result_contents_from_ast_file(filename)
+      elements.select { |element| element['element'] == 'annotation' }
+    end
+
+    private_class_method :annotations_from_blueprint_ast, :pointer_to_file,
+                         :parse_result_contents_from_ast_file
 
   end
 end

@@ -17,7 +17,11 @@ describe Lacerda::Infrastructure do
   end
 
   it "lists consumers correctly" do
-    expect($test_infrastructure.consumers).to eq [consumer, consumer_invalid_property, consumer_missing_definition, consumer_missing_required]
+    expect($test_infrastructure.consumers).to eq [consumer, consumer_invalid_property, consumer_missing_required] 
+  end
+
+  it "does not include invalid contracts" do
+    expect($test_infrastructure.consumers.map(&:name)).not_to include consumer_missing_definition.name
   end
 
   it "checks to see if all contracts are fulfilled" do
