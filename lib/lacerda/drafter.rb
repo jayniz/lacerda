@@ -44,7 +44,5 @@ module Lacerda
     #  https://github.com/apiaryio/drafter/blob/0f485b647e71780659d1d4e42c402d60a9dd1507/src/drafter.cc
     #  DRAFTER_API int drafter_parse_blueprint_to(const char* source, char **out, const drafter_options options)
     attach_function :drafter_parse_blueprint_to, [:string, :pointer, DrafterOptions.by_value], :int
-
-    attach_function :drafter_free_result, [:pointer], :void
   end
 end

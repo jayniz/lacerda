@@ -167,7 +167,8 @@ module Lacerda
       parse_result = FFI::MemoryPointer.new :pointer
       Lacerda::Drafter.drafter_parse_blueprint_to(mson, parse_result, Lacerda::Drafter.options)
       pointer_to_file(parse_result, output)
-      # TODO: FREE MEMORY FOR THE POINTER!
+    ensure
+      parse_result&.free
     end
 
     def self.pointer_to_file(parse_result, output)
