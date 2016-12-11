@@ -24,8 +24,6 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "json-schema",   ["~> 2.6.2"]
 
-  spec.add_runtime_dependency "redsnow",       ["~> 0.4.3"]
-  spec.add_runtime_dependency "drafter"
   spec.add_runtime_dependency "colorize"
   spec.add_runtime_dependency "blumquist",     ["~> 0.5"]
 

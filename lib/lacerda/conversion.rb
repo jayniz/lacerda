@@ -3,7 +3,6 @@ require 'open3'
 require 'lacerda/conversion/apiary_to_json_schema'
 require 'lacerda/conversion/error'
 require 'lacerda/drafter'
-require 'redsnow'
 require 'colorize'
 
 module Lacerda
@@ -36,7 +35,7 @@ module Lacerda
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
-      
+ 
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
