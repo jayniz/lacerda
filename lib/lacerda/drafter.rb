@@ -23,7 +23,9 @@ module Lacerda
   module Drafter
     extend FFI::Library
 
-    ffi_lib 'drafter'
+    prefix = FFI::Platform.mac? ? '' : 'lib.target/'
+
+    ffi_lib File.expand_path("../../../ext/drafter/build/out/Release/#{prefix}libdrafter.#{FFI::Platform::LIBSUFFIX}", __FILE__)
 
     enum :drafter_format, [:DRAFTER_SERIALIZE_YAML, :DRAFTER_SERIALIZE_JSON]
 

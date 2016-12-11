@@ -14,9 +14,15 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/moviepilot/lacerda"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.files << Dir['ext/drafter/**/*'].reject { |f| f =~ /cmdline|test|features|README*|LICENSE|Gemfile*|\.xcode*/   }
   spec.bindir        = "bin"
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = %(lib ext)
+
+  spec.extensions   = %w(Rakefile)
+
+  spec.required_ruby_version = '>= 2.3.0'
+
   spec.license       = 'MIT'
 
   spec.add_runtime_dependency "activesupport"
