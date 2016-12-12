@@ -22,7 +22,6 @@ describe Lacerda::Service do
       consumers = [
         consumer,
         consumer_invalid_property,
-        consumer_missing_definition,
         consumer_missing_required
       ].map(&:name)
       expect(publisher.consumers.map(&:name)).to eq consumers
@@ -174,6 +173,12 @@ describe Lacerda::Service do
         expect{
           consumer.validate_object_to_consume!('Publisher::unknown_type', {some: :data})
         }.to raise_error(Lacerda::Service::InvalidObjectTypeError)
+      end
+
+      it "accepts an object with non-required properties" do
+        expect {
+          consumer.validate_object_to_consume('Published::Post', valid_post.merge(abstract: 'im a nice extra')))
+        }. to be true
       end
 
       it "accepts a valid object" do
