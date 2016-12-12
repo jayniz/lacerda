@@ -48,7 +48,6 @@ module Lacerda
       private
 
       def add_description_to_json_schema
-        # Should we check here if content is an array as well?
         return unless @data
         description = @data.detect { |c| c.dig('meta', 'description') }
         return unless description
