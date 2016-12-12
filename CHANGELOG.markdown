@@ -1,3 +1,9 @@
+# 1.0.0
+- Disallow additional properties
+- Replace redsnow with lounge_lizard
+- Missing definitions raise errors now
+- Multitype arrays support
+
 # 0.14.6
 - relax rake dependency
 - relax tins dependency
