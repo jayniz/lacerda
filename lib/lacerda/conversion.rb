@@ -150,10 +150,6 @@ module Lacerda
       end
     end
 
-    def self.ast_parsing_errors(filename)
-      ast_parsing_annotation_messages(filename, 'error')
-    end
-
     def self.mson_to_ast_json(filename)
       input = filename
       output = filename.gsub(/\.\w+$/, '.blueprint-ast.json')
@@ -168,20 +164,21 @@ module Lacerda
       output
     end
 
+    private_class_method def self.ast_parsing_errors(filename)
+      ast_parsing_annotation_messages(filename, 'error')
+    end
+
     # Reads a file containing a json representation of a blueprint AST file,
     # and returns the content of a parse result. 
     # It always returns an array.
-    def self.parse_result_contents_from_ast_file(filename)
+    private_class_method def self.parse_result_contents_from_ast_file(filename)
       json = JSON.parse(open(filename).read)
       json&.dig('content') || []
     end
 
-    def self.annotations_from_blueprint_ast(filename)
+    private_class_method def self.annotations_from_blueprint_ast(filename)
       elements = parse_result_contents_from_ast_file(filename)
       elements.select { |element| element['element'] == 'annotation' }
     end
-
-    private_class_method :annotations_from_blueprint_ast, :ast_parsing_errors,
-                         :parse_result_contents_from_ast_file
   end
 end

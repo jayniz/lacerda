@@ -1,4 +1,3 @@
-
 module Lacerda
   module Conversion
     class DataStructure
