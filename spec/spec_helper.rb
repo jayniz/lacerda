@@ -25,6 +25,8 @@ require 'lacerda'
 
 RSpec.configure do |config|
 
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
   # Convert/load test infrastructure, services and specifications
   config.before(:suite) do
     $contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")

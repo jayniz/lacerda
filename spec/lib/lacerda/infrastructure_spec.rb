@@ -6,7 +6,6 @@ describe Lacerda::Infrastructure do
   let(:consumer){ $test_infrastructure.services[:consumer] }
   let(:consumer_invalid_property){ $test_infrastructure.services[:invalid_property] }
   let(:consumer_missing_required){ $test_infrastructure.services[:missing_required] }
-  let(:consumer_missing_definition){ $test_infrastructure.services[:missing_definition] }
 
   it "allows to refresh the data" do
     expect{$test_infrastructure.reload}.to_not raise_error
@@ -17,7 +16,7 @@ describe Lacerda::Infrastructure do
   end
 
   it "lists consumers correctly" do
-    expect($test_infrastructure.consumers).to eq [consumer, consumer_invalid_property, consumer_missing_definition, consumer_missing_required]
+    expect($test_infrastructure.consumers).to eq [consumer, consumer_invalid_property, consumer_missing_required]
   end
 
   it "checks to see if all contracts are fulfilled" do

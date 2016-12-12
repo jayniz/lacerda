@@ -2,8 +2,8 @@ require 'fileutils'
 require 'open3'
 require 'lacerda/conversion/apiary_to_json_schema'
 require 'lacerda/conversion/error'
-require 'redsnow'
 require 'colorize'
+require 'lounge_lizard'
 
 module Lacerda
   module Conversion
@@ -31,10 +31,11 @@ module Lacerda
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
+      raise_parsing_errors(filename, ast_file)
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
-
+ 
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
@@ -81,8 +82,8 @@ module Lacerda
       # }
       #
       data_structures.each do |data|
-        id = data['name']['literal']
-        json= DataStructure.new(id, data, nil).to_json
+        id = data['content'].first['meta']['id']
+        json= DataStructure.new(id, data['content'], nil).to_json
         member = json.delete('title')
         schema['definitions'][member] = json
         schema['properties'][member] = {"$ref" => "#/definitions/#{member}"}
@@ -97,10 +98,56 @@ module Lacerda
       true
     end
 
+    def self.raise_parsing_errors(mson_file, ast_file)
+      parsing_errors = ast_parsing_errors(ast_file)
+      return if parsing_errors.empty? 
+      raise Error, parsing_errors.prepend("The following errors were found in #{mson_file}:").join("\n")
+    end
+
+    # The structure is of an AST is normally something like
+    #    parseResult
+    #      - category             # (meta => api)            It seems there is always only 1
+    #        - category           # (meta => dataStructures) It seems there is always only 1
+    #            - dataStructure  #                          Bunch of data structures
+    #              . . .
+    #            - dataStructure
+    #              . . .
+    #
+    #      - annotation  # Bunch of annotations(errors/warnings
+    #        . . .
+    #      - annotation
+    #        . . .
     def self.data_structures_from_blueprint_ast(filename)
-      c = JSON.parse(open(filename).read)['ast']['content'].first
-      return [] unless c
-      c['content']
+      # The content of the ast parsing
+      elements = parse_result_contents_from_ast_file(filename)
+
+      # We keep the content of the categories only, they could be annotations otherwise
+      result_categories = elements.select do |element|
+        element['element'] == 'category'
+      end.map { |category| category['content'] }.flatten 
+
+      # From these categories we keep the 'dataStructures' category contents. 
+      # If there could be other types, no idea ¯\_(ツ)_/¯
+      data_structures_categories_contents = result_categories.select do |result_category|
+        result_category['meta']['classes'].include?('dataStructures')
+      end.map { |data_structures_category| data_structures_category['content'] }.flatten
+
+      # From the contents of 'dataStructures' categories we keep
+      # the 'dataStructure' elements. If there could be other types, 
+      # no idea ¯\_(ツ)_/¯
+      data_structures_categories_contents.select do |data_structures_content|
+        data_structures_content['element'] == 'dataStructure'
+      end
+    end
+
+    def self.ast_parsing_annotation_messages(filename, type)
+      annotations = annotations_from_blueprint_ast(filename).select do |annotation|
+        annotation['meta']['classes'].include?(type)
+      end
+      return [] if annotations.empty?
+      annotations.map do |annotation|
+        "#{type.capitalize} code #{annotation['attributes']['code']}: #{annotation['content']}"
+      end
     end
 
     def self.mson_to_ast_json(filename)
@@ -112,24 +159,26 @@ module Lacerda
       unless mson[/^\#[ ]*data[ ]+structure/i]
         mson = "# Data Structures\n#{mson}"
       end
-
-      parse_result = FFI::MemoryPointer.new :pointer
-      RedSnow::Binding.drafter_c_parse(mson, 0, parse_result)
-      parse_result = parse_result.get_pointer(0)
-
-      status = -1
-      result = ''
-
-      unless parse_result.null?
-        status = 0
-        result = parse_result.read_string
-      end
-
+      result = LoungeLizard.parse(mson)
       File.open(output, 'w'){ |f| f.puts(result)  }
-
       output
-    ensure
-      RedSnow::Memory.free(parse_result)
+    end
+
+    private_class_method def self.ast_parsing_errors(filename)
+      ast_parsing_annotation_messages(filename, 'error')
+    end
+
+    # Reads a file containing a json representation of a blueprint AST file,
+    # and returns the content of a parse result. 
+    # It always returns an array.
+    private_class_method def self.parse_result_contents_from_ast_file(filename)
+      json = JSON.parse(open(filename).read)
+      json&.dig('content') || []
+    end
+
+    private_class_method def self.annotations_from_blueprint_ast(filename)
+      elements = parse_result_contents_from_ast_file(filename)
+      elements.select { |element| element['element'] == 'annotation' }
     end
   end
 end

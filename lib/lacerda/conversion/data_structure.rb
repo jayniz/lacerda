@@ -1,4 +1,3 @@
-
 module Lacerda
   module Conversion
     class DataStructure
@@ -48,49 +47,53 @@ module Lacerda
       private
 
       def add_description_to_json_schema
-        return unless @data['sections']
-        description = @data['sections'].select{|d| d['class'] == 'blockDescription' }.first
+        return unless @data
+        description = @data.detect { |c| c.dig('meta', 'description') }
         return unless description
-        @schema['description'] = description['content'].strip
+        @schema['description'] = description['meta']['description'].strip
       end
 
       def add_properties_to_json_schema
-        return unless @data['sections']
-        return unless @data['sections'].length > 0
-        members = @data['sections'].select{|d| d['class'] == 'memberType' }.first['content'].select{|d| d['class'] == 'property' }
-
+        possible_members  = @data&.first&.dig('content')
+        return unless possible_members
+        # In the case that you create a nested data structure when type == 'object', 
+        # the possible_members can be just a Hash, instead of an array
+        possible_members = [possible_members] if possible_members.is_a?(Hash)
+        members = possible_members.select { |d| d['element'] == 'member' }
         # Iterate over each property
         members.each do |s|
 
           # Pluck some things out of the AST
           content = s['content']
-          type_definition = content['valueDefinition']['typeDefinition']
-          type = type_definition['typeSpecification']['name']
-          attributes = type_definition['attributes'] || []
+          type_definition = content['value']
+          type = type_definition['element']
+          attributes = s.dig('attributes', 'typeAttributes') || []
           is_required = attributes.include?('required')
 
           # Prepare the json schema fragment
           spec = {}
-          name = Lacerda.underscore(content['name']['literal'])
+          name = Lacerda.underscore(content['key']['content'])
 
           # This is either type: primimtive or a oneOf { $ref: reference_name }
           spec.merge!(primitive_or_oneOf(type, is_required))
 
           # We might have a description
-          spec['description'] = content['description']
+          spec['description'] = s.dig('meta', 'description')
 
           # If it's an array, we need to pluck out the item types
           if type == 'array'
-            nestedTypes = type_definition['typeSpecification']['nestedTypes']
+            nestedTypes = type_definition['content'].map{|vc| vc['element'] }.uniq
             spec['items'] = array_items(nestedTypes)
 
           # If it's an object, we need recursion
           elsif type == 'object'
             spec['properties'] = {}
-            content['sections'].select{|d| d['class'] == 'memberType'}.each do |data|
-              data_structure = DataStructure.new('tmp', content, @scope).to_json
-              spec['properties'].merge!(data_structure['properties'])
-            end
+            # The object has a value that will represent a data structure. the data
+            # passed to DataStructure normally is an array, but in this case if wouldn't
+            # So we have to wrap it if it's not an Array.
+            data = [content['value']] unless content['value'].is_a?(Array)
+            data_structure = DataStructure.new('tmp', [content['value']], @scope).to_json
+            spec['properties'].merge!(data_structure['properties'])
           end
 
           # Add the specification of this property to the schema
@@ -154,7 +157,7 @@ module Lacerda
       end
 
       def reference(type)
-        {'$ref' => "#/definitions/#{self.class.scope(@scope, type['literal'])}" }
+        {'$ref' => "#/definitions/#{self.class.scope(@scope, type)}" }
       end
 
       def json_schema_blueprint
