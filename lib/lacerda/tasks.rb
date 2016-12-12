@@ -5,7 +5,6 @@ module Lacerda
     include Rake::DSL if defined? Rake::DSL
 
     def install_tasks
-      Bundler.require
       namespace :lacerda do
         desc "Clean up intermediary json files"
         task :cleanup do
@@ -49,6 +48,7 @@ module Lacerda
           # Let's go
           puts "Converting #{files.length} files:"
 
+          Bundler.require
           ok = true
           files.each do |file|
             ok = ok && Lacerda::Conversion.mson_to_json_schema(
