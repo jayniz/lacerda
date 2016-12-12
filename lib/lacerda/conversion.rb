@@ -2,8 +2,8 @@ require 'fileutils'
 require 'open3'
 require 'lacerda/conversion/apiary_to_json_schema'
 require 'lacerda/conversion/error'
-require 'lacerda/drafter'
 require 'colorize'
+require 'lounge_lizard'
 
 module Lacerda
   module Conversion
@@ -163,27 +163,8 @@ module Lacerda
       unless mson[/^\#[ ]*data[ ]+structure/i]
         mson = "# Data Structures\n#{mson}"
       end
-
-      parse_result = FFI::MemoryPointer.new :pointer
-      Lacerda::Drafter.drafter_parse_blueprint_to(mson, parse_result, Lacerda::Drafter.options)
-      pointer_to_file(parse_result, output)
-    ensure
-      parse_result&.free
-    end
-
-    def self.pointer_to_file(parse_result, output)
-      parse_result = parse_result.get_pointer(0)
-
-      status = -1
-      result = ''
-
-      unless parse_result.null?
-        status = 0
-        result = parse_result.read_string
-      end
-
+      result = LoungeLizard.parse(mson)
       File.open(output, 'w'){ |f| f.puts(result)  }
-
       output
     end
 
@@ -200,7 +181,7 @@ module Lacerda
       elements.select { |element| element['element'] == 'annotation' }
     end
 
-    private_class_method :annotations_from_blueprint_ast, :pointer_to_file,
-                         :parse_result_contents_from_ast_file, :ast_parsing_errors
+    private_class_method :annotations_from_blueprint_ast, :ast_parsing_errors,
+                         :parse_result_contents_from_ast_file
   end
 end
