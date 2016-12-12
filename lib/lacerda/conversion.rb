@@ -101,7 +101,9 @@ module Lacerda
     def self.raise_parsing_errors(mson_file, ast_file)
       parsing_errors = ast_parsing_errors(ast_file)
       return if parsing_errors.empty? 
-      raise Error, parsing_errors.prepend("The following errors were found in #{mson_file}:").join("\n")
+      count = data_structures_from_blueprint_ast(ast_file).count
+      raise Error, parsing_errors.prepend("#{count} data structures were parsed from the AST, but "\
+                                          "the following errors were found in #{mson_file}:").join("\n")
     end
 
     # The structure is of an AST is normally something like
