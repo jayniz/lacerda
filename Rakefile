@@ -3,6 +3,10 @@
 
 require 'bundler/gem_tasks'
 
+$:.unshift File.join(File.dirname(__FILE__), "lib")
+
+require 'lacerda/tasks'
+
 require 'ffi'
 
 task default: :compile
@@ -21,19 +25,15 @@ task :compile do
     end
     puts 'Compiling...'
     `cd #{File.expand_path('ext/drafter/')} && ./configure --shared && make drafter`
-    status = $CHILD_STATUS.to_i
+    status = $?.to_i
     if status == 0
       puts 'Compiling done.'
     else
-      puts 'Compiling error, exiting.'
-      next # If i'm using exit, abort I have some errors in rake install but gem can be installed
+      raise 'Compiling error, exiting.'
     end
   else
     puts 'Extension already compiled. To recompile set env variable RECOMPILE=true.'
   end
 end
 
-# Bundler.require
-#$:.unshift File.join(File.dirname(__FILE__), "lib")
 
-#require 'lacerda/tasks'
