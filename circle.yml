@@ -1,6 +1,14 @@
 machine:
+  environment:
+    RECOMPILE: true
   ruby:
     version: '2.3.0'
+checkout:
+  post:
+    - git submodule update --init --recursive
+dependencies:
+  post:
+    - bundle exec rake compile
 test:
   post:
     - bundle exec codeclimate-test-reporter 

@@ -48,6 +48,7 @@ module Lacerda
           # Let's go
           puts "Converting #{files.length} files:"
 
+          Bundler.require
           ok = true
           files.each do |file|
             ok = ok && Lacerda::Conversion.mson_to_json_schema(
