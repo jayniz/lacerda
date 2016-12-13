@@ -37,7 +37,6 @@ module Lacerda
         @schema['title'] = @id
         add_description_to_json_schema
         add_properties_to_json_schema
-        @schema['additionalProperties'] = false
       end
 
       def to_json
