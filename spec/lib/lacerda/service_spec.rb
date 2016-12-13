@@ -188,7 +188,7 @@ describe Lacerda::Service do
 
       end
 
-      xit "rejects an valid object with an exception", focus: true do
+      xit "rejects an valid object with an exception" do
         invalid_post = { id: 'string', title: 'My title' }
         expect{
           consumer.validate_object_to_consume!('Publisher::Post', invalid_post)

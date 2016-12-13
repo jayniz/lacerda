@@ -29,7 +29,6 @@ module Lacerda
     end
 
     def validate_data!(data)
-      require 'byebug' ; byebug
       JSON::Validator.validate!(@schema, data)
     end
 
