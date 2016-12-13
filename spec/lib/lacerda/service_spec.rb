@@ -188,8 +188,8 @@ describe Lacerda::Service do
 
       end
 
-      xit "rejects an valid object with an exception" do
-        invalid_post = { id: 'string', title: 'My title' }
+      it "rejects an invalid object with an exception" do
+        invalid_post = { tag: 'string', title: 'My title' }
         expect{
           consumer.validate_object_to_consume!('Publisher::Post', invalid_post)
         }.to raise_error(JSON::Schema::ValidationError)
