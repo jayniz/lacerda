@@ -31,7 +31,6 @@ module Lacerda
       # Parse MSON to an apiary blueprint AST
       # (see https://github.com/apiaryio/api-blueprint)
       ast_file = mson_to_ast_json(filename)
-      raise_parsing_errors(filename, ast_file)
 
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
