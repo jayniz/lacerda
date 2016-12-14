@@ -1,8 +1,18 @@
-# 1.0.0
+# 1.0.0.beta4
+- fix: Remove a stupid typo
+
+# 1.0.0.beta3
+- fix: Do not raise parsing errors, as it breaks the current service if
+  an unrelated service from the infrastructure has an invalid contract.
+- fix: Revert the aditional properties change, as this breaks non-required
+  properties for the consumer
+  
+# 1.0.0.beta2
+- fix: Replace redsnow with lounge_lizard to avoid build errors
+
+# 1.0.0.beta1
 - Disallow additional properties
-- Replace redsnow with lounge_lizard
-- Missing definitions raise errors now
-- Multitype arrays support
+- Support multitype arrays
 
 # 0.14.6
 - relax rake dependency
