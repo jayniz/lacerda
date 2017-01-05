@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.add_runtime_dependency "activesupport"
-  spec.add_runtime_dependency "rake"
+  spec.add_runtime_dependency "rake", ["~> 11.0"]
 
   spec.add_runtime_dependency "json-schema",   ["~> 2.6.2"]
 
