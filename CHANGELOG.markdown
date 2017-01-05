@@ -1,3 +1,6 @@
+# 0.14.8
+- Fix rake to 11, to avoid problems building redsnow
+
 # 0.14.6
 - relax rake dependency
 - relax tins dependency
