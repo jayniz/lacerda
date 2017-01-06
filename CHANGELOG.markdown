@@ -1,5 +1,5 @@
 # 0.14.8
-- Fix rake to 11, to avoid problems building redsnow
+- Update redsnow 0.4.3 -> 0.4.4
 
 # 0.14.6
 - relax rake dependency
