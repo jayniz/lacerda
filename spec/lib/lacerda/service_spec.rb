@@ -91,6 +91,12 @@ describe Lacerda::Service do
         expect(result).to be true
       end
 
+      it "accepts empty strings for required fields" do
+        valid_post = {id: 1, title: '', body: '', comments: []}
+        result = publisher.validate_object_to_publish('Post', valid_post)
+        expect(result).to be true
+      end
+
       it "rejects an valid object with an exception" do
         invalid_post = {id: 'string', title: 'My title'}
         expect{
