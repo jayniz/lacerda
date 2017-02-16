@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "guard-bundler"
   spec.add_development_dependency "guard-ctags-bundler"
   spec.add_development_dependency "guard-rspec"
-  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec", [">= 3.0"]
   spec.add_development_dependency "coveralls"
   spec.add_development_dependency "codeclimate-test-reporter", ["~> 1.0"]
   spec.add_development_dependency 'pry'
