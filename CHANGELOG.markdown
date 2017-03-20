@@ -1,3 +1,6 @@
+# 1.0.0
+- Support multitype arrays
+
 # 0.14.8
 - Update redsnow 0.4.3 -> 0.4.4
 
