@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "json-schema",   ["~> 2.6"]
 
   spec.add_runtime_dependency "colorize"
-  spec.add_runtime_dependency "blumquist",     ["~> 0.5"]
+  spec.add_runtime_dependency "blumquist",     ["~> 0.7"]
   spec.add_runtime_dependency "lounge_lizard", [">= 0.1.3", "~> 0.1"]
 
   spec.add_runtime_dependency "tins"
