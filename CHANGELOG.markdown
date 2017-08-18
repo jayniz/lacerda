@@ -1,3 +1,6 @@
+# 1.1.0
+- Update blumquist to show prettier errors
+
 # 1.0.0
 - Support multitype arrays
 
