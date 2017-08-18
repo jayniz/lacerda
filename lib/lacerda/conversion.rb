@@ -35,19 +35,21 @@ module Lacerda
       # Pluck out Data structures from it
       data_structures = data_structures_from_blueprint_ast(ast_file)
  
+      basename = File.basename(filename)
+      file_type = basename[/(consume|publish)\.mson$/]
+      if file_type.blank?
+        raise Error, "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
+      end
+
       # Generate json schema from each contained data structure
       schema = {
         "$schema"     => "http://json-schema.org/draft-04/schema#",
+        "id"          => file_type.gsub('.mson', '.schema.json'),
         "title"       => service_scope,
         "definitions" => {},
         "type"        => "object",
         "properties"  => {},
       }
-
-      basename = File.basename(filename)
-      if !basename.end_with?("publish.mson") and !basename.end_with?("consume.mson")
-        raise Error, "Invalid filename #{basename}, can't tell if it's a publish or consume schema"
-      end
 
       # The json schema we're constructing contains every known
       # object type in the 'definitions'. So if we have definitions for

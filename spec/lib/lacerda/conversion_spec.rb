@@ -15,6 +15,10 @@ describe Lacerda::Conversion do
         expect(consume_schema['definitions'].keys.sort).to eq ["another_app::post"]
       end
 
+      it "sets id = consume.schema.json" do
+        expect(consume_schema['id']).to eq 'consume.schema.json'
+      end
+
       it "parsed child objects in the consume schema" do
         expect(consume_schema['definitions']['another_app::post']['properties']['primary_tag']['properties']['name']['type']).to eq ["string", "null"]
       end
@@ -48,6 +52,10 @@ describe Lacerda::Conversion do
             .with(filename: f, keep_intermediary_files: false).and_raise
           expect(Lacerda::Conversion.mson_to_json_schema(filename: publish_schema_file, verbose: false)).to be false
         end
+      end
+
+      it "sets id = publish.schema.json" do
+        expect(publish_schema['id']).to eq 'publish.schema.json'
       end
 
       it "doesn't allow names except for publish.mson and consume.mson" do
