@@ -119,7 +119,7 @@ describe Lacerda::Service do
           post = valid_post.merge(similar_properties: similar_properties)
           expect {
             publisher.validate_object_to_publish!('Post', post)
-          }.not_to raise_error(JSON::Schema::ValidationError)
+          }.not_to raise_error
         end
 
         it 'does not work if two of the types have (some) fields with the same name' do

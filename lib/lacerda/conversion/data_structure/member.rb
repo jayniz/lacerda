@@ -43,10 +43,6 @@ module Lacerda
               # If it's an object, we need recursion
             if @type.object?
               spec['properties'] = {}
-              # The object has a value that will represent a data structure. the data
-              # passed to DataStructure normally is an array, but in this case if wouldn't
-              # So we have to wrap it if it's not an Array.
-              data = [@content['value']] unless @content['value'].is_a?(Array)
               data_structure = DataStructure.new('tmp', [@content['value']], @scope).to_json
               spec['properties'].merge!(data_structure['properties'])
             end
