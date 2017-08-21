@@ -25,7 +25,7 @@ module Lacerda
           @name = Lacerda.underscore(@content['key']['content'])
           @attributes = member.dig('attributes', 'typeAttributes') || []
           @is_required = @attributes.include?('required')
-          @type = Type.new(@content['value'], @is_required)
+          @type = Type.new(@content['value'], @is_required, @scope)
           @scope = scope
         end
 
@@ -38,7 +38,7 @@ module Lacerda
             # We might have a description
             spec['description'] = @description
             spec.merge!(@type.to_hash)
-            # add the type of the array objects (if it is an array)
+            # Add the type of the array objects (if it is an array)
             spec['items'] = @type.array_type
               # If it's an object, we need recursion
             if @type.object?

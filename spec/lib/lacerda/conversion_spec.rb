@@ -123,6 +123,23 @@ describe Lacerda::Conversion do
           end
         end
 
+        context 'have enums' do
+          it 'works with valid enums' do
+            data = { 'id' => 1, 'author_id' => 2, 'title' => nil, 'assignee' => 'oliver'  }
+            expect(data).to match_schema(publish_schema, :post)
+          end
+
+          it 'is invalid with a value out of the enum' do
+            data = { 'id' => 1, 'author_id' => 2, 'title' => nil, 'assignee' => 'mark'  }
+            expect(data).not_to match_schema(publish_schema, :post)
+          end
+
+          it 'is valid when empty and not required' do
+            data = { 'id' => 1, 'author_id' => 2, 'title' => nil }
+            expect(data).to match_schema(publish_schema, :post)
+          end
+        end
+
         context 'have multitype arrays' do
           it "are valid" do
             hash = { 'id' => 1, 'author_id' => 2, 

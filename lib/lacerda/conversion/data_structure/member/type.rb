@@ -3,8 +3,9 @@ module Lacerda
     class DataStructure
       class Member
         class Type
-          def initialize(type_definition, is_required)
+          def initialize(type_definition, is_required, scope)
             @type_definition = type_definition
+            @scope = scope
             @type_name = type_definition['element']
             @is_required = is_required
           end
@@ -74,7 +75,12 @@ module Lacerda
           def primitive(type_name, is_required) 
             types = [type_name]
             types << 'null' unless is_required
-            { 'type' => types }
+            if type_name == 'enum'
+              enum_values = @type_definition['content'].map { |i| i['content'] }
+              { 'type' => types, 'enum' => enum_values }
+            else
+              { 'type' => types }
+            end
           end
 
           def required?
