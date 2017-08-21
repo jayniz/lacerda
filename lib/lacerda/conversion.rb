@@ -99,8 +99,8 @@ module Lacerda
       true
     end
 
-    def self.raise_parsing_errors(mson_file, ast_file)
-      parsing_errors = ast_parsing_errors(ast_file)
+    def self.raise_parsing_errors(mson_file, elements)
+      parsing_errors = ast_parsing_errors(elements)
       return if parsing_errors.empty? 
       raise Error, parsing_errors.prepend("The following errors were found in #{mson_file}:").join("\n")
     end
@@ -122,6 +122,8 @@ module Lacerda
       # The content of the ast parsing
       elements = parse_result_contents_from_ast_file(filename)
 
+      raise_parsing_errors(filename, elements)
+
       # We keep the content of the categories only, they could be annotations otherwise
       result_categories = elements.select do |element|
         element['element'] == 'category'
@@ -141,12 +143,10 @@ module Lacerda
       end
     end
 
-    def self.ast_parsing_annotation_messages(filename, type)
-      annotations = annotations_from_blueprint_ast(filename).select do |annotation|
-        annotation['meta']['classes'].include?(type)
-      end
-      return [] if annotations.empty?
-      annotations.map do |annotation|
+    def self.ast_parsing_annotation_messages(elements, type)
+      elements.select do |element|
+        element['element'] == 'annotation' && element['meta']['classes'].include?(type)
+      end.map do |annotation|
         "#{type.capitalize} code #{annotation['attributes']['code']}: #{annotation['content']}"
       end
     end
@@ -175,11 +175,6 @@ module Lacerda
     private_class_method def self.parse_result_contents_from_ast_file(filename)
       json = JSON.parse(open(filename).read)
       json&.dig('content') || []
-    end
-
-    private_class_method def self.annotations_from_blueprint_ast(filename)
-      elements = parse_result_contents_from_ast_file(filename)
-      elements.select { |element| element['element'] == 'annotation' }
     end
   end
 end

@@ -81,10 +81,6 @@ module Lacerda
             @is_required
           end
 
-          def primitive?
-            PRIMITIVES.include?(type_name.first)
-          end
-
           def nested_types
             error_msg = "This DataStructure::Member is a #{@type_name}, not "\
               'an array, so it cannot have nested types'

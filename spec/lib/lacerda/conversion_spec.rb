@@ -65,18 +65,18 @@ describe Lacerda::Conversion do
         }.to raise_error(Lacerda::Conversion::Error)
       end
 
-      it "allows missing definitions" do
+      it "does not allow missing definitions" do
         missing_definition = File.expand_path("../../../support/contracts/json_schema_test/missing_definition/consume.mson", __FILE__)
         expect { 
           Lacerda::Conversion.mson_to_json_schema!(filename: missing_definition)
-        }.not_to raise_error
+        }.to raise_error(Lacerda::Conversion::Error, /base type 'Tag' is not defined/)
       end
 
       it "allows empty files" do
         empty_mson_file = File.expand_path("../../../support/contracts/empty_test/app/publish.mson", __FILE__)
         expect{
           Lacerda::Conversion.mson_to_json_schema!(filename: empty_mson_file)
-        }.to_not raise_error
+        }.not_to raise_error
       end
 
       it "created a schema file" do
@@ -100,6 +100,13 @@ describe Lacerda::Conversion do
 
       it "found the tag's id property description" do
         expect(publish_schema['definitions']['app::tag']['properties']['id']['description']).to eq "Just an id, carry on"
+      end
+
+      it 'raises errors if the mson is not parseable' do
+        file =  File.expand_path("../../../support/contracts/unparseable/publish.mson", __FILE__)
+        expect{
+          Lacerda::Conversion.mson_to_json_schema!(filename: file)
+        }.to raise_error(Lacerda::Conversion::Error, /base type 'integer' is not defined/)
       end
 
       context "validating objects that" do
