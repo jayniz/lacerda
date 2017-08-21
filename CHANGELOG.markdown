@@ -1,3 +1,7 @@
+# 2.0.0
+- [Breaking] Raise parsing errors, instead of silently returning an empty contract
+- Add enum support
+
 # 1.1.0
 - Update blumquist to show prettier errors
 

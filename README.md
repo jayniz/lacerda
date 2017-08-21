@@ -62,10 +62,10 @@ conversion ourselves. These features from the MSON specification are currently s
 - [x] primitive properties: `string`, `number`, `boolean`, `null`
 - [x] `object` properties
 - [x] `array` properties with items of one type
-- [ ] `array` properties of mixed types
+- [x] `array` properties of mixed types
 - [ ] `array` properties of arrays
-- [ ] `enum` properties
-- [ ] `One of` properties mutually exclusive properties
+- [x] `enum` properties
+- [x] `One of` properties mutually exclusive properties
 - [x] `Referencing`
 - [ ] `Mixins` 
 - [ ] Variable property names
