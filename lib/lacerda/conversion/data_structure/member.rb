@@ -23,10 +23,9 @@ module Lacerda
           @description = member.dig('meta', 'description')
           @content = member['content']
           @name = Lacerda.underscore(@content['key']['content'])
-          @type_definition = @content['value']
-          @type = @type_definition['element']
           @attributes = member.dig('attributes', 'typeAttributes') || []
           @is_required = @attributes.include?('required')
+          @type = Type.new(@content['value'], @is_required)
           @scope = scope
         end
 
@@ -36,19 +35,13 @@ module Lacerda
 
         def spec
             spec = {}
-            # This is either type: primimtive or a oneOf { $ref: reference_name }
-            spec.merge!(primitive_or_oneOf(@type))
-
             # We might have a description
             spec['description'] = @description
-
-            # If it's an array, we need to pluck out the item types
-            if @type == 'array'
-              nestedTypes = @type_definition['content'].map{|vc| vc['element'] }.uniq
-              spec['items'] = array_items(nestedTypes)
-
+            spec.merge!(@type.to_hash)
+            # add the type of the array objects (if it is an array)
+            spec['items'] = @type.array_type
               # If it's an object, we need recursion
-            elsif @type == 'object'
+            if @type.object?
               spec['properties'] = {}
               # The object has a value that will represent a data structure. the data
               # passed to DataStructure normally is an array, but in this case if wouldn't
@@ -58,63 +51,6 @@ module Lacerda
               spec['properties'].merge!(data_structure['properties'])
             end
             spec
-        end
-
-        def primitive_or_oneOf(type)
-          return { 'type' => 'object' } if type.blank?
-          if PRIMITIVES.include?(type)
-            primitive(type)
-          else
-            oneOf([type])
-          end
-        end
-
-
-        # A basic type is either a primitive type with exactly 1 primitive type
-        #   {'type' => [boolean] }
-        # a reference
-        #   { '$ref' => "#/definitions/name" }
-        # or an object if the type in not there
-        #   { 'type' => object }
-        # Basic types don't care about being required or not.
-        def basic_type(type, is_required = required?)
-          return { 'type' => 'object' } if type.blank?
-          if PRIMITIVES.include?(type)
-            primitive(type, is_required)
-          else
-            reference(type)
-          end
-        end
-
-        def oneOf(types, is_required = required?)
-          types = types.map { |type| basic_type(type, is_required) }
-          types << { 'type' => 'null' } unless is_required
-          {
-            'oneOf' => types.uniq
-          }
-        end
-
-        # returns the type of an array, given its specified type(s). This will be
-        # either exactly one basic type, or a oneOf in case there are 1+ types 
-        # or exactly 1 non-basic type. 
-        # As there are specied types in the array, `nil` should not be a valid value
-        # and therefore required should be true.
-        def array_items(types)
-          if types.size == 1 && PRIMITIVES.include?(types.first)
-            primitive(types.first, true) 
-          else
-            oneOf(types, true)
-          end
-        end
-
-        def reference(type)
-          {'$ref' => "#/definitions/#{Lacerda::Conversion::DataStructure.scope(@scope, type)}" }
-        end
-
-        def primitive(type, is_required = required?) 
-          types = [type]
-          types << 'null' unless is_required
-          { 'type' => types }
         end
       end
     end
