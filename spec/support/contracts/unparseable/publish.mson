@@ -1,0 +1,9 @@
+# Data Structure
+
+# AnotherApp::Post
+
+We misnamed a property (integer instead of number). Error should be reaised
+
+## Properties
+
+- title: (integer, required)
