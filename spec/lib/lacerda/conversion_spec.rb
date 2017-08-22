@@ -90,7 +90,7 @@ describe Lacerda::Conversion do
       end
 
       it "registered all types with automatic scope from directory name" do
-        expect(publish_schema['definitions'].keys.sort).to eq ["app::post", "app::tag", "prop_a", "prop_b"]
+        expect(publish_schema['definitions'].keys.sort).to eq ["app::post", "app::tag", "prop_a", "prop_b", "tweet", "video"]
       end
 
 
@@ -167,6 +167,28 @@ describe Lacerda::Conversion do
 
           it "are valid with 1 single item of a basic type" do
             expect({ 'id' => 1, 'author_id' => 2, 'numbers' => [1] }).to match_schema(publish_schema, :post)
+          end
+
+          context 'using an enum as a type' do
+            it 'works' do
+              hash = { 'id' => 1, 'author_id' => 2,
+                       'embedded_content' => [
+                         {'url' => 'https://youtube.com/foo', '@type' => 'video'},
+                         {'url' => 'https://twitter.com/foo/bar','@type' => 'tweet'}
+                        ]
+                     }
+              expect(hash).to match_schema(publish_schema, :post)
+            end
+
+            it 'raises errors if it does not match one of the items' do
+              hash = { 'id' => 1, 'author_id' => 2,
+                       'embedded_content' => [
+                         {'url' => 'https://youtube.com/foo', '@type' => 'video'},
+                         {'@type' => 'tweet'}
+                       ]
+                     }
+              expect(hash).not_to match_schema(publish_schema, :post)
+            end
           end
         end
 

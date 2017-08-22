@@ -15,6 +15,16 @@ Very basic tag implementation with a url slug and multiple variations of the tag
 # PropB
 - num: (number, required)
 
+# Video
+- @type: (enum, required)
+  - video
+- url: (string, required)
+
+# Tweet
+- @type: (enum, required)
+  - tweet
+- url: (string, required)
+
 # App::Post
 
 A post that only has a title, but no text body. Weird, right?
@@ -27,6 +37,7 @@ A post that only has a title, but no text body. Weird, right?
 - primary_tag: (App::Tag, optional) - Property of custom type
 - tags: (array[App::Tag]) - An array with a custom type
 - multiple_props: (array[PropA, PropB, string]) - A multitype array
+- embedded_content: (array[Video, Tweet]) - A multitype array
 - comments: (array[string]) - An array with a primitive type
 - assignee: (enum[string])
   - oliver
