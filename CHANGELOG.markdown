@@ -1,3 +1,6 @@
+# 2.0.1
+- Merge (for real) add enum support to master
+
 # 2.0.0
 - [Breaking] Raise parsing errors, instead of silently returning an empty contract
 - Add enum support
