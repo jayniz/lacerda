@@ -13,9 +13,11 @@ module Lacerda
       # Called before one single publisher is checked against its consumers
     end
 
-    def object_publish_specification_valid(consumed_object, is_valid)
+
+    def object_publish_specification_errors(consumed_object, errors)
       # Called after a consumed object's specification has been checked against
-      # the publisher's specification of that object.
+      # the publisher's specification of that object. It returns an array of
+      # errors
     end
 
     def check_consuming

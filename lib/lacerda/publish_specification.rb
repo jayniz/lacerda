@@ -16,6 +16,7 @@ module Lacerda
       Lacerda.validate_reporter(reporter)
       @comparator = Compare::JsonSchema.new(@schema)
       result = @comparator.contains?(consumer.consume.scoped_schema(service), consumer.name)
+      reporter.try(:consume_specification_errors,consumer, errors)
       reporter.try(:consume_specification_satisfied, consumer, result)
       result
     end

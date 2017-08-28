@@ -7,19 +7,38 @@ module Lacerda
         @group = group
       end
 
+      def consume_specification_satisfied(consumer, is_valid)
+        @current_publisher.it "satisfies #{consumer.name}" do
+          expect(is_valid).to be true
+        end
+      end
+
+      # errors is a hash with the following structure:
+      #   { "publisher_name -> consumer_name" => [
+      #      { :error => :ERR_MISSING_DEFINITION,
+      #        :message =>"Some text",
+      #        :location => 'consumer_name/publisher_name::object_name
+      #      }]
+      #   }
+      def consume_specification_errors(consumer, errors)
+        error_messages = errors.map do |error|
+          "- #{error[:error]} in #{error[:location]}: #{error[:message]}"
+        end
+        msg = "expected #{@current_publisher.description} to satisfy "\
+              "#{consumer.name} but found these errors:\n"\
+              "  #{error_messages.join("\n")}"
+        @current_publisher.it "satisfies #{consumer.name}" do
+          expect(error_messages).to be_empty, msg
+        end
+      end
+
       def check_publishing
+        @current_consumer.try(:run)
         @publish_group = @group.describe("publishers")
       end
 
       def check_publisher(service)
-        @current_publisher.try(:run)
         @current_publisher = @publish_group.describe(service.try(:name))
-      end
-
-      def object_publish_specificaiton_valid(object, valid)
-        @current_publisher.it "-> #{object.try(:consumer).try(:name)}" do
-          expect(valid).to be true
-        end
       end
 
       def check_consuming
@@ -39,8 +58,6 @@ module Lacerda
       end
 
       def result(errors)
-        @current_consumer.try(:run)
-        @group.run
       end
 
     end
