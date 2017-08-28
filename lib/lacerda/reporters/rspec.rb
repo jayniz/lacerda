@@ -47,7 +47,7 @@ module Lacerda
 
       def object_publisher_existing(object_name, publisher_name, valid)
         @current_consumer.it "#{object_name} from #{publisher_name}" do
-          expect(valid).to be true
+          expect(valid).to eq true, "Publisher #{publisher_name} does not exist"
         end
       end
 
