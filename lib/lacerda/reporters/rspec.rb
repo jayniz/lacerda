@@ -7,12 +7,6 @@ module Lacerda
         @group = group
       end
 
-      def consume_specification_satisfied(consumer, is_valid)
-        @current_publisher.it "satisfies #{consumer.name}" do
-          expect(is_valid).to be true
-        end
-      end
-
       # errors is a hash with the following structure:
       #   { "publisher_name -> consumer_name" => [
       #      { :error => :ERR_MISSING_DEFINITION,
