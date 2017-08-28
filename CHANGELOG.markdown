@@ -1,3 +1,7 @@
+# 2.1.0
+- Allow to validate objects without scopes
+- Fix RSpec reporter, so it displayes publisher errors
+
 # 2.0.1
 - Merge (for real) add enum support to master
 
