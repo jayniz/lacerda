@@ -66,15 +66,15 @@ module Lacerda
       @errors.empty?
     end
 
-    def validate_object_to_publish(type, data)
-      validate_object_to_publish!(type, data)
+    def validate_object_to_publish(type, data, scoped: true)
+      validate_object_to_publish!(type, data, scoped: true)
       true
     rescue
       false
     end
 
-    def validate_object_to_publish!(type, data)
-      object_description = @publish.object(type)
+    def validate_object_to_publish!(type, data, scoped: true)
+      object_description = @publish.object(type, scoped: scoped)
       object_description.validate_data!(data)
     end
 
