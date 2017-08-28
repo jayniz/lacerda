@@ -43,7 +43,7 @@ module Lacerda
         @io.print "\nObjects consumed by #{consuming_service.name.camelize}: "
       end
 
-      def object_publisher_existing(consumed_object, is_published)
+      def object_publisher_existing(consumed_object_name, publisher_name, is_published)
         return unless @verbose
         if is_published
           @io.print ".".green

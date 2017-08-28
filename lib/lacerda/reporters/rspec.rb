@@ -45,8 +45,8 @@ module Lacerda
         @current_consumer = @consume_group.describe("#{service.try(:name)} consuming")
       end
 
-      def object_publisher_existing(object, valid)
-        @current_consumer.it "#{object.name} from #{object.try(:publisher).try(:name)}" do
+      def object_publisher_existing(object_name, publisher_name, valid)
+        @current_consumer.it "#{object_name} from #{publisher_name}" do
           expect(valid).to be true
         end
       end
