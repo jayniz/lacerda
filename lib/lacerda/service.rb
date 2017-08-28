@@ -78,6 +78,11 @@ module Lacerda
       object_description.validate_data!(data)
     end
 
+    def validate_internal_publish_object!(type, data)
+      object_description = @publish.object(type, scoped: false)
+      object_description.validate_data!(data)
+    end
+
     def validate_object_to_consume(type, data)
       validate_object_to_consume!(type, data)
       true

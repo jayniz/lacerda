@@ -79,6 +79,12 @@ describe Lacerda::Service do
         ).to be false
       end
 
+      it "validates internal/unscoped objects" do
+        expect {
+          publisher.validate_internal_publish_object!('PropA', num: 1) 
+        }.not_to raise_error
+      end
+
       it "complains about an unknokwn type with an exception" do
         expect{
           publisher.validate_object_to_publish!('unknown_type', {some: :data})
