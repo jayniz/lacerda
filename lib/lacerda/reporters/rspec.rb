@@ -21,7 +21,9 @@ module Lacerda
         msg = "expected #{@current_publisher.description} to satisfy "\
           "#{consumer.name} but found these errors:\n"\
           "  #{error_messages.join("\n")}"
-        @current_publisher.it "satisfies #{consumer.name}" do
+        @current_publisher.it "satisfies #{consumer.name}" do |example|
+          # We need to set the location to avoid rspec STDOUT errors
+          example.metadata[:location] = 'spec/config/zeta_spec.rb'
           expect(error_messages).to be_empty, msg
         end
       end
@@ -48,7 +50,9 @@ module Lacerda
                 elsif !is_published
                   "#{publisher_name} does not publish #{consumed_object_name}"
                 end
-        @current_consumer.it "#{consumed_object_name} from #{publisher_name}" do
+        @current_consumer.it "#{consumed_object_name} from #{publisher_name}" do |example|
+          # We need to set the location to avoid rspec STDOUT errors
+          example.metadata[:location] = 'spec/config/zeta_spec.rb'
           expect(publisher_exists && is_published).to eq(true), error
         end
       end

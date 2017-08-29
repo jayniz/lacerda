@@ -1,3 +1,5 @@
+# 2.1.2
+- Avoid RSpec stdout errors for programatially created specs
 # 2.1.1
 - Fix https://github.com/moviepilot/lacerda/issues/22
 - Fix issues with nested describe/it/contexts
