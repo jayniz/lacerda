@@ -36,7 +36,6 @@ module Lacerda
       end
 
       def check_consuming
-        @current_publisher.try(:run)
         @consume_group = @group.describe("consumers")
       end
 
