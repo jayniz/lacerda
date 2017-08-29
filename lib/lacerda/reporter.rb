@@ -29,7 +29,7 @@ module Lacerda
       # Called before all consumed objects are iterated
     end
 
-    def object_publisher_existing(consumed_object_name, publisher_name, is_published)
+    def check_published_object(consumed_object_name, publisher_name, publisher_exists, is_published)
       # Called after a consumed object was inspected (does a publish specification
       # for this object exist?)
     end

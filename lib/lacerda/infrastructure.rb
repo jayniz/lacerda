@@ -37,13 +37,14 @@ module Lacerda
         consumers.each do |consumer|
           reporter.try(:check_consumer, consumer)
           consumer.consumed_objects.each do |object|
-            if object.publisher
-              reporter.try(:object_publisher_existing, object.name, object.publisher.name, true)
+            publisher_exists = !object.publisher.nil?
+            is_published = publisher_exists && object.publisher.publishes?(object.name)
+            reporter.try(:check_consumed_object, object.name, object.publisher_name.camelize, publisher_exists, is_published)
+            if publisher_exists
               next
             else
               missing_publishers[object.publisher_name.camelize] ||= []
               missing_publishers[object.publisher_name.camelize] << consumer.name.camelize
-              reporter.try(:object_publisher_existing, object.name, object.publisher_name.camelize, false)
             end
           end
         end

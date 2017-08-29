@@ -43,9 +43,22 @@ module Lacerda
         @io.print "\nObjects consumed by #{consuming_service.name.camelize}: "
       end
 
-      def object_publisher_existing(consumed_object_name, publisher_name, is_published)
+
+      def check_consumed_object(object)
+        error = if object.publisher.nil?
+                  "Publisher #{object.publisher_name} does not exist"
+                elsif !object.publisher.publishes?(object.name)
+                  "#{object.publisher.name} does not publish #{object.name}"
+                else
+                  nil
+                end
+        @current_consumer.it "#{object.name} from #{object.publisher_name}" do
+          expect(error).to(be_nil, error)
+        end
+      end
+      def check_consumed_object(consumed_object_name, publisher_name, publisher_exists, is_published)
         return unless @verbose
-        if is_published
+        if publisher_exists && is_published
           @io.print ".".green
         else
           @io.print "x".red

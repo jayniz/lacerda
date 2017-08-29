@@ -19,15 +19,14 @@ module Lacerda
           "- #{error[:error]} in #{error[:location]}: #{error[:message]}"
         end
         msg = "expected #{@current_publisher.description} to satisfy "\
-              "#{consumer.name} but found these errors:\n"\
-              "  #{error_messages.join("\n")}"
+          "#{consumer.name} but found these errors:\n"\
+          "  #{error_messages.join("\n")}"
         @current_publisher.it "satisfies #{consumer.name}" do
           expect(error_messages).to be_empty, msg
         end
       end
 
       def check_publishing
-        @current_consumer.try(:run)
         @publish_group = @group.describe("publishers")
       end
 
@@ -40,13 +39,17 @@ module Lacerda
       end
 
       def check_consumer(service)
-        @current_consumer.try(:run)
         @current_consumer = @consume_group.describe("#{service.try(:name)} consuming")
       end
 
-      def object_publisher_existing(object_name, publisher_name, valid)
-        @current_consumer.it "#{object_name} from #{publisher_name}" do
-          expect(valid).to eq(true), "Publisher #{publisher_name} does not exist"
+      def check_consumed_object(consumed_object_name, publisher_name, publisher_exists, is_published)
+        error = if !publisher_exists
+                  "Publisher #{publisher_name} does not exist"
+                elsif !is_published
+                  "#{publisher_name} does not publish #{consumed_object_name}"
+                end
+        @current_consumer.it "#{consumed_object_name} from #{publisher_name}" do
+          expect(publisher_exists && is_published).to eq(true), error
         end
       end
 
