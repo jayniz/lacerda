@@ -2,7 +2,7 @@ require 'pry'
 require 'spec_helper'
 include Lacerda::Compare
 
-describe JsonSchema do
+RSpec.describe JsonSchema do
 
   let(:schema_a) {
     {

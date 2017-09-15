@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Lacerda::Conversion do
+RSpec.describe Lacerda::Conversion do
   context "doing basic mson->json schema conversion" do
 
     context 'for consume.mson' do

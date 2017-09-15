@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Lacerda::Specification do
+RSpec.describe Lacerda::Specification do
   let(:service){ $test_infrastructure.services[:consumer] }
 
   it "allows initialization with a loaded schema" do

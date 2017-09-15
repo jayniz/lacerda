@@ -2,7 +2,7 @@ require 'spec_helper'
 
 # We're relying on the test services defined in
 # spec/support/contracts
-describe Lacerda::Service do
+RSpec.describe Lacerda::Service do
   let(:publisher){ $test_infrastructure.services[:publisher] }
   let(:consumer){ $test_infrastructure.services[:consumer] }
   let(:consumer_invalid_property){ $test_infrastructure.services[:invalid_property] }

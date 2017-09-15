@@ -3,7 +3,7 @@ require 'active_support/core_ext/object/try'
 module Lacerda
   module Reporters
     class RSpec < Lacerda::Reporter
-      def initialize(group = RSpec.describe("Lacerda infrastructure contract validation"))
+      def initialize(group = ::RSpec.describe("Lacerda infrastructure contract validation"))
         @group = group
       end
 
