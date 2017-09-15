@@ -1,5 +1,10 @@
+# [2.1.3] - 2017-09-15
+### Fixed
+- Allow Lacerda::Reporter::Rspec to work when RSpec config.disable_monkey_paching! is set.
+
 # 2.1.2
 - Avoid RSpec stdout errors for programatially created specs
+
 # 2.1.1
 - Fix https://github.com/moviepilot/lacerda/issues/22
 - Fix issues with nested describe/it/contexts
