@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'lacerda/reporters/rspec'
 
-describe Lacerda::Infrastructure do
+RSpec.describe Lacerda::Infrastructure do
   let(:publisher){ $test_infrastructure.services[:publisher] }
   let(:consumer){ $test_infrastructure.services[:consumer] }
   let(:consumer_invalid_property){ $test_infrastructure.services[:invalid_property] }

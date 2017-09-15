@@ -7,8 +7,8 @@ require 'pry'
 require 'simplecov'
 require 'coveralls'
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-    SimpleCov::Formatter::HTMLFormatter,
-    Coveralls::SimpleCov::Formatter
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
 ]
 SimpleCov.start {
   add_filter 'spec/'
@@ -24,9 +24,10 @@ Bundler.require
 require 'lacerda'
 
 RSpec.configure do |config|
+  config.disable_monkey_patching!
+  config.filter_run_when_matching :focus
+  config.order = :random
 
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
   # Convert/load test infrastructure, services and specifications
   config.before(:suite) do
     $contracts_dir = File.join(File.dirname(__FILE__), "support", "contracts")
@@ -34,6 +35,4 @@ RSpec.configure do |config|
     $test_infrastructure = Lacerda::Infrastructure.new(data_dir: path)
     $test_infrastructure.convert_all!(true)
   end
-
-  config.order = :random
 end

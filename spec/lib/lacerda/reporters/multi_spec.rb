@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Lacerda::Reporters::Multi do
+RSpec.describe Lacerda::Reporters::Multi do
   context "dispatch to each registered reporter" do
     methods = Lacerda::Reporter.instance_methods - Object.instance_methods
     methods.each do |m|
