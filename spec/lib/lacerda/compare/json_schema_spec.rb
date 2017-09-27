@@ -31,7 +31,8 @@ RSpec.describe JsonSchema do
       },
       'properties' => {
         'post' => { '$ref' => '#/definitions/post' },
-        'tag'  => { '$ref' => '#/definitions/tag' }
+        'tag'  => { '$ref' => '#/definitions/tag' },
+        'version_number' => { 'type' => 'number' }
       }
     }
   }
@@ -55,7 +56,8 @@ RSpec.describe JsonSchema do
         }
       },
       'properties' => {
-        'post' => { '$ref' => '#/definitions/post' }
+        'post' => { '$ref' => '#/definitions/post' },
+        'version_number' => { 'type' => 'number' }
       }
     }
   }
@@ -340,8 +342,22 @@ RSpec.describe JsonSchema do
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
         end
 
-        it 'a missing required property' do
+        it 'a missing required property in a definition' do
           schema_b['definitions']['post']['required'] << 'name'
+
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
+        end
+
+        it 'a missing required reference' do
+          schema_b['required'] = ['post']
+
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
+        end
+
+        it 'a missing required property of a base type' do
+          schema_b['required'] = ['version_number']
 
           expect(comparator.contains?(schema_b)).to be false
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
