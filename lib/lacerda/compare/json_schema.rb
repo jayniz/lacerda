@@ -125,16 +125,10 @@ module Lacerda
 
             # Check all publish types for a compatible consume type
             publish_types.each do |publish_type|
-              compatible_consume_type_found = false
-              consume_types.each do |consume_type|
-                next unless publish_type == consume_type or
-                            compare_sub_types(publish_type, consume_type, location + [publish_type])
-                compatible_consume_type_found = true
+              matched = consume_types.any? do |consume_type|
+                compare_sub_types(publish_type, consume_type, location + [publish_type])
               end
-
-              unless compatible_consume_type_found
-                return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type)
-              end
+              return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type) if !matched
             end
 
           # Mixed case 1/2:
@@ -175,11 +169,11 @@ module Lacerda
         end
 
         if consume['type'] == 'array'
-          sorted_publish = publish['items'].sort
-          consume['items'].sort.each_with_index do |item, i|
-            # TODO why just compare sorted_publish[i] and not all??
-            next if schema_contains?(publish: sorted_publish[i], consume: item)
-            return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
+          publish['items'].each do |publish_item|
+            matched = consume['items'].any? do |consume_item|
+              schema_contains?(publish: publish_item, consume: consume_item)
+            end
+            return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil) unless matched
           end
         end
 
@@ -246,7 +240,7 @@ module Lacerda
       #
       def data_for_pointer(data_or_pointer, schema)
         data = nil
-        if data_or_pointer['type']
+        if data_or_pointer['type'] || data_or_pointer['oneOf']
           data = data_or_pointer
         elsif pointer = data_or_pointer['$ref']
           data = resolve_pointer(pointer, schema)
@@ -272,10 +266,12 @@ module Lacerda
       # this method wraps them into full schemas, creates a new
       # instance of self and compares
       def compare_sub_types(containing, contained, location)
+
         resolved_containing = data_for_pointer(containing, @containing_schema)
         resolved_contained  = data_for_pointer(contained,  @contained_schema)
+
         containing_schema = {
-          'definitions' => { 'foo' =>  resolved_containing },
+          'definitions' => { 'foo' => resolved_containing},
           'properties' => { 'bar' => { '$ref' => '#/definitions/foo' } }
         }
         comparator = self.class.new(containing_schema)
