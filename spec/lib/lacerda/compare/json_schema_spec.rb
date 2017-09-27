@@ -16,7 +16,7 @@ RSpec.describe JsonSchema do
         'date' => { 
           'type' => 'object',
           'properties' => {
-            'milis' => { 'type' =>  'number' }
+            'millis' => { 'type' =>  'number' }
             }
         },
         'post' => {
@@ -50,7 +50,7 @@ RSpec.describe JsonSchema do
         'date' => {
           'type' => 'object',
           'properties' => {
-            'milis' => { 'type' =>  'number' }
+            'millis' => { 'type' =>  'number' }
           }
         },
         'post' => {
