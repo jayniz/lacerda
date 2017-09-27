@@ -13,6 +13,12 @@ RSpec.describe JsonSchema do
           'properties' => { 'id' => { 'type' => 'number', 'description' => 'Foobar' } },
           'required' => [ 'id' ],
         },
+        'date' => { 
+          'type' => 'object',
+          'properties' => {
+            'milis' => { 'type' =>  'number' }
+            }
+        },
         'post' => {
           'type' => 'object',
           'properties' => {
@@ -23,7 +29,7 @@ RSpec.describe JsonSchema do
             'multi_props'=> { 'type'=>'array', 'items'=> [ {
               'oneOf' => [
                 { 'type' => 'string' },
-                { '$ref' => '#/definitions/post' } ]
+                { '$ref' => '#/definitions/date' } ]
             } ] }
           },
           'required' => [ 'id', 'title' ]
@@ -41,6 +47,12 @@ RSpec.describe JsonSchema do
     {
       '$schema' => 'http://json-schema.org/draft-04/schema#',
       'definitions' => {
+        'date' => {
+          'type' => 'object',
+          'properties' => {
+            'milis' => { 'type' =>  'number' }
+          }
+        },
         'post' => {
           'type' => 'object',
           'properties' => {
@@ -49,7 +61,7 @@ RSpec.describe JsonSchema do
             'multi_props'=> { 'type'=> 'array', 'items'=> [{
             'oneOf' => [
               { 'type' => 'string' },
-              { '$ref' => '#/definitions/post' } ]
+              { '$ref' => '#/definitions/date' } ]
           } ]},
           },
           'required' => [ 'id', 'title' ]
@@ -383,7 +395,57 @@ RSpec.describe JsonSchema do
     end
 
     context 'oneOfs' do
+      context 'a required is missing in publish' do
+        let(:schema_a){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "type": "object",
+              "properties": {"id": {"type": "number"}, "name": {"type": "string"}}
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "oneOf" : [
+                { "$ref": "#/definitions/testObject" }
+              ]
+            }
+          }
+        }
+        JSON
+        }
+        let(:schema_b){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "type": "object",
+              "properties": {"id": {"type": "number"}, "name": {"type": "string"}}
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "oneOf" : [
+                { "$ref": "#/definitions/testObject" }
+              ]
+            }
+          }
+        }
+        JSON
+        }
 
+        it 'no compatible oneOf in the consume schema is found' do
+          schema_b['definitions']['testObject']['required'] = ['name']
+          comparator = JsonSchema.new(schema_a)
+          expect(comparator.contains?(schema_b)).to eq false
+          expect(comparator.errors.size).to eq 1
+        end
+      end
       context 'in just consume' do
         let(:including){ JSON.parse <<-JSON
         {
