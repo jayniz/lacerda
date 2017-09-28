@@ -9,6 +9,7 @@ module Lacerda
         :ERR_MISSING_REQUIRED     => "The published object has an optional property that you marked as required in your specification.",
         :ERR_MISSING_TYPE_AND_REF_AND_ONE_OF => 'A property has to either have a "type", "oneOf" or "$ref" property.',
         :ERR_TYPE_MISMATCH        => "The published object has a property with a different type than the consumer's specification.",
+        :ERR_NOT_IMPLEMENTED      => "Not implemented.",
         :ERR_NOT_SUPPORTED        => 'I don\'t yet know what to do when the consumer\'s specification has a "$ref" defined and the publisher\'s specification has a "type".'
       }
 
@@ -125,15 +126,20 @@ module Lacerda
 
             # Check all publish types for a compatible consume type
             publish_types.each do |publish_type|
-              compatible_consume_type_found = false
-              consume_types.each do |consume_type|
-                next unless publish_type == consume_type or
-                            compare_sub_types(publish_type, consume_type, location + [publish_type])
-                compatible_consume_type_found = true
+              errors = []
+              consume_types.any? do |consume_type|
+               errors = compare_sub_types(publish_type, consume_type, location + [publish_type])
+               errors.empty?
               end
-
-              unless compatible_consume_type_found
-                return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type)
+              if errors.any?
+                # As there is only one type in each oneOf, we can give more specific error.
+                # TODO: add this to other cases
+                if publish_types.size == 1 && consume_types.size == 1
+                  @errors.push(*errors)
+                else
+                  _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type)
+                end
+                return false
               end
             end
 
@@ -174,39 +180,50 @@ module Lacerda
           end
         end
 
-        if consume['type'] == 'array'
-          sorted_publish = publish['items'].sort
-          consume['items'].sort.each_with_index do |item, i|
-            # TODO why just compare sorted_publish[i] and not all??
-            next if schema_contains?(publish: sorted_publish[i], consume: item)
+        if consume['type'] == 'array' && publish['type'] == 'array'
+          if !consume['items'].is_a?(Hash) || !publish['items'].is_a?(Hash)
+            return _e(:ERR_NOT_IMPLEMENTED, location, "'items' can only be hash (schema)")
+          elsif !schema_contains?(publish: publish['items'], consume: consume['items'])
             return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
           end
         end
-
         true
       end
 
       private
 
       def properties_contained?
-        @contained_schema['properties'].each do |property, contained_property|
-          resolved_contained_property = data_for_pointer(contained_property, @contained_schema)
-          containing_property = @containing_schema['properties'][property]
-          if !containing_property
-            _e(:ERR_MISSING_DEFINITION, [@initial_location, property], "(in publish.mson)")
-          else
-            resolved_containing_property = data_for_pointer(
-              containing_property,
-              @containing_schema
-            )
-            schema_contains?(
-              publish: resolved_containing_property,
-              consume: resolved_contained_property,
-              location: [property]
-            )
-          end
+        # success is used to ensure we have no errors.
+        success = @contained_schema['properties'].map do |name, content|
+          property_contained?(name, content)
+        end.all? {|is_property_contained| is_property_contained }
+        success && @errors.empty?
+      end
+
+      def property_contained?(property_name, content)
+        resolved_contained_property = data_for_pointer(content, @contained_schema)
+        containing_property = @containing_schema['properties'][property_name]
+
+        if !containing_property
+          return _e(:ERR_MISSING_DEFINITION, [@initial_location, property_name], "(in publish.mson)")
         end
-        @errors.empty?
+
+        # Make sure required properties in consume are required in publish
+        publish_required = @containing_schema['required'] || []
+        consume_required = @contained_schema['required'] || []
+        missing = (consume_required - publish_required)
+        return _e(:ERR_MISSING_REQUIRED, [property_name], missing.to_json) unless missing.empty?
+
+        resolved_containing_property = data_for_pointer(
+          containing_property,
+          @containing_schema
+        )
+
+        schema_contains?(
+          publish: resolved_containing_property,
+          consume: resolved_contained_property,
+          location: [property_name]
+        )
       end
 
       def _e(error, location, extra = nil)
@@ -233,7 +250,7 @@ module Lacerda
       #
       def data_for_pointer(data_or_pointer, schema)
         data = nil
-        if data_or_pointer['type']
+        if data_or_pointer['type'] || data_or_pointer['oneOf']
           data = data_or_pointer
         elsif pointer = data_or_pointer['$ref']
           data = resolve_pointer(pointer, schema)
@@ -259,16 +276,17 @@ module Lacerda
       # this method wraps them into full schemas, creates a new
       # instance of self and compares
       def compare_sub_types(containing, contained, location)
+
         resolved_containing = data_for_pointer(containing, @containing_schema)
         resolved_contained  = data_for_pointer(contained,  @contained_schema)
+
         containing_schema = {
-          'definitions' => { 'foo' =>  resolved_containing },
+          'definitions' => { 'foo' => resolved_containing},
           'properties' => { 'bar' => { '$ref' => '#/definitions/foo' } }
         }
         comparator = self.class.new(containing_schema)
-        # TODO we need errorrs to bubble up here
-        result = comparator.schema_contains?(publish: resolved_containing, consume: resolved_contained)
-        result
+        comparator.schema_contains?(publish: resolved_containing, consume: resolved_contained)
+        comparator.errors
       end
     end
   end

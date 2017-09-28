@@ -13,25 +13,32 @@ RSpec.describe JsonSchema do
           'properties' => { 'id' => { 'type' => 'number', 'description' => 'Foobar' } },
           'required' => [ 'id' ],
         },
+        'date' => { 
+          'type' => 'object',
+          'properties' => {
+            'millis' => { 'type' =>  'number' }
+            }
+        },
         'post' => {
           'type' => 'object',
           'properties' => {
             'id' => { 'type' => 'number', 'description' => 'The unique identifier for a post' },
             'title' => { 'type' => 'string', 'description' => 'Title of the product' },
             'author' => { 'type' => 'number', 'description' => 'External user id of author' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
-            'multi_props'=> { 'type'=>'array', 'items'=> [ {
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } },
+            'multi_props'=> { 'type'=>'array', 'items'=>  {
               'oneOf' => [
                 { 'type' => 'string' },
-                { '$ref' => '#/definitions/post' } ]
-            } ] }
+                { '$ref' => '#/definitions/date' } ]
+            }  }
           },
           'required' => [ 'id', 'title' ]
         }
       },
       'properties' => {
         'post' => { '$ref' => '#/definitions/post' },
-        'tag'  => { '$ref' => '#/definitions/tag' }
+        'tag'  => { '$ref' => '#/definitions/tag' },
+        'version_number' => { 'type' => 'number' }
       }
     }
   }
@@ -40,22 +47,29 @@ RSpec.describe JsonSchema do
     {
       '$schema' => 'http://json-schema.org/draft-04/schema#',
       'definitions' => {
+        'date' => {
+          'type' => 'object',
+          'properties' => {
+            'millis' => { 'type' =>  'number' }
+          }
+        },
         'post' => {
           'type' => 'object',
           'properties' => {
             'id' => { 'type' => 'number' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
-            'multi_props'=> { 'type'=> 'array', 'items'=> [{
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } },
+            'multi_props'=> { 'type'=> 'array', 'items'=> {
             'oneOf' => [
               { 'type' => 'string' },
-              { '$ref' => '#/definitions/post' } ]
-          } ]},
+              { '$ref' => '#/definitions/date' } ]
+          } },
           },
           'required' => [ 'id', 'title' ]
         }
       },
       'properties' => {
-        'post' => { '$ref' => '#/definitions/post' }
+        'post' => { '$ref' => '#/definitions/post' },
+        'version_number' => { 'type' => 'number' }
       }
     }
   }
@@ -68,7 +82,7 @@ RSpec.describe JsonSchema do
           'type' => 'object',
           'BROKEN' => {
             'id' => { 'type' => 'number' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } }
           },
           'required' => [ 'id', 'title' ]
         }
@@ -315,7 +329,7 @@ RSpec.describe JsonSchema do
         end
 
         it 'misses a type in the oneOf' do
-          schema_b['definitions']['post']['properties']['multi_props']['items'][0]['oneOf'].delete({'type' => 'string'})
+          schema_b['definitions']['post']['properties']['multi_props']['items']['oneOf'].delete({'type' => 'string'})
           expect(comparator.contains?(schema_b)).to be false
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME
         end
@@ -340,8 +354,22 @@ RSpec.describe JsonSchema do
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_PROPERTY
         end
 
-        it 'a missing required property' do
+        it 'a missing required property in a definition' do
           schema_b['definitions']['post']['required'] << 'name'
+
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
+        end
+
+        it 'a missing required reference' do
+          schema_b['required'] = ['post']
+
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
+        end
+
+        it 'a missing required property of a base type' do
+          schema_b['required'] = ['version_number']
 
           expect(comparator.contains?(schema_b)).to be false
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_REQUIRED
@@ -357,17 +385,80 @@ RSpec.describe JsonSchema do
         end
 
         it 'a different type for the items of a property of type array' do
-          schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
+          schema_b['definitions']['post']['properties']['tags']['items']['type'] = 'number'
 
           expect(comparator.contains?(schema_b)).to be false
-          expect(comparator.errors.length).to be 2
           expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
+          expect(comparator.errors.length).to be 2
+        end
+
+        it 'an array as item type' do
+          schema_b['definitions']['post']['properties']['tags']['items'] = []
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_NOT_IMPLEMENTED]
         end
       end
     end
 
     context 'oneOfs' do
+      context 'a required is missing in publish' do
+        let(:schema_a){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "type": "object",
+              "properties": {"id": {"type": "number"}, "name": {"type": "string"}}
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "oneOf" : [
+                { "$ref": "#/definitions/testObject" }
+              ]
+            }
+          }
+        }
+        JSON
+        }
+        let(:schema_b){ JSON.parse <<-JSON
+        {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "title": "publisher",
+          "definitions": {
+            "testObject": {
+              "type": "object",
+              "properties": {"id": {"type": "number"}, "name": {"type": "string"}}
+            }
+          },
+          "type": "object",
+          "properties": {
+            "oneOfOneOfTest": {
+              "oneOf" : [
+                { "$ref": "#/definitions/testObject" }
+              ]
+            }
+          }
+        }
+        JSON
+        }
 
+        it 'no compatible oneOf in the consume schema is found' do
+          schema_b['definitions']['testObject']['required'] = ['name']
+          comparator = JsonSchema.new(schema_a)
+          expect(comparator.contains?(schema_b)).to eq false
+          expect(comparator.errors.size).to eq 1
+        end
+
+        it 'has a concrete error if the oneOf has only one type' do
+          schema_b['definitions']['testObject']['required'] = ['name']
+          comparator = JsonSchema.new(schema_a)
+          expect(comparator.contains?(schema_b)).to eq false
+          expect(comparator.errors.first[:error]).to eq :ERR_MISSING_REQUIRED
+        end
+      end
       context 'in just consume' do
         let(:including){ JSON.parse <<-JSON
         {
