@@ -126,10 +126,21 @@ module Lacerda
 
             # Check all publish types for a compatible consume type
             publish_types.each do |publish_type|
-              matched = consume_types.any? do |consume_type|
-                compare_sub_types(publish_type, consume_type, location + [publish_type])
+              errors = []
+              consume_types.any? do |consume_type|
+               errors = compare_sub_types(publish_type, consume_type, location + [publish_type])
+               errors.empty?
               end
-              return _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type) if !matched
+              if errors.any?
+                # As there is only one type in each oneOf, we can give more specific error.
+                # TODO: add this to other cases
+                if publish_types.size == 1 && consume_types.size == 1
+                  @errors.push(*errors)
+                else
+                  _e(:ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME, location, publish_type)
+                end
+                return false
+              end
             end
 
           # Mixed case 1/2:
@@ -274,9 +285,8 @@ module Lacerda
           'properties' => { 'bar' => { '$ref' => '#/definitions/foo' } }
         }
         comparator = self.class.new(containing_schema)
-        # TODO we need errorrs to bubble up here
-        result = comparator.schema_contains?(publish: resolved_containing, consume: resolved_contained)
-        result
+        comparator.schema_contains?(publish: resolved_containing, consume: resolved_contained)
+        comparator.errors
       end
     end
   end

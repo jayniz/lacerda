@@ -451,6 +451,13 @@ RSpec.describe JsonSchema do
           expect(comparator.contains?(schema_b)).to eq false
           expect(comparator.errors.size).to eq 1
         end
+
+        it 'has a concrete error if the oneOf has only one type' do
+          schema_b['definitions']['testObject']['required'] = ['name']
+          comparator = JsonSchema.new(schema_a)
+          expect(comparator.contains?(schema_b)).to eq false
+          expect(comparator.errors.first[:error]).to eq :ERR_MISSING_REQUIRED
+        end
       end
       context 'in just consume' do
         let(:including){ JSON.parse <<-JSON
