@@ -1,3 +1,3 @@
 module Lacerda
-  VERSION = '2.1.4.beta3'
+  VERSION = '2.1.3'
 end
