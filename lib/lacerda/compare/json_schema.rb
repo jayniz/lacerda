@@ -172,7 +172,7 @@ module Lacerda
         if consume['type'] == 'array' && publish['type'] == 'array'
           if !consume['items'].is_a?(Hash) || !publish['items'].is_a?(Hash)
             return _e(:ERR_NOT_IMPLEMENTED, location, "'items' can only be hash (schema)")
-           elsif !schema_contains?(publish: publish['items'], consume: consume['items'])
+          elsif !schema_contains?(publish: publish['items'], consume: consume['items'])
             return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
           end
         end
