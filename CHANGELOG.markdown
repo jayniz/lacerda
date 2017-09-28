@@ -1,6 +1,7 @@
-# [2.1.4.beta1] - 2017-09-27
+# [2.1.4.beta1] - 2017-09-28
 ### Fixed
 - Fix json schema inclusion for `required` fields
+- Update how we compare array item types, do not allow array as types.
 
 # [2.1.3] - 2017-09-15
 ### Fixed
