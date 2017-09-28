@@ -391,6 +391,12 @@ RSpec.describe JsonSchema do
           expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
           expect(comparator.errors.length).to be 2
         end
+
+        it 'an array as item type' do
+          schema_b['definitions']['post']['properties']['tags']['items'] = []
+          expect(comparator.contains?(schema_b)).to be false
+          expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_NOT_IMPLEMENTED]
+        end
       end
     end
 
