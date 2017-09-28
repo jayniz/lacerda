@@ -25,12 +25,12 @@ RSpec.describe JsonSchema do
             'id' => { 'type' => 'number', 'description' => 'The unique identifier for a post' },
             'title' => { 'type' => 'string', 'description' => 'Title of the product' },
             'author' => { 'type' => 'number', 'description' => 'External user id of author' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
-            'multi_props'=> { 'type'=>'array', 'items'=> [ {
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } },
+            'multi_props'=> { 'type'=>'array', 'items'=>  {
               'oneOf' => [
                 { 'type' => 'string' },
                 { '$ref' => '#/definitions/date' } ]
-            } ] }
+            }  }
           },
           'required' => [ 'id', 'title' ]
         }
@@ -57,12 +57,12 @@ RSpec.describe JsonSchema do
           'type' => 'object',
           'properties' => {
             'id' => { 'type' => 'number' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] },
-            'multi_props'=> { 'type'=> 'array', 'items'=> [{
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } },
+            'multi_props'=> { 'type'=> 'array', 'items'=> {
             'oneOf' => [
               { 'type' => 'string' },
               { '$ref' => '#/definitions/date' } ]
-          } ]},
+          } },
           },
           'required' => [ 'id', 'title' ]
         }
@@ -82,7 +82,7 @@ RSpec.describe JsonSchema do
           'type' => 'object',
           'BROKEN' => {
             'id' => { 'type' => 'number' },
-            'tags' => { 'type' => 'array', 'items' => [ { 'type' => 'string' } ] }
+            'tags' => { 'type' => 'array', 'items' => { 'type' => 'string' } }
           },
           'required' => [ 'id', 'title' ]
         }
@@ -329,7 +329,7 @@ RSpec.describe JsonSchema do
         end
 
         it 'misses a type in the oneOf' do
-          schema_b['definitions']['post']['properties']['multi_props']['items'][0]['oneOf'].delete({'type' => 'string'})
+          schema_b['definitions']['post']['properties']['multi_props']['items']['oneOf'].delete({'type' => 'string'})
           expect(comparator.contains?(schema_b)).to be false
           expect(comparator.errors.first[:error]).to be :ERR_MISSING_MULTI_PUBLISH_MULTI_CONSUME
         end
@@ -385,11 +385,11 @@ RSpec.describe JsonSchema do
         end
 
         it 'a different type for the items of a property of type array' do
-          schema_b['definitions']['post']['properties']['tags']['items'].first['type'] = 'number'
+          schema_b['definitions']['post']['properties']['tags']['items']['type'] = 'number'
 
           expect(comparator.contains?(schema_b)).to be false
-          expect(comparator.errors.length).to be 2
           expect(comparator.errors.map{|d| d[:error] }.sort).to eq [:ERR_ARRAY_ITEM_MISMATCH, :ERR_TYPE_MISMATCH]
+          expect(comparator.errors.length).to be 2
         end
       end
     end

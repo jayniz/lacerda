@@ -9,6 +9,7 @@ module Lacerda
         :ERR_MISSING_REQUIRED     => "The published object has an optional property that you marked as required in your specification.",
         :ERR_MISSING_TYPE_AND_REF_AND_ONE_OF => 'A property has to either have a "type", "oneOf" or "$ref" property.',
         :ERR_TYPE_MISMATCH        => "The published object has a property with a different type than the consumer's specification.",
+        :ERR_NOT_IMPLEMENTED      => "Not implemented.",
         :ERR_NOT_SUPPORTED        => 'I don\'t yet know what to do when the consumer\'s specification has a "$ref" defined and the publisher\'s specification has a "type".'
       }
 
@@ -168,15 +169,13 @@ module Lacerda
           end
         end
 
-        if consume['type'] == 'array'
-          publish['items'].each do |publish_item|
-            matched = consume['items'].any? do |consume_item|
-              schema_contains?(publish: publish_item, consume: consume_item)
-            end
-            return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil) unless matched
+        if consume['type'] == 'array' && publish['type'] == 'array'
+          if !consume['items'].is_a?(Hash) || !publish['items'].is_a?(Hash)
+            return _e(:ERR_NOT_IMPLEMENTED, location, "'items' can only be hash (schema)")
+          elsif !schema_contains?(publish: publish['items'], consume: consume['items'])
+            return _e(:ERR_ARRAY_ITEM_MISMATCH, location, nil)
           end
         end
-
         true
       end
 
